@@ -1,0 +1,66 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "!(server.js|node_modules/**)",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/admin",
+      "dest": "/admin.html"
+    },
+    {
+      "src": "/admin-enhanced",
+      "dest": "/admin-enhanced.html"
+    },
+    {
+      "src": "/delivery-admin",
+      "dest": "/delivery-admin.html"
+    },
+    {
+      "src": "/delivery-jobs",
+      "dest": "/delivery-jobs.html"
+    },
+    {
+      "src": "/driver-app",
+      "dest": "/driver-app.html"
+    },
+    {
+      "src": "/driver-portal",
+      "dest": "/driver-portal.html"
+    },
+    {
+      "src": "/sell-car-wizard",
+      "dest": "/sell-car-wizard.html"
+    },
+    {
+      "src": "/sell-my-car",
+      "dest": "/sell-my-car.html"
+    },
+    {
+      "src": "/track-delivery",
+      "dest": "/track-delivery.html"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
