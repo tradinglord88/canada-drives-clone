@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Portal - Green Light Automotive</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/delivery-bidding.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-wrapper">
+                    <a href="index.html" class="logo">
+                        <h1>Green Light Automotive</h1>
+                    </a>
+                    <ul class="nav-menu">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="delivery-jobs.html">Delivery Jobs</a></li>
+                        <li><a href="driver-portal.html" class="active">Driver Portal</a></li>
+                        <li><a href="/admin">Admin</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="driver-portal-main">
+        <div class="container">
+            <!-- Driver Login/Profile Section -->
+            <div class="driver-section">
+                <div class="driver-login" id="driverLogin">
+                    <h2><i class="fas fa-user-circle"></i> Driver Login</h2>
+                    <form id="driverLoginForm">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="driverEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label>License Number</label>
+                            <input type="text" id="licenseNumber" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </form>
+                    <p class="register-link">New driver? <a href="#" onclick="showRegisterForm()">Register here</a></p>
+                </div>
+
+                <div class="driver-profile" id="driverProfile" style="display: none;">
+                    <div class="profile-header">
+                        <h2><i class="fas fa-user-check"></i> Welcome, <span id="driverName"></span></h2>
+                        <button class="btn btn-secondary" onclick="logout()">Logout</button>
+                    </div>
+                    <div class="driver-stats">
+                        <div class="stat-card">
+                            <i class="fas fa-star"></i>
+                            <div>
+                                <span class="stat-value" id="driverRating">5.0</span>
+                                <span class="stat-label">Rating</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-truck"></i>
+                            <div>
+                                <span class="stat-value" id="completedDeliveries">0</span>
+                                <span class="stat-label">Deliveries</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-gavel"></i>
+                            <div>
+                                <span class="stat-value" id="activeBids">0</span>
+                                <span class="stat-label">Active Bids</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs for Available Jobs and My Bids -->
+            <div class="tabs" id="driverTabs" style="display: none;">
+                <button class="tab-btn active" onclick="switchTab('available')">
+                    <i class="fas fa-list"></i> Available Jobs
+                </button>
+                <button class="tab-btn" onclick="switchTab('mybids')">
+                    <i class="fas fa-gavel"></i> My Bids
+                </button>
+                <button class="tab-btn" onclick="switchTab('assigned')">
+                    <i class="fas fa-truck"></i> Assigned Jobs
+                </button>
+            </div>
+
+            <!-- Available Jobs Tab -->
+            <div class="tab-content" id="availableTab">
+                <h2>Available Delivery Jobs</h2>
+                <div class="jobs-grid" id="availableJobsGrid">
+                    <!-- Available jobs will be loaded here -->
+                </div>
+            </div>
+
+            <!-- My Bids Tab -->
+            <div class="tab-content" id="mybidsTab" style="display: none;">
+                <h2>My Bids</h2>
+                <div class="bids-grid" id="myBidsGrid">
+                    <!-- Driver's bids will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Assigned Jobs Tab -->
+            <div class="tab-content" id="assignedTab" style="display: none;">
+                <h2>Assigned Jobs</h2>
+                <div class="jobs-grid" id="assignedJobsGrid">
+                    <!-- Assigned jobs will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Place Bid Modal -->
+    <div class="modal" id="placeBidModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Place Your Bid</h2>
+                <button class="close-btn" onclick="closeBidModal()">&times;</button>
+            </div>
+            <div class="job-summary" id="jobSummary">
+                <!-- Job details will be shown here -->
+            </div>
+            <form id="placeBidForm">
+                <input type="hidden" id="bidJobId">
+                <div class="form-group">
+                    <label><i class="fas fa-dollar-sign"></i> Your Bid Amount ($)</label>
+                    <input type="number" id="bidAmount" min="1" step="0.01" required>
+                    <small>Consider distance, time, and fuel costs</small>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-clock"></i> Estimated Completion Time (minutes)</label>
+                    <input type="number" id="estimatedTime" min="15" step="5" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-comment"></i> Message to Customer (Optional)</label>
+                    <textarea id="bidMessage" rows="3" placeholder="Why should they choose you?"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeBidModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit Bid</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Driver Registration Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Driver Registration</h2>
+                <button class="close-btn" onclick="closeRegisterModal()">&times;</button>
+            </div>
+            <form id="registerForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label>License Number</label>
+                        <input type="text" name="license_number" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Vehicle Type</label>
+                        <select name="vehicle_type" required>
+                            <option value="">Select Vehicle Type</option>
+                            <option value="Flatbed Truck">Flatbed Truck</option>
+                            <option value="Enclosed Trailer">Enclosed Trailer</option>
+                            <option value="Tow Truck">Tow Truck</option>
+                            <option value="Car Carrier">Car Carrier</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeRegisterModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        let currentDriver = null;
+
+        // Check if driver is already logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedDriver = localStorage.getItem('currentDriver');
+            if (savedDriver) {
+                currentDriver = JSON.parse(savedDriver);
+                showDriverDashboard();
+            }
+        });
+
+        // Driver login
+        document.getElementById('driverLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('driverEmail').value;
+            const licenseNumber = document.getElementById('licenseNumber').value;
+            
+            try {
+                const response = await fetch('/api/driver/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, licenseNumber })
+                });
+                
+                if (response.ok) {
+                    currentDriver = await response.json();
+                    localStorage.setItem('currentDriver', JSON.stringify(currentDriver));
+                    showDriverDashboard();
+                } else {
+                    alert('Invalid login credentials');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Error logging in');
+            }
+        });
+
+        function showDriverDashboard() {
+            document.getElementById('driverLogin').style.display = 'none';
+            document.getElementById('driverProfile').style.display = 'block';
+            document.getElementById('driverTabs').style.display = 'flex';
+            
+            // Update driver info
+            document.getElementById('driverName').textContent = currentDriver.name;
+            document.getElementById('driverRating').textContent = currentDriver.rating.toFixed(1);
+            document.getElementById('completedDeliveries').textContent = currentDriver.completed_deliveries;
+            
+            // Load available jobs
+            loadAvailableJobs();
+            loadMyBids();
+            loadAssignedJobs();
+        }
+
+        async function loadAvailableJobs() {
+            try {
+                const response = await fetch('/api/delivery-jobs?status=open');
+                const jobs = await response.json();
+                
+                const grid = document.getElementById('availableJobsGrid');
+                if (jobs.length === 0) {
+                    grid.innerHTML = '<p class="no-jobs">No available jobs at the moment.</p>';
+                    return;
+                }
+                
+                grid.innerHTML = jobs.map(job => `
+                    <div class="job-card">
+                        <h3>${job.vehicle_info}</h3>
+                        <div class="job-info">
+                            <p><i class="fas fa-map-marker-alt"></i> ${job.pickup_address}</p>
+                            <p><i class="fas fa-arrow-right"></i> ${job.delivery_address}</p>
+                            <p><i class="fas fa-calendar"></i> ${new Date(job.delivery_date).toLocaleDateString()}</p>
+                            <p><i class="fas fa-clock"></i> ${job.delivery_window}</p>
+                            ${job.distance ? `<p><i class="fas fa-route"></i> ${job.distance} km</p>` : ''}
+                        </div>
+                        <div class="bid-info">
+                            <span class="bid-count">${job.bid_count || 0} bids</span>
+                            ${job.average_bid ? `<span class="avg-bid">Avg: $${job.average_bid}</span>` : ''}
+                        </div>
+                        <button class="btn btn-primary" onclick="placeBid(${job.id})">
+                            <i class="fas fa-gavel"></i> Place Bid
+                        </button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading jobs:', error);
+            }
+        }
+
+        async function loadMyBids() {
+            if (!currentDriver) return;
+            
+            try {
+                const response = await fetch(`/api/driver/${currentDriver.id}/bids`);
+                const bids = await response.json();
+                
+                const grid = document.getElementById('myBidsGrid');
+                if (bids.length === 0) {
+                    grid.innerHTML = '<p class="no-bids">You haven\'t placed any bids yet.</p>';
+                    return;
+                }
+                
+                grid.innerHTML = bids.map(bid => `
+                    <div class="bid-card ${bid.status}">
+                        <div class="bid-status ${bid.status}">${bid.status.toUpperCase()}</div>
+                        <h3>${bid.vehicle_info}</h3>
+                        <p>${bid.pickup_address} → ${bid.delivery_address}</p>
+                        <div class="bid-details">
+                            <span class="bid-amount">Your Bid: $${bid.bid_amount}</span>
+                            <span class="bid-time">${bid.estimated_completion_time} min</span>
+                        </div>
+                        ${bid.status === 'pending' ? `
+                            <button class="btn btn-secondary" onclick="cancelBid(${bid.id})">
+                                Cancel Bid
+                            </button>
+                        ` : ''}
+                    </div>
+                `).join('');
+                
+                // Update active bids count
+                const activeBids = bids.filter(b => b.status === 'pending').length;
+                document.getElementById('activeBids').textContent = activeBids;
+            } catch (error) {
+                console.error('Error loading bids:', error);
+            }
+        }
+
+        async function loadAssignedJobs() {
+            if (!currentDriver) return;
+            
+            try {
+                const response = await fetch(`/api/driver/${currentDriver.id}/assigned-jobs`);
+                const jobs = await response.json();
+                
+                const grid = document.getElementById('assignedJobsGrid');
+                if (jobs.length === 0) {
+                    grid.innerHTML = '<p class="no-jobs">No assigned jobs.</p>';
+                    return;
+                }
+                
+                grid.innerHTML = jobs.map(job => `
+                    <div class="job-card assigned">
+                        <div class="job-status assigned">ASSIGNED TO YOU</div>
+                        <h3>${job.vehicle_info}</h3>
+                        <div class="job-info">
+                            <p><strong>Customer:</strong> ${job.customer_name}</p>
+                            <p><i class="fas fa-map-marker-alt"></i> ${job.pickup_address}</p>
+                            <p><i class="fas fa-arrow-right"></i> ${job.delivery_address}</p>
+                            <p><i class="fas fa-calendar"></i> ${new Date(job.delivery_date).toLocaleDateString()}</p>
+                            <p><i class="fas fa-clock"></i> ${job.delivery_window}</p>
+                        </div>
+                        <div class="job-actions">
+                            <button class="btn btn-success" onclick="markInProgress(${job.id})">
+                                <i class="fas fa-play"></i> Start Delivery
+                            </button>
+                            <button class="btn btn-primary" onclick="markCompleted(${job.id})">
+                                <i class="fas fa-check"></i> Mark Completed
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading assigned jobs:', error);
+            }
+        }
+
+        async function placeBid(jobId) {
+            if (!currentDriver) {
+                alert('Please login to place a bid');
+                return;
+            }
+            
+            // Load job details
+            try {
+                const response = await fetch(`/api/delivery-jobs/${jobId}`);
+                const job = await response.json();
+                
+                document.getElementById('jobSummary').innerHTML = `
+                    <h3>${job.vehicle_info}</h3>
+                    <p><strong>Route:</strong> ${job.pickup_address} → ${job.delivery_address}</p>
+                    <p><strong>Date:</strong> ${new Date(job.delivery_date).toLocaleDateString()} | ${job.delivery_window}</p>
+                    ${job.distance ? `<p><strong>Distance:</strong> ${job.distance} km</p>` : ''}
+                    ${job.special_instructions ? `<p><strong>Instructions:</strong> ${job.special_instructions}</p>` : ''}
+                `;
+                
+                document.getElementById('bidJobId').value = jobId;
+                document.getElementById('placeBidModal').style.display = 'flex';
+            } catch (error) {
+                console.error('Error loading job details:', error);
+            }
+        }
+
+        function closeBidModal() {
+            document.getElementById('placeBidModal').style.display = 'none';
+            document.getElementById('placeBidForm').reset();
+        }
+
+        // Submit bid
+        document.getElementById('placeBidForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const bidData = {
+                job_id: document.getElementById('bidJobId').value,
+                driver_id: currentDriver.id,
+                bid_amount: document.getElementById('bidAmount').value,
+                estimated_completion_time: document.getElementById('estimatedTime').value,
+                message: document.getElementById('bidMessage').value
+            };
+            
+            try {
+                const response = await fetch('/api/driver/place-bid', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bidData)
+                });
+                
+                if (response.ok) {
+                    alert('Bid placed successfully!');
+                    closeBidModal();
+                    loadAvailableJobs();
+                    loadMyBids();
+                    
+                    // Emit socket event for real-time update
+                    socket.emit('newBid', { jobId: bidData.job_id });
+                } else {
+                    const error = await response.json();
+                    alert(error.message || 'Error placing bid');
+                }
+            } catch (error) {
+                console.error('Error placing bid:', error);
+                alert('Error placing bid');
+            }
+        });
+
+        function switchTab(tab) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tab + 'Tab').style.display = 'block';
+            event.target.classList.add('active');
+            
+            // Reload data for the tab
+            if (tab === 'available') loadAvailableJobs();
+            else if (tab === 'mybids') loadMyBids();
+            else if (tab === 'assigned') loadAssignedJobs();
+        }
+
+        function showRegisterForm() {
+            document.getElementById('registerModal').style.display = 'flex';
+        }
+
+        function closeRegisterModal() {
+            document.getElementById('registerModal').style.display = 'none';
+            document.getElementById('registerForm').reset();
+        }
+
+        // Driver registration
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const driverData = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch('/api/driver/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(driverData)
+                });
+                
+                if (response.ok) {
+                    alert('Registration successful! Please login.');
+                    closeRegisterModal();
+                } else {
+                    alert('Error registering driver');
+                }
+            } catch (error) {
+                console.error('Error registering:', error);
+                alert('Error registering driver');
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('currentDriver');
+            currentDriver = null;
+            location.reload();
+        }
+
+        async function cancelBid(bidId) {
+            if (!confirm('Are you sure you want to cancel this bid?')) return;
+            
+            try {
+                const response = await fetch(`/api/driver/cancel-bid/${bidId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    alert('Bid cancelled');
+                    loadMyBids();
+                } else {
+                    alert('Error cancelling bid');
+                }
+            } catch (error) {
+                console.error('Error cancelling bid:', error);
+            }
+        }
+
+        async function markInProgress(jobId) {
+            try {
+                const response = await fetch(`/api/delivery-jobs/${jobId}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'in_progress' })
+                });
+                
+                if (response.ok) {
+                    alert('Delivery started!');
+                    loadAssignedJobs();
+                    socket.emit('jobStatusUpdate', { jobId, status: 'in_progress' });
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+            }
+        }
+
+        async function markCompleted(jobId) {
+            if (!confirm('Mark this delivery as completed?')) return;
+            
+            try {
+                const response = await fetch(`/api/delivery-jobs/${jobId}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'completed' })
+                });
+                
+                if (response.ok) {
+                    alert('Delivery completed!');
+                    loadAssignedJobs();
+                    socket.emit('jobStatusUpdate', { jobId, status: 'completed' });
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+            }
+        }
+
+        // Socket.io listeners
+        socket.on('bidAccepted', (data) => {
+            if (currentDriver && data.driverId === currentDriver.id) {
+                alert('Your bid has been accepted!');
+                loadMyBids();
+                loadAssignedJobs();
+            }
+        });
+    </script>
+</body>
+</html>

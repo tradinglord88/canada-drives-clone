@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Green Light Automotive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        .admin-header {
+            background-color: #0a5c3e;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .admin-header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .admin-nav {
+            background-color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-tab.active {
+            color: #0a5c3e;
+            border-bottom-color: #0a5c3e;
+        }
+
+        .nav-tab:hover {
+            color: #0a5c3e;
+        }
+
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #0a5c3e;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background-color: #0a5c3e;
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background-color: #083d2a;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h3 {
+            font-size: 0.875rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0a5c3e;
+        }
+
+        .data-table {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1rem 1.5rem;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .search-box {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 300px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background-color: #f8f9fa;
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-view, .btn-print, .btn-delete {
+            padding: 0.25rem 0.75rem;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .btn-view {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .btn-print {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 2rem;
+            border-radius: 10px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-close {
+            font-size: 1.5rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-item {
+            padding: 0.75rem;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #666;
+            font-size: 0.875rem;
+        }
+
+        .detail-value {
+            margin-top: 0.25rem;
+            font-size: 1rem;
+        }
+
+        .photos-section {
+            margin-top: 2rem;
+        }
+
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .photo-item {
+            text-align: center;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .photo-label {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #666;
+        }
+        
+        .document-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .document-link:hover {
+            background: #c8e6c9;
+            transform: translateY(-1px);
+        }
+        
+        .document-link i {
+            font-size: 1.2rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error-message {
+            color: #dc3545;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        @media print {
+            .admin-header, .admin-nav, .action-buttons, .modal-close {
+                display: none;
+            }
+            
+            .modal {
+                display: block !important;
+                position: static;
+                background: none;
+            }
+            
+            .modal-content {
+                margin: 0;
+                padding: 1rem;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Form -->
+    <div id="loginForm" class="login-container">
+        <h2>Admin Login</h2>
+        <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="submit-btn">Login</button>
+            <div id="loginError" class="error-message"></div>
+        </form>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="dashboard" class="hidden">
+        <header class="admin-header">
+            <h1>Green Light Automotive Admin Dashboard</h1>
+        </header>
+        
+        <nav class="admin-nav">
+            <div class="nav-tabs">
+                <div class="nav-tab active" onclick="switchTab('applications')">
+                    <i class="fas fa-file-alt"></i> Pre-Approval Applications
+                </div>
+                <div class="nav-tab" onclick="switchTab('sell')">
+                    <i class="fas fa-car"></i> Sell Car Submissions
+                </div>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </nav>
+
+        <div class="container">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Applications</h3>
+                    <div class="stat-value" id="totalApplications">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Applications Today</h3>
+                    <div class="stat-value" id="todayApplications">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Sell Requests</h3>
+                    <div class="stat-value" id="totalSellRequests">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Sell Requests Today</h3>
+                    <div class="stat-value" id="todaySellRequests">0</div>
+                </div>
+            </div>
+
+            <!-- Applications Table -->
+            <div id="applicationsTab" class="data-table">
+                <div class="table-header">
+                    <h2 class="table-title">Pre-Approval Applications</h2>
+                    <input type="text" class="search-box" placeholder="Search applications..." onkeyup="searchApplications(this.value)">
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Vehicle Type</th>
+                            <th>Budget</th>
+                            <th>Trade-In</th>
+                            <th>Submitted</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="applicationsTableBody">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Sell Submissions Table -->
+            <div id="sellTab" class="data-table hidden">
+                <div class="table-header">
+                    <h2 class="table-title">Sell Car Submissions</h2>
+                    <input type="text" class="search-box" placeholder="Search submissions..." onkeyup="searchSellSubmissions(this.value)">
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Vehicle</th>
+                            <th>Year</th>
+                            <th>Mileage</th>
+                            <th>Submitted</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sellTableBody">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Application Details</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody">
+                <!-- Details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let authToken = localStorage.getItem('adminToken');
+        let applicationsData = [];
+        let sellData = [];
+
+        // Check if already logged in
+        if (authToken) {
+            showDashboard();
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    authToken = data.token;
+                    localStorage.setItem('adminToken', authToken);
+                    showDashboard();
+                } else {
+                    document.getElementById('loginError').textContent = data.error || 'Login failed';
+                }
+            } catch (error) {
+                document.getElementById('loginError').textContent = 'Network error';
+            }
+        }
+
+        function showDashboard() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            loadData();
+        }
+
+        function logout() {
+            localStorage.removeItem('adminToken');
+            authToken = null;
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('loginError').textContent = '';
+        }
+
+        async function loadData() {
+            await Promise.all([loadApplications(), loadSellSubmissions()]);
+            updateStats();
+        }
+
+        async function loadApplications() {
+            try {
+                const response = await fetch('/api/applications', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    applicationsData = await response.json();
+                    displayApplications(applicationsData);
+                } else if (response.status === 401) {
+                    logout();
+                }
+            } catch (error) {
+                console.error('Error loading applications:', error);
+            }
+        }
+
+        async function loadSellSubmissions() {
+            try {
+                const response = await fetch('/api/sell-submissions', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    sellData = await response.json();
+                    displaySellSubmissions(sellData);
+                } else if (response.status === 401) {
+                    logout();
+                }
+            } catch (error) {
+                console.error('Error loading sell submissions:', error);
+            }
+        }
+
+        function displayApplications(data) {
+            const tbody = document.getElementById('applicationsTableBody');
+            tbody.innerHTML = data.map(app => `
+                <tr>
+                    <td>#${app.id}</td>
+                    <td>${app.first_name} ${app.last_name}</td>
+                    <td>${app.email}</td>
+                    <td>${app.phone}</td>
+                    <td>${app.vehicle_type}</td>
+                    <td>${app.budget}</td>
+                    <td>${app.trade_in === 'yes' ? 'Yes' : 'No'}</td>
+                    <td>${new Date(app.submitted_at).toLocaleDateString()}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-view" onclick="viewApplication(${app.id})">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            <button class="btn-print" onclick="printApplication(${app.id})">
+                                <i class="fas fa-print"></i> Print
+                            </button>
+                            <button class="btn-delete" onclick="deleteApplication(${app.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function displaySellSubmissions(data) {
+            const tbody = document.getElementById('sellTableBody');
+            tbody.innerHTML = data.map(sub => `
+                <tr>
+                    <td>#${sub.id}</td>
+                    <td>${sub.first_name} ${sub.last_name}</td>
+                    <td>${sub.email}</td>
+                    <td>${sub.phone}</td>
+                    <td>${sub.make} ${sub.model}</td>
+                    <td>${sub.year}</td>
+                    <td>${sub.mileage} ${sub.mileage_unit || 'km'}</td>
+                    <td>${new Date(sub.submitted_at).toLocaleDateString()}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-view" onclick="viewSellSubmission(${sub.id})">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            <button class="btn-print" onclick="printSellSubmission(${sub.id})">
+                                <i class="fas fa-print"></i> Print
+                            </button>
+                            <button class="btn-delete" onclick="deleteSellSubmission(${sub.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateStats() {
+            const today = new Date().toDateString();
+            
+            document.getElementById('totalApplications').textContent = applicationsData.length;
+            document.getElementById('todayApplications').textContent = 
+                applicationsData.filter(app => new Date(app.submitted_at).toDateString() === today).length;
+            
+            document.getElementById('totalSellRequests').textContent = sellData.length;
+            document.getElementById('todaySellRequests').textContent = 
+                sellData.filter(sub => new Date(sub.submitted_at).toDateString() === today).length;
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            event.target.closest('.nav-tab').classList.add('active');
+            
+            if (tab === 'applications') {
+                document.getElementById('applicationsTab').classList.remove('hidden');
+                document.getElementById('sellTab').classList.add('hidden');
+            } else {
+                document.getElementById('applicationsTab').classList.add('hidden');
+                document.getElementById('sellTab').classList.remove('hidden');
+            }
+        }
+
+        async function viewApplication(id) {
+            try {
+                const response = await fetch(`/api/applications/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showApplicationDetails(data);
+                }
+            } catch (error) {
+                console.error('Error viewing application:', error);
+            }
+        }
+
+        async function viewSellSubmission(id) {
+            try {
+                const response = await fetch(`/api/sell-submissions/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showSellDetails(data);
+                }
+            } catch (error) {
+                console.error('Error viewing submission:', error);
+            }
+        }
+
+        function showApplicationDetails(data) {
+            document.getElementById('modalTitle').textContent = 'Pre-Approval Application Details';
+            
+            let detailsHTML = `
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">Application ID</div>
+                        <div class="detail-value">#${data.id}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Submitted Date</div>
+                        <div class="detail-value">${new Date(data.submitted_at).toLocaleString()}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Full Name</div>
+                        <div class="detail-value">${data.first_name} ${data.last_name}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Email</div>
+                        <div class="detail-value">${data.email}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Phone</div>
+                        <div class="detail-value">${data.phone}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Postal Code</div>
+                        <div class="detail-value">${data.postal_code}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Vehicle Type</div>
+                        <div class="detail-value">${data.vehicle_type}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Budget</div>
+                        <div class="detail-value">${data.budget}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Credit Score</div>
+                        <div class="detail-value">${data.credit_score}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Employment Status</div>
+                        <div class="detail-value">${data.employment}</div>
+                    </div>
+            `;
+
+            if (data.income_type) {
+                detailsHTML += `
+                    <div class="detail-item">
+                        <div class="detail-label">Income Type</div>
+                        <div class="detail-value">${data.income_type}</div>
+                    </div>
+                `;
+            }
+
+            if (data.annual_income) {
+                detailsHTML += `
+                    <div class="detail-item">
+                        <div class="detail-label">Annual Income</div>
+                        <div class="detail-value">$${data.annual_income.toLocaleString()}</div>
+                    </div>
+                `;
+            }
+
+            if (data.company_name) {
+                detailsHTML += `
+                    <div class="detail-item">
+                        <div class="detail-label">Company</div>
+                        <div class="detail-value">${data.company_name}</div>
+                    </div>
+                `;
+            }
+
+            if (data.job_title) {
+                detailsHTML += `
+                    <div class="detail-item">
+                        <div class="detail-label">Job Title</div>
+                        <div class="detail-value">${data.job_title}</div>
+                    </div>
+                `;
+            }
+
+            detailsHTML += `</div>`;
+
+            // Add trade-in details if exists
+            if (data.tradeInDetails) {
+                const trade = data.tradeInDetails;
+                detailsHTML += `
+                    <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Trade-In Vehicle Details</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Year</div>
+                            <div class="detail-value">${trade.year}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Make</div>
+                            <div class="detail-value">${trade.make}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Model</div>
+                            <div class="detail-value">${trade.model}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Mileage</div>
+                            <div class="detail-value">${trade.mileage} km</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Condition</div>
+                            <div class="detail-value">${trade.condition}</div>
+                        </div>
+                    </div>
+                `;
+
+                // Add photos
+                if (trade.front_photo || trade.back_photo || trade.driver_photo || trade.passenger_photo || trade.vin_photo || trade.odometer_photo) {
+                    detailsHTML += `
+                        <div class="photos-section">
+                            <h4>Trade-In Vehicle Photos</h4>
+                            <div class="photos-grid">
+                    `;
+
+                    if (trade.front_photo) {
+                        detailsHTML += `
+                            <div class="photo-item">
+                                <img src="/uploads/${trade.front_photo}" alt="Front" onclick="window.open('/uploads/${trade.front_photo}')">
+                                <div class="photo-label">Front</div>
+                            </div>
+                        `;
+                    }
+
+                    if (trade.back_photo) {
+                        detailsHTML += `
+                            <div class="photo-item">
+                                <img src="/uploads/${trade.back_photo}" alt="Back" onclick="window.open('/uploads/${trade.back_photo}')">
+                                <div class="photo-label">Back</div>
+                            </div>
+                        `;
+                    }
+
+                    if (trade.driver_photo) {
+                        detailsHTML += `
+                            <div class="photo-item">
+                                <img src="/uploads/${trade.driver_photo}" alt="Driver Side" onclick="window.open('/uploads/${trade.driver_photo}')">
+                                <div class="photo-label">Driver Side</div>
+                            </div>
+                        `;
+                    }
+
+                    if (trade.passenger_photo) {
+                        detailsHTML += `
+                            <div class="photo-item">
+                                <img src="/uploads/${trade.passenger_photo}" alt="Passenger Side" onclick="window.open('/uploads/${trade.passenger_photo}')">
+                                <div class="photo-label">Passenger Side</div>
+                            </div>
+                        `;
+                    }
+
+                    if (trade.vin_photo) {
+                        detailsHTML += `
+                            <div class="photo-item">
+                                <img src="/uploads/${trade.vin_photo}" alt="VIN" onclick="window.open('/uploads/${trade.vin_photo}')">
+                                <div class="photo-label">VIN</div>
+                            </div>
+                        `;
+                    }
+
+                    if (trade.odometer_photo) {
+                        detailsHTML += `
+                            <div class="photo-item">
+                                <img src="/uploads/${trade.odometer_photo}" alt="Odometer" onclick="window.open('/uploads/${trade.odometer_photo}')">
+                                <div class="photo-label">Odometer</div>
+                            </div>
+                        `;
+                    }
+
+                    detailsHTML += `
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            // Add Documents section
+            if (data.paystub_file || data.drivers_license_file) {
+                detailsHTML += `
+                    <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Uploaded Documents</h3>
+                    <div class="detail-grid">
+                `;
+                
+                if (data.paystub_file) {
+                    detailsHTML += `
+                        <div class="detail-item">
+                            <div class="detail-label">Income Verification (Paystub)</div>
+                            <div class="detail-value">
+                                <a href="/uploads/${data.paystub_file}" target="_blank" class="document-link">
+                                    <i class="fas fa-file-pdf"></i> View Paystub
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                if (data.drivers_license_file) {
+                    detailsHTML += `
+                        <div class="detail-item">
+                            <div class="detail-label">Identity Verification (Driver's License)</div>
+                            <div class="detail-value">
+                                <a href="/uploads/${data.drivers_license_file}" target="_blank" class="document-link">
+                                    <i class="fas fa-id-card"></i> View Driver's License
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                detailsHTML += `</div>`;
+            }
+
+            document.getElementById('modalBody').innerHTML = detailsHTML;
+            document.getElementById('detailModal').style.display = 'block';
+        }
+
+        function showSellDetails(data) {
+            document.getElementById('modalTitle').textContent = 'Sell Car Submission Details';
+            
+            let detailsHTML = `
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">Submission ID</div>
+                        <div class="detail-value">#${data.id}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Submitted Date</div>
+                        <div class="detail-value">${new Date(data.submitted_at).toLocaleString()}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Full Name</div>
+                        <div class="detail-value">${data.first_name} ${data.last_name}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Email</div>
+                        <div class="detail-value">${data.email}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Phone</div>
+                        <div class="detail-value">${data.phone}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Postal Code</div>
+                        <div class="detail-value">${data.postal_code}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Vehicle Year</div>
+                        <div class="detail-value">${data.year}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Make</div>
+                        <div class="detail-value">${data.make}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Model</div>
+                        <div class="detail-value">${data.model}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Mileage</div>
+                        <div class="detail-value">${data.mileage} ${data.mileage_unit || 'km'}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Condition</div>
+                        <div class="detail-value">${data.condition || 'Not specified'}</div>
+                    </div>
+                </div>
+            `;
+
+            // Add photos
+            if (data.front_photo || data.back_photo || data.driver_photo || data.passenger_photo || data.vin_photo || data.odometer_photo) {
+                detailsHTML += `
+                    <div class="photos-section">
+                        <h4>Vehicle Photos</h4>
+                        <div class="photos-grid">
+                `;
+
+                if (data.front_photo) {
+                    detailsHTML += `
+                        <div class="photo-item">
+                            <img src="/uploads/${data.front_photo}" alt="Front" onclick="window.open('/uploads/${data.front_photo}')">
+                            <div class="photo-label">Front</div>
+                        </div>
+                    `;
+                }
+
+                if (data.back_photo) {
+                    detailsHTML += `
+                        <div class="photo-item">
+                            <img src="/uploads/${data.back_photo}" alt="Back" onclick="window.open('/uploads/${data.back_photo}')">
+                            <div class="photo-label">Back</div>
+                        </div>
+                    `;
+                }
+
+                if (data.driver_photo) {
+                    detailsHTML += `
+                        <div class="photo-item">
+                            <img src="/uploads/${data.driver_photo}" alt="Driver Side" onclick="window.open('/uploads/${data.driver_photo}')">
+                            <div class="photo-label">Driver Side</div>
+                        </div>
+                    `;
+                }
+
+                if (data.passenger_photo) {
+                    detailsHTML += `
+                        <div class="photo-item">
+                            <img src="/uploads/${data.passenger_photo}" alt="Passenger Side" onclick="window.open('/uploads/${data.passenger_photo}')">
+                            <div class="photo-label">Passenger Side</div>
+                        </div>
+                    `;
+                }
+
+                if (data.vin_photo) {
+                    detailsHTML += `
+                        <div class="photo-item">
+                            <img src="/uploads/${data.vin_photo}" alt="VIN" onclick="window.open('/uploads/${data.vin_photo}')">
+                            <div class="photo-label">VIN</div>
+                        </div>
+                    `;
+                }
+
+                if (data.odometer_photo) {
+                    detailsHTML += `
+                        <div class="photo-item">
+                            <img src="/uploads/${data.odometer_photo}" alt="Odometer" onclick="window.open('/uploads/${data.odometer_photo}')">
+                            <div class="photo-label">Odometer</div>
+                        </div>
+                    `;
+                }
+
+                detailsHTML += `
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Add Documents section for sell submissions
+            if (data.paystub_file || data.drivers_license_file) {
+                detailsHTML += `
+                    <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Uploaded Documents</h3>
+                    <div class="detail-grid">
+                `;
+                
+                if (data.paystub_file) {
+                    detailsHTML += `
+                        <div class="detail-item">
+                            <div class="detail-label">Income Verification (Paystub)</div>
+                            <div class="detail-value">
+                                <a href="/uploads/${data.paystub_file}" target="_blank" class="document-link">
+                                    <i class="fas fa-file-pdf"></i> View Paystub
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                if (data.drivers_license_file) {
+                    detailsHTML += `
+                        <div class="detail-item">
+                            <div class="detail-label">Identity Verification (Driver's License)</div>
+                            <div class="detail-value">
+                                <a href="/uploads/${data.drivers_license_file}" target="_blank" class="document-link">
+                                    <i class="fas fa-id-card"></i> View Driver's License
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                detailsHTML += `</div>`;
+            }
+
+            document.getElementById('modalBody').innerHTML = detailsHTML;
+            document.getElementById('detailModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').style.display = 'none';
+        }
+
+        async function deleteApplication(id) {
+            if (!confirm('Are you sure you want to delete this application?')) return;
+
+            try {
+                const response = await fetch(`/api/applications/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    loadApplications();
+                    updateStats();
+                }
+            } catch (error) {
+                console.error('Error deleting application:', error);
+            }
+        }
+
+        async function deleteSellSubmission(id) {
+            if (!confirm('Are you sure you want to delete this submission?')) return;
+
+            try {
+                const response = await fetch(`/api/sell-submissions/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    loadSellSubmissions();
+                    updateStats();
+                }
+            } catch (error) {
+                console.error('Error deleting submission:', error);
+            }
+        }
+
+        function printApplication(id) {
+            window.open(`/print/application/${id}`, '_blank');
+        }
+
+        function printSellSubmission(id) {
+            window.open(`/print/sell/${id}`, '_blank');
+        }
+
+        function searchApplications(query) {
+            const filtered = applicationsData.filter(app => 
+                app.first_name.toLowerCase().includes(query.toLowerCase()) ||
+                app.last_name.toLowerCase().includes(query.toLowerCase()) ||
+                app.email.toLowerCase().includes(query.toLowerCase()) ||
+                app.phone.includes(query)
+            );
+            displayApplications(filtered);
+        }
+
+        function searchSellSubmissions(query) {
+            const filtered = sellData.filter(sub => 
+                sub.first_name.toLowerCase().includes(query.toLowerCase()) ||
+                sub.last_name.toLowerCase().includes(query.toLowerCase()) ||
+                sub.email.toLowerCase().includes(query.toLowerCase()) ||
+                sub.phone.includes(query) ||
+                sub.make.toLowerCase().includes(query.toLowerCase()) ||
+                sub.model.toLowerCase().includes(query.toLowerCase())
+            );
+            displaySellSubmissions(filtered);
+        }
+
+        // Close modal on click outside
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('detailModal')) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>

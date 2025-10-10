@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell My Car - Green Light Automotive</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-wrapper">
+                    <a href="index.html" class="logo">
+                        <h1>Green Light Automotive</h1>
+                    </a>
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <ul class="nav-menu" id="navMenu">
+                        <li><a href="index.html#get-approved">Get Pre-Approved</a></li>
+                        <li><a href="sell-my-car.html" class="active">Sell My Car</a></li>
+                        <li><a href="track-delivery.html">Track Delivery</a></li>
+                        <li><a href="index.html#why-us">Our Story</a></li>
+                        <li><a href="index.html#resources">Resources</a></li>
+                        <li><a href="/admin" class="admin-link"><i class="fas fa-lock"></i> Admin</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="sell-car-page">
+        <div class="container">
+            <div class="sell-car-wizard" style="margin-top: 100px; margin-bottom: 50px;">
+                <div class="sell-car-header">
+                    <h2 class="sell-title">Sell Your Car to Green Light Automotive</h2>
+                    <p class="sell-subtitle">Get an instant offer by providing photos and details of your vehicle</p>
+                </div>
+                
+                <div class="sell-car-steps">
+                    <h3>Step 1: Take Photos of Your Vehicle</h3>
+                    <p class="photo-instructions">Please take clear photos of all required angles. Make sure photos are well-lit and show the entire side of the vehicle.</p>
+                    
+                    <div class="sell-car-upload-grid">
+                        <!-- Front of Vehicle -->
+                        <div class="upload-section">
+                            <h4>Front of Vehicle</h4>
+                            <div class="upload-area" id="sell-upload-front">
+                                <input type="file" id="sell-front-photo" accept="image/*" onchange="handleSellPhotoUpload(event, 'front')">
+                                <label for="sell-front-photo" class="upload-label">
+                                    <i class="fas fa-camera"></i>
+                                    <span>Take Front Photo</span>
+                                    <small>Stand directly in front</small>
+                                </label>
+                                <div class="preview-container" id="sell-preview-front"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Back of Vehicle -->
+                        <div class="upload-section">
+                            <h4>Back of Vehicle</h4>
+                            <div class="upload-area" id="sell-upload-back">
+                                <input type="file" id="sell-back-photo" accept="image/*" onchange="handleSellPhotoUpload(event, 'back')">
+                                <label for="sell-back-photo" class="upload-label">
+                                    <i class="fas fa-camera"></i>
+                                    <span>Take Back Photo</span>
+                                    <small>Stand directly behind</small>
+                                </label>
+                                <div class="preview-container" id="sell-preview-back"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Driver Side -->
+                        <div class="upload-section">
+                            <h4>Driver Side</h4>
+                            <div class="upload-area" id="sell-upload-driver">
+                                <input type="file" id="sell-driver-photo" accept="image/*" onchange="handleSellPhotoUpload(event, 'driver')">
+                                <label for="sell-driver-photo" class="upload-label">
+                                    <i class="fas fa-camera"></i>
+                                    <span>Take Driver Side</span>
+                                    <small>Include entire side view</small>
+                                </label>
+                                <div class="preview-container" id="sell-preview-driver"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Passenger Side -->
+                        <div class="upload-section">
+                            <h4>Passenger Side</h4>
+                            <div class="upload-area" id="sell-upload-passenger">
+                                <input type="file" id="sell-passenger-photo" accept="image/*" onchange="handleSellPhotoUpload(event, 'passenger')">
+                                <label for="sell-passenger-photo" class="upload-label">
+                                    <i class="fas fa-camera"></i>
+                                    <span>Take Passenger Side</span>
+                                    <small>Include entire side view</small>
+                                </label>
+                                <div class="preview-container" id="sell-preview-passenger"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- VIN Number -->
+                        <div class="upload-section">
+                            <h4>VIN Number</h4>
+                            <div class="upload-area" id="sell-upload-vin">
+                                <input type="file" id="sell-vin-photo" accept="image/*" onchange="handleSellPhotoUpload(event, 'vin')">
+                                <label for="sell-vin-photo" class="upload-label">
+                                    <i class="fas fa-camera"></i>
+                                    <span>Take VIN Photo</span>
+                                    <small>Dashboard or door frame</small>
+                                </label>
+                                <div class="preview-container" id="sell-preview-vin"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Odometer -->
+                        <div class="upload-section">
+                            <h4>Odometer Reading</h4>
+                            <div class="upload-area" id="sell-upload-odometer">
+                                <input type="file" id="sell-odometer-photo" accept="image/*" onchange="handleSellPhotoUpload(event, 'odometer')">
+                                <label for="sell-odometer-photo" class="upload-label">
+                                    <i class="fas fa-camera"></i>
+                                    <span>Take Odometer Photo</span>
+                                    <small>Show current mileage</small>
+                                </label>
+                                <div class="preview-container" id="sell-preview-odometer"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Cosmetic Damage -->
+                        <div class="upload-section upload-section-wide">
+                            <h4>Cosmetic Damage (Optional)</h4>
+                            <div class="upload-area" id="sell-upload-damage">
+                                <input type="file" id="sell-damage-photo" accept="image/*" multiple onchange="handleSellPhotoUpload(event, 'damage')">
+                                <label for="sell-damage-photo" class="upload-label">
+                                    <i class="fas fa-camera"></i>
+                                    <span>Upload Damage Photos</span>
+                                    <small>Any dents, scratches, or damage</small>
+                                </label>
+                                <div class="preview-container" id="sell-preview-damage"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="photo-tips">
+                        <h4><i class="fas fa-lightbulb"></i> Photo Tips:</h4>
+                        <ul>
+                            <li>Take photos in good lighting (daylight is best)</li>
+                            <li>Make sure the entire vehicle side is visible in each photo</li>
+                            <li>Keep a safe distance to capture the whole vehicle</li>
+                            <li>Ensure VIN and odometer photos are clear and readable</li>
+                            <li>Include close-up photos of any damage or wear</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="sell-vehicle-info">
+                        <h3>Step 2: Vehicle Information</h3>
+                        <div class="vehicle-form-grid">
+                            <div class="form-group">
+                                <label for="sell-vehicle-year">
+                                    <i class="fas fa-calendar"></i>
+                                    Year
+                                </label>
+                                <select id="sell-vehicle-year" required>
+                                    <option value="">Select Year</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2022">2022</option>
+                                    <option value="2021">2021</option>
+                                    <option value="2020">2020</option>
+                                    <option value="2019">2019</option>
+                                    <option value="2018">2018</option>
+                                    <option value="2017">2017</option>
+                                    <option value="2016">2016</option>
+                                    <option value="2015">2015</option>
+                                    <option value="2014">2014</option>
+                                    <option value="2013">2013</option>
+                                    <option value="2012">2012</option>
+                                    <option value="2011">2011</option>
+                                    <option value="2010">2010</option>
+                                    <option value="2009">2009</option>
+                                    <option value="2008">2008</option>
+                                    <option value="2007">2007</option>
+                                    <option value="2006">2006</option>
+                                    <option value="2005">2005</option>
+                                    <option value="older">Older than 2005</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="sell-vehicle-make">
+                                    <i class="fas fa-car"></i>
+                                    Make
+                                </label>
+                                <input type="text" id="sell-vehicle-make" placeholder="e.g., Toyota" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="sell-vehicle-model">
+                                    <i class="fas fa-car-side"></i>
+                                    Model
+                                </label>
+                                <input type="text" id="sell-vehicle-model" placeholder="e.g., Camry" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="sell-vehicle-trim">
+                                    <i class="fas fa-star"></i>
+                                    Trim <span class="optional">(Optional)</span>
+                                </label>
+                                <input type="text" id="sell-vehicle-trim" placeholder="e.g., SE, Limited">
+                            </div>
+                            
+                            <div class="form-group mileage-group">
+                                <label for="sell-vehicle-mileage">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                    Current Mileage
+                                </label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="sell-vehicle-mileage" placeholder="50000" required>
+                                    <span class="unit">km</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sell-contact-info">
+                        <h3>Step 3: Your Contact Information</h3>
+                        <div class="contact-form-grid">
+                            <div class="form-group">
+                                <label for="sell-first-name">
+                                    <i class="fas fa-user"></i>
+                                    First Name
+                                </label>
+                                <input type="text" id="sell-first-name" placeholder="John" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="sell-last-name">
+                                    <i class="fas fa-user"></i>
+                                    Last Name
+                                </label>
+                                <input type="text" id="sell-last-name" placeholder="Doe" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="sell-email">
+                                    <i class="fas fa-envelope"></i>
+                                    Email
+                                </label>
+                                <input type="email" id="sell-email" placeholder="john.doe@example.com" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="sell-phone">
+                                    <i class="fas fa-phone"></i>
+                                    Phone Number
+                                </label>
+                                <input type="tel" id="sell-phone" placeholder="(555) 123-4567" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="sell-postal">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Postal Code
+                                </label>
+                                <input type="text" id="sell-postal" placeholder="K1A 0B1" pattern="[A-Za-z][0-9][A-Za-z] ?[0-9][A-Za-z][0-9]" required>
+                            </div>
+                            
+                            <div class="form-group full-width">
+                                <label for="sell-comments">
+                                    <i class="fas fa-comment"></i>
+                                    Additional Comments <span class="optional">(Optional)</span>
+                                </label>
+                                <textarea id="sell-comments" rows="4" placeholder="Tell us more about your vehicle condition, service history, or any special features..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="consent-section">
+                            <label class="consent-checkbox">
+                                <input type="checkbox" id="privacy-consent" required>
+                                <span class="checkbox-custom"></span>
+                                <span class="consent-text">
+                                    I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. 
+                                    I consent to receive communications about my vehicle offer.
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="sell-form-buttons">
+                        <a href="index.html" class="btn btn-secondary">Cancel</a>
+                        <button class="btn btn-primary" onclick="submitSellForm()" id="sellSubmitBtn" disabled>Get My Instant Offer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="#">Car Financing</a></li>
+                        <li><a href="#">Sell Your Car</a></li>
+                        <li><a href="#">Trade-In</a></li>
+                        <li><a href="#">Car Loans</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Car Reviews</a></li>
+                        <li><a href="#">Financing Guide</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Connect With Green Light</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Green Light Automotive. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/sell-form.js"></script>
+    <script>
+        // Add validation on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listeners for validation
+            const sellFields = ['sell-vehicle-year', 'sell-vehicle-make', 'sell-vehicle-model', 
+                               'sell-vehicle-mileage', 'sell-first-name', 'sell-last-name', 
+                               'sell-email', 'sell-phone', 'sell-postal', 'privacy-consent'];
+            
+            sellFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.addEventListener('input', validateSellForm);
+                    field.addEventListener('change', validateSellForm);
+                }
+            });
+        });
+
+        // Validate sell form
+        function validateSellForm() {
+            const requiredPhotos = ['front', 'back', 'driver', 'passenger', 'vin', 'odometer'];
+            const requiredFields = ['sell-vehicle-year', 'sell-vehicle-make', 'sell-vehicle-model', 
+                                   'sell-vehicle-mileage', 'sell-first-name', 'sell-last-name', 
+                                   'sell-email', 'sell-phone', 'sell-postal'];
+            
+            // Check all required photos
+            const photosValid = requiredPhotos.every(type => {
+                const input = document.getElementById(`sell-${type}-photo`);
+                return input && input.files.length > 0;
+            });
+            
+            // Check all required fields
+            const fieldsValid = requiredFields.every(fieldId => {
+                const field = document.getElementById(fieldId);
+                return field && field.value.trim() !== '';
+            });
+            
+            // Check consent checkbox
+            const consentChecked = document.getElementById('privacy-consent')?.checked || false;
+            
+            // Enable/disable submit button
+            const submitBtn = document.getElementById('sellSubmitBtn');
+            if (submitBtn) {
+                submitBtn.disabled = !(photosValid && fieldsValid && consentChecked);
+            }
+        }
+
+        // Submit form success
+        function submitSellForm() {
+            const mainContent = document.querySelector('.sell-car-wizard');
+            if (mainContent) {
+                mainContent.innerHTML = `
+                    <div class="submission-success" style="text-align: center; padding: 100px 20px;">
+                        <i class="fas fa-check-circle" style="font-size: 5rem; color: var(--green-primary); margin-bottom: 2rem;"></i>
+                        <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Thank You!</h2>
+                        <p style="font-size: 1.25rem; margin-bottom: 1rem;">We've received your vehicle information and photos.</p>
+                        <p style="font-size: 1.25rem; margin-bottom: 3rem;">You'll receive your instant offer via email within the next few minutes.</p>
+                        <a href="index.html" class="btn btn-primary">Return to Home</a>
+                    </div>
+                `;
+                window.scrollTo(0, 0);
+            }
+        }
+    </script>
+</body>
+</html>

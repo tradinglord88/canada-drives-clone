@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Report - Green Light Automotive</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: white;
+            padding: 20px;
+        }
+
+        .print-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #0a5c3e;
+        }
+
+        .print-header h1 {
+            color: #0a5c3e;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .print-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            background: #f8f9fa;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: #0a5c3e;
+            border-left: 4px solid #0a5c3e;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .photos-section {
+            page-break-inside: avoid;
+        }
+
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .photo-item {
+            text-align: center;
+        }
+
+        .photo-item img {
+            width: 100%;
+            max-width: 200px;
+            height: 150px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+        }
+
+        .photo-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+            }
+
+            .section {
+                page-break-inside: avoid;
+            }
+
+            .photos-section {
+                page-break-before: auto;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .error {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <div class="loading">Loading report...</div>
+    </div>
+
+    <script>
+        // Get type and ID from URL
+        const pathParts = window.location.pathname.split('/');
+        const type = pathParts[2];
+        const id = pathParts[3];
+
+        // Get auth token
+        const authToken = localStorage.getItem('adminToken');
+
+        if (!authToken) {
+            document.getElementById('content').innerHTML = '<div class="error">Authentication required. Please login first.</div>';
+        } else {
+            loadReport();
+        }
+
+        async function loadReport() {
+            try {
+                let url = '';
+                if (type === 'application') {
+                    url = `/api/applications/${id}/print`;
+                } else if (type === 'sell') {
+                    url = `/api/sell-submissions/${id}/print`;
+                } else {
+                    throw new Error('Invalid report type');
+                }
+
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load report');
+                }
+
+                const data = await response.json();
+                
+                if (type === 'application') {
+                    displayApplicationReport(data);
+                } else {
+                    displaySellReport(data);
+                }
+
+                // Auto-print after loading
+                setTimeout(() => {
+                    window.print();
+                }, 500);
+
+            } catch (error) {
+                document.getElementById('content').innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            }
+        }
+
+        function displayApplicationReport(data) {
+            const app = data.application;
+            const trade = data.tradeIn;
+
+            let html = `
+                <div class="print-header">
+                    <h1>Green Light Automotive</h1>
+                    <p>Pre-Approval Application Report</p>
+                    <p>Generated on ${new Date().toLocaleString()}</p>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">Application Information</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Application ID</div>
+                            <div class="info-value">#${app.id}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Submitted Date</div>
+                            <div class="info-value">${new Date(app.submitted_at).toLocaleString()}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">Personal Information</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Full Name</div>
+                            <div class="info-value">${app.first_name} ${app.last_name}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Email</div>
+                            <div class="info-value">${app.email}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Phone</div>
+                            <div class="info-value">${app.phone}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Postal Code</div>
+                            <div class="info-value">${app.postal_code}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">Vehicle & Financial Information</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Vehicle Type</div>
+                            <div class="info-value">${app.vehicle_type}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Budget</div>
+                            <div class="info-value">${app.budget}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Trade-In</div>
+                            <div class="info-value">${app.trade_in === 'yes' ? 'Yes' : 'No'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Credit Score</div>
+                            <div class="info-value">${app.credit_score}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">Employment & Income</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Employment Status</div>
+                            <div class="info-value">${app.employment}</div>
+                        </div>
+            `;
+
+            if (app.income_type) {
+                html += `
+                        <div class="info-item">
+                            <div class="info-label">Income Type</div>
+                            <div class="info-value">${app.income_type}</div>
+                        </div>
+                `;
+            }
+
+            if (app.annual_income) {
+                html += `
+                        <div class="info-item">
+                            <div class="info-label">Annual Income</div>
+                            <div class="info-value">$${app.annual_income.toLocaleString()}</div>
+                        </div>
+                `;
+            }
+
+            if (app.monthly_income) {
+                html += `
+                        <div class="info-item">
+                            <div class="info-label">Monthly Income</div>
+                            <div class="info-value">$${app.monthly_income.toLocaleString()}</div>
+                        </div>
+                `;
+            }
+
+            if (app.company_name) {
+                html += `
+                        <div class="info-item">
+                            <div class="info-label">Company</div>
+                            <div class="info-value">${app.company_name}</div>
+                        </div>
+                `;
+            }
+
+            if (app.job_title) {
+                html += `
+                        <div class="info-item">
+                            <div class="info-label">Job Title</div>
+                            <div class="info-value">${app.job_title}</div>
+                        </div>
+                `;
+            }
+
+            if (app.income_years || app.income_months) {
+                html += `
+                        <div class="info-item">
+                            <div class="info-label">Time at Current Income</div>
+                            <div class="info-value">${app.income_years || 0} years, ${app.income_months || 0} months</div>
+                        </div>
+                `;
+            }
+
+            if (app.income_verified) {
+                html += `
+                        <div class="info-item">
+                            <div class="info-label">Income Verification</div>
+                            <div class="info-value">${app.income_verified}</div>
+                        </div>
+                `;
+            }
+
+            html += `
+                    </div>
+                </div>
+            `;
+
+            // Add trade-in details if exists
+            if (trade) {
+                html += `
+                    <div class="section">
+                        <h2 class="section-title">Trade-In Vehicle Details</h2>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Year</div>
+                                <div class="info-value">${trade.year}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Make</div>
+                                <div class="info-value">${trade.make}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Model</div>
+                                <div class="info-value">${trade.model}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Mileage</div>
+                                <div class="info-value">${trade.mileage} km</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Condition</div>
+                                <div class="info-value">${trade.condition}</div>
+                            </div>
+                        </div>
+                `;
+
+                // Add trade-in photos
+                if (trade.front_photo || trade.back_photo || trade.driver_photo || trade.passenger_photo || trade.vin_photo || trade.odometer_photo) {
+                    html += `
+                        <div class="photos-section">
+                            <h3>Trade-In Vehicle Photos</h3>
+                            <div class="photos-grid">
+                    `;
+
+                    if (trade.front_photo) {
+                        html += `
+                            <div class="photo-item">
+                                <img src="/uploads/${trade.front_photo}" alt="Front">
+                                <div class="photo-label">Front</div>
+                            </div>
+                        `;
+                    }
+
+                    if (trade.back_photo) {
+                        html += `
+                            <div class="photo-item">
+                                <img src="/uploads/${trade.back_photo}" alt="Back">
+                                <div class="photo-label">Back</div>
+                            </div>
+                        `;
+                    }
+
+                    if (trade.driver_photo) {
+                        html += `
+                            <div class="photo-item">
+                                <img src="/uploads/${trade.driver_photo}" alt="Driver Side">
+                                <div class="photo-label">Driver Side</div>
+                            </div>
+                        `;
+                    }
+
+                    if (trade.passenger_photo) {
+                        html += `
+                            <div class="photo-item">
+                                <img src="/uploads/${trade.passenger_photo}" alt="Passenger Side">
+                                <div class="photo-label">Passenger Side</div>
+                            </div>
+                        `;
+                    }
+
+                    if (trade.vin_photo) {
+                        html += `
+                            <div class="photo-item">
+                                <img src="/uploads/${trade.vin_photo}" alt="VIN">
+                                <div class="photo-label">VIN</div>
+                            </div>
+                        `;
+                    }
+
+                    if (trade.odometer_photo) {
+                        html += `
+                            <div class="photo-item">
+                                <img src="/uploads/${trade.odometer_photo}" alt="Odometer">
+                                <div class="photo-label">Odometer</div>
+                            </div>
+                        `;
+                    }
+
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                }
+
+                html += `</div>`;
+            }
+
+            html += `
+                <div class="footer">
+                    <p>This report is confidential and intended for internal use only.</p>
+                    <p>Green Light Automotive - ${new Date().getFullYear()}</p>
+                </div>
+            `;
+
+            document.getElementById('content').innerHTML = html;
+        }
+
+        function displaySellReport(data) {
+            let html = `
+                <div class="print-header">
+                    <h1>Green Light Automotive</h1>
+                    <p>Sell Car Submission Report</p>
+                    <p>Generated on ${new Date().toLocaleString()}</p>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">Submission Information</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Submission ID</div>
+                            <div class="info-value">#${data.id}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Submitted Date</div>
+                            <div class="info-value">${new Date(data.submitted_at).toLocaleString()}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">Contact Information</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Full Name</div>
+                            <div class="info-value">${data.first_name} ${data.last_name}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Email</div>
+                            <div class="info-value">${data.email}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Phone</div>
+                            <div class="info-value">${data.phone}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Postal Code</div>
+                            <div class="info-value">${data.postal_code}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">Vehicle Information</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Year</div>
+                            <div class="info-value">${data.year}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Make</div>
+                            <div class="info-value">${data.make}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Model</div>
+                            <div class="info-value">${data.model}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Mileage</div>
+                            <div class="info-value">${data.mileage} ${data.mileage_unit || 'km'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Condition</div>
+                            <div class="info-value">${data.condition || 'Not specified'}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Add photos
+            if (data.front_photo || data.back_photo || data.driver_photo || data.passenger_photo || data.vin_photo || data.odometer_photo) {
+                html += `
+                    <div class="section photos-section">
+                        <h2 class="section-title">Vehicle Photos</h2>
+                        <div class="photos-grid">
+                `;
+
+                if (data.front_photo) {
+                    html += `
+                        <div class="photo-item">
+                            <img src="/uploads/${data.front_photo}" alt="Front">
+                            <div class="photo-label">Front</div>
+                        </div>
+                    `;
+                }
+
+                if (data.back_photo) {
+                    html += `
+                        <div class="photo-item">
+                            <img src="/uploads/${data.back_photo}" alt="Back">
+                            <div class="photo-label">Back</div>
+                        </div>
+                    `;
+                }
+
+                if (data.driver_photo) {
+                    html += `
+                        <div class="photo-item">
+                            <img src="/uploads/${data.driver_photo}" alt="Driver Side">
+                            <div class="photo-label">Driver Side</div>
+                        </div>
+                    `;
+                }
+
+                if (data.passenger_photo) {
+                    html += `
+                        <div class="photo-item">
+                            <img src="/uploads/${data.passenger_photo}" alt="Passenger Side">
+                            <div class="photo-label">Passenger Side</div>
+                        </div>
+                    `;
+                }
+
+                if (data.vin_photo) {
+                    html += `
+                        <div class="photo-item">
+                            <img src="/uploads/${data.vin_photo}" alt="VIN">
+                            <div class="photo-label">VIN</div>
+                        </div>
+                    `;
+                }
+
+                if (data.odometer_photo) {
+                    html += `
+                        <div class="photo-item">
+                            <img src="/uploads/${data.odometer_photo}" alt="Odometer">
+                            <div class="photo-label">Odometer</div>
+                        </div>
+                    `;
+                }
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += `
+                <div class="footer">
+                    <p>This report is confidential and intended for internal use only.</p>
+                    <p>Green Light Automotive - ${new Date().getFullYear()}</p>
+                </div>
+            `;
+
+            document.getElementById('content').innerHTML = html;
+        }
+    </script>
+</body>
+</html>

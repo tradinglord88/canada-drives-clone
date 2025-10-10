@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Green Light Automotive - The Easiest Way to Buy or Sell a Car</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-wrapper">
+                    <a href="#" class="logo">
+                        <h1>Green Light Automotive</h1>
+                    </a>
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <ul class="nav-menu" id="navMenu">
+                        <li><a href="#get-approved">Get Pre-Approved</a></li>
+                        <li><a href="sell-car-wizard.html">Sell My Car</a></li>
+                        <li><a href="delivery-jobs.html">Delivery Jobs</a></li>
+                        <li><a href="driver-portal.html">Driver Portal</a></li>
+                        <li><a href="#why-us">Our Story</a></li>
+                        <li><a href="/admin" class="admin-link"><i class="fas fa-lock"></i> Admin</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <!-- Hero Banner -->
+        <div class="hero-banner">
+            <div class="container">
+                <h1 class="hero-title">The Easiest Way to Buy or Sell a Car</h1>
+                <p class="hero-subtitle">Get pre-approved for a new car or sell your car directly to Green Light Automotive.</p>
+                <div class="hero-choice-buttons">
+                    <button class="choice-btn choice-btn-primary" onclick="showPreApprovalForm()">Get Pre-Approved</button>
+                    <span class="choice-separator">Or</span>
+                    <a href="sell-car-wizard.html" class="choice-btn choice-btn-secondary">Sell My Car</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <div class="hero-content">
+            <!-- Sell Car Wizard Container -->
+            <div class="sell-car-wizard" id="sellCarWizard" style="display: none;"></div>
+            
+            <!-- Pre-Approval Form Wizard -->
+            <div class="form-wizard" id="formWizard" style="display: none;">
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <div class="progress-text">3 minutes from finish</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+
+                <!-- Step 1: Vehicle Type -->
+                <div class="form-step active" id="step1">
+                    <h2 class="step-title">Get Pre-Approved for the Car You Want at a Price You Can Afford</h2>
+                    <p class="step-subtitle">What type of vehicle are you looking for?</p>
+                    <div class="vehicle-selection">
+                        <div class="vehicle-option" data-vehicle="coupe">
+                            <div class="vehicle-icon">
+                                <img src="https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?w=400&h=200&fit=crop&auto=format" alt="Coupe" loading="lazy">
+                            </div>
+                            <span>Coupe</span>
+                        </div>
+                        <div class="vehicle-option" data-vehicle="hatchback">
+                            <div class="vehicle-icon">
+                                <img src="https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=400&h=200&fit=crop&auto=format" alt="Hatchback" loading="lazy">
+                            </div>
+                            <span>Hatchback</span>
+                        </div>
+                        <div class="vehicle-option" data-vehicle="sedan">
+                            <div class="vehicle-icon">
+                                <img src="https://images.unsplash.com/photo-1590362891991-f776e747a588?w=400&h=200&fit=crop&auto=format" alt="Sedan" loading="lazy">
+                            </div>
+                            <span>Sedan</span>
+                        </div>
+                        <div class="vehicle-option" data-vehicle="minivan">
+                            <div class="vehicle-icon">
+                                <img src="https://images.unsplash.com/photo-1630877203820-a56fe97e8fd8?w=400&h=200&fit=crop&auto=format" alt="Minivan" loading="lazy">
+                            </div>
+                            <span>Minivan</span>
+                        </div>
+                        <div class="vehicle-option" data-vehicle="suv">
+                            <div class="vehicle-icon">
+                                <img src="https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=400&h=200&fit=crop&auto=format" alt="SUV" loading="lazy">
+                            </div>
+                            <span>SUV & Crossover</span>
+                        </div>
+                        <div class="vehicle-option" data-vehicle="truck">
+                            <div class="vehicle-icon">
+                                <img src="https://images.unsplash.com/photo-1586165368502-1bad197a6461?w=400&h=200&fit=crop&auto=format" alt="Truck" loading="lazy">
+                            </div>
+                            <span>Truck</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary form-continue" onclick="nextStep()" disabled>Continue</button>
+                </div>
+
+                <!-- Step 2: Budget -->
+                <div class="form-step" id="step2">
+                    <h2 class="step-title">What is your budget?</h2>
+                    <div class="option-list">
+                        <label class="option-item">
+                            <input type="radio" name="budget" value="under400">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">Under $400 / Month</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="budget" value="400-499">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">$400 - 499 / Month</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="budget" value="500-600">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">$500 - 600 / Month</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="budget" value="over600">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">Over $600 / Month</span>
+                        </label>
+                    </div>
+                    <p class="form-note">Find vehicle options that fit your budget.</p>
+                    <div class="form-buttons">
+                        <button class="btn btn-secondary" onclick="prevStep()">Back</button>
+                        <button class="btn btn-primary form-continue" onclick="nextStep()" disabled>Continue</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Trade-in -->
+                <div class="form-step" id="step3">
+                    <div class="selection-summary">
+                        <div class="summary-item">
+                            <div class="summary-icon"></div>
+                            <div class="summary-details">
+                                <span class="summary-type"></span>
+                                <span class="summary-budget"></span>
+                            </div>
+                            <a href="#" class="edit-link" onclick="goToStep(1)">Edit</a>
+                        </div>
+                    </div>
+                    <h2 class="step-title">Do you have a trade-in?</h2>
+                    <div class="option-list">
+                        <label class="option-item">
+                            <input type="radio" name="tradein" value="yes">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">Yes</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="tradein" value="no">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">No</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="tradein" value="unsure">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">Unsure</span>
+                        </label>
+                    </div>
+                    <div class="form-buttons">
+                        <button class="btn btn-secondary" onclick="prevStep()">Back</button>
+                        <button class="btn btn-primary form-continue" onclick="nextStep()" disabled>Continue</button>
+                    </div>
+                </div>
+
+                <!-- Step 3.5: Trade-in Details (shows only if trade-in = yes) -->
+                <div class="form-step" id="step3-tradein">
+                    <div class="selection-summary">
+                        <div class="summary-item">
+                            <div class="summary-icon"></div>
+                            <div class="summary-details">
+                                <span class="summary-type"></span>
+                                <span class="summary-budget"></span>
+                            </div>
+                            <a href="#" class="edit-link" onclick="goToStep(1)">Edit</a>
+                        </div>
+                    </div>
+                    <h2 class="step-title">Trade-in Vehicle Details</h2>
+                    <p class="step-subtitle">Please provide photos and information about your trade-in vehicle</p>
+                    
+                    <div class="tradein-upload-grid">
+                        <!-- Front of Car -->
+                        <div class="upload-section">
+                            <h3>Front of Vehicle</h3>
+                            <div class="upload-area" id="upload-front">
+                                <input type="file" id="front-photo" accept="image/*" onchange="handlePhotoUpload(event, 'front')">
+                                <label for="front-photo" class="upload-label">
+                                    <i class="fas fa-camera"></i>
+                                    <span>Upload Front Photo</span>
+                                    <small>Click or drag photo here</small>
+                                </label>
+                                <div class="preview-container" id="preview-front"></div>
+                            </div>
+                        </div>
+
+                        <!-- Driver Side -->
+                        <div class="upload-section">
+                            <h3>Driver Side</h3>
+                            <div class="upload-area" id="upload-driver">
+                                <input type="file" id="driver-photo" accept="image/*" onchange="handlePhotoUpload(event, 'driver')">
+                                <label for="driver-photo" class="upload-label">
+                                    <i class="fas fa-camera"></i>
+                                    <span>Upload Driver Side</span>
+                                    <small>Click or drag photo here</small>
+                                </label>
+                                <div class="preview-container" id="preview-driver"></div>
+                            </div>
+                        </div>
+
+                        <!-- Passenger Side -->
+                        <div class="upload-section">
+                            <h3>Passenger Side</h3>
+                            <div class="upload-area" id="upload-passenger">
+                                <input type="file" id="passenger-photo" accept="image/*" onchange="handlePhotoUpload(event, 'passenger')">
+                                <label for="passenger-photo" class="upload-label">
+                                    <i class="fas fa-camera"></i>
+                                    <span>Upload Passenger Side</span>
+                                    <small>Click or drag photo here</small>
+                                </label>
+                                <div class="preview-container" id="preview-passenger"></div>
+                            </div>
+                        </div>
+
+                        <!-- VIN Photo -->
+                        <div class="upload-section">
+                            <h3>VIN Number</h3>
+                            <div class="upload-area" id="upload-vin">
+                                <input type="file" id="vin-photo" accept="image/*" onchange="handlePhotoUpload(event, 'vin')">
+                                <label for="vin-photo" class="upload-label">
+                                    <i class="fas fa-camera"></i>
+                                    <span>Upload VIN Photo</span>
+                                    <small>Usually on dashboard or door frame</small>
+                                </label>
+                                <div class="preview-container" id="preview-vin"></div>
+                            </div>
+                        </div>
+
+                        <!-- Odometer Photo -->
+                        <div class="upload-section">
+                            <h3>Odometer</h3>
+                            <div class="upload-area" id="upload-odometer">
+                                <input type="file" id="odometer-photo" accept="image/*" onchange="handlePhotoUpload(event, 'odometer')">
+                                <label for="odometer-photo" class="upload-label">
+                                    <i class="fas fa-camera"></i>
+                                    <span>Upload Odometer Photo</span>
+                                    <small>Show current mileage</small>
+                                </label>
+                                <div class="preview-container" id="preview-odometer"></div>
+                            </div>
+                        </div>
+
+                        <!-- Damage Photos -->
+                        <div class="upload-section">
+                            <h3>Cosmetic Damage (Optional)</h3>
+                            <div class="upload-area" id="upload-damage">
+                                <input type="file" id="damage-photo" accept="image/*" multiple onchange="handlePhotoUpload(event, 'damage')">
+                                <label for="damage-photo" class="upload-label">
+                                    <i class="fas fa-camera"></i>
+                                    <span>Upload Damage Photos</span>
+                                    <small>Any dents, scratches, or damage</small>
+                                </label>
+                                <div class="preview-container" id="preview-damage"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Information -->
+                    <div class="tradein-info-form">
+                        <h3>Additional Vehicle Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="vehicle-year">Year</label>
+                                <input type="number" id="vehicle-year" min="1900" max="2025" placeholder="e.g., 2020">
+                            </div>
+                            <div class="form-group">
+                                <label for="vehicle-make">Make</label>
+                                <input type="text" id="vehicle-make" placeholder="e.g., Toyota">
+                            </div>
+                            <div class="form-group">
+                                <label for="vehicle-model">Model</label>
+                                <input type="text" id="vehicle-model" placeholder="e.g., Camry">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="vehicle-mileage">Mileage</label>
+                                <input type="number" id="vehicle-mileage" placeholder="e.g., 50000">
+                            </div>
+                            <div class="form-group">
+                                <label for="vehicle-condition">Condition</label>
+                                <select id="vehicle-condition">
+                                    <option value="">Select condition</option>
+                                    <option value="excellent">Excellent</option>
+                                    <option value="good">Good</option>
+                                    <option value="fair">Fair</option>
+                                    <option value="poor">Poor</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="form-note">All photos are required except cosmetic damage photos. Make sure photos are clear and well-lit.</p>
+                    <div class="form-buttons">
+                        <button class="btn btn-secondary" onclick="prevStep()">Back</button>
+                        <button class="btn btn-primary form-continue" onclick="validateAndContinueTradeIn()" disabled>Continue</button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Credit Score -->
+                <div class="form-step" id="step4">
+                    <h2 class="step-title">What's your estimated credit score?</h2>
+                    <div class="option-list">
+                        <label class="option-item">
+                            <input type="radio" name="creditscore" value="excellent">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">Excellent (750+)</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="creditscore" value="good">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">Good (660-749)</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="creditscore" value="fair">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">Fair (560-659)</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="creditscore" value="poor">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">Poor (300-559)</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="creditscore" value="unsure">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">Not Sure</span>
+                        </label>
+                    </div>
+                    <div class="form-buttons">
+                        <button class="btn btn-secondary" onclick="prevStep()">Back</button>
+                        <button class="btn btn-primary form-continue" onclick="nextStep()" disabled>Continue</button>
+                    </div>
+                </div>
+
+                <!-- Step 5: Employment Status -->
+                <div class="form-step" id="step5">
+                    <h2 class="step-title">What's your employment status?</h2>
+                    <div class="option-list">
+                        <label class="option-item">
+                            <input type="radio" name="employment" value="fulltime">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">Full-Time Employee</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="employment" value="parttime">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">Part-Time Employee</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="employment" value="selfemployed">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">Self-Employed</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="employment" value="retired">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">Retired</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="employment" value="student">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">Student</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="employment" value="unemployed">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">Not Currently Employed</span>
+                        </label>
+                    </div>
+                    <div class="form-buttons">
+                        <button class="btn btn-secondary" onclick="prevStep()">Back</button>
+                        <button class="btn btn-primary form-continue" onclick="nextStep()" disabled>Continue</button>
+                    </div>
+                </div>
+
+                <!-- Step 6: Income Details -->
+                <div class="form-step" id="step6">
+                    <div class="selection-summary">
+                        <div class="summary-item">
+                            <div class="summary-icon"></div>
+                            <div class="summary-details">
+                                <span class="summary-type"></span>
+                                <span class="summary-budget"></span>
+                            </div>
+                            <a href="#" class="edit-link" onclick="goToStep(1)">Edit</a>
+                        </div>
+                    </div>
+                    <h2 class="step-title">Income Details.</h2>
+                    <p class="step-subtitle">Please Select One:</p>
+                    <div class="option-list">
+                        <label class="option-item">
+                            <input type="radio" name="incometype" value="annual">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">I Know My Annual Salary</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="incometype" value="hourly">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">I Know My Hourly Wage</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="incometype" value="monthly">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">I Know My Monthly Income</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="radio" name="incometype" value="other">
+                            <span class="radio-dot"></span>
+                            <span class="option-content">Other</span>
+                        </label>
+                    </div>
+                    <p class="form-note">Your income details help us make sure your vehicle payments are easy and affordable.</p>
+                    <div class="form-buttons">
+                        <button class="btn btn-secondary" onclick="prevStep()">Back</button>
+                        <button class="btn btn-primary form-continue" onclick="nextStep()" disabled>Continue</button>
+                    </div>
+                </div>
+
+                <!-- Step 7: Annual Income -->
+                <div class="form-step" id="step7">
+                    <div class="selection-summary">
+                        <div class="summary-item">
+                            <div class="summary-icon"></div>
+                            <div class="summary-details">
+                                <span class="summary-type"></span>
+                                <span class="summary-budget"></span>
+                            </div>
+                            <a href="#" class="edit-link" onclick="goToStep(1)">Edit</a>
+                        </div>
+                    </div>
+                    <h2 class="step-title">What is your annual income before taxes & deductions?</h2>
+                    <p class="form-note" style="margin-bottom: 30px;">Round to Nearest Dollar</p>
+                    <div class="income-input-container">
+                        <span class="currency-symbol">$</span>
+                        <input type="number" id="annualIncome" name="annualIncome" placeholder="Annual Salary" min="0" class="income-input">
+                    </div>
+                    <p class="form-note">Your income details help us make sure your vehicle payments are easy and affordable.</p>
+                    <div class="form-buttons">
+                        <button class="btn btn-secondary" onclick="prevStep()">Back</button>
+                        <button class="btn btn-primary form-continue" onclick="nextStep()" disabled>Continue</button>
+                    </div>
+                </div>
+
+                <!-- Step 8: Income Duration -->
+                <div class="form-step" id="step8">
+                    <div class="selection-summary">
+                        <div class="summary-item">
+                            <div class="summary-icon"></div>
+                            <div class="summary-details">
+                                <span class="summary-type"></span>
+                                <span class="summary-budget"></span>
+                            </div>
+                            <a href="#" class="edit-link" onclick="goToStep(1)">Edit</a>
+                        </div>
+                    </div>
+                    <h2 class="step-title">How long have you been receiving this income?</h2>
+                    <div class="duration-input-container">
+                        <div class="duration-input-group">
+                            <input type="number" id="incomeYears" name="incomeYears" placeholder="0" min="0" max="50" class="duration-input">
+                            <label>Years</label>
+                        </div>
+                        <div class="duration-input-group">
+                            <input type="number" id="incomeMonths" name="incomeMonths" placeholder="0" min="0" max="11" class="duration-input">
+                            <label>Months</label>
+                        </div>
+                    </div>
+                    <p class="form-note">Enter 1 month if you just started your job.</p>
+                    <div class="form-buttons">
+                        <button class="btn btn-secondary" onclick="prevStep()">Back</button>
+                        <button class="btn btn-primary form-continue" onclick="nextStep()" disabled>Continue</button>
+                    </div>
+                </div>
+
+                <!-- Step 9: Workplace -->
+                <div class="form-step" id="step9">
+                    <div class="selection-summary">
+                        <div class="summary-item">
+                            <div class="summary-icon"></div>
+                            <div class="summary-details">
+                                <span class="summary-type"></span>
+                                <span class="summary-budget"></span>
+                            </div>
+                            <a href="#" class="edit-link" onclick="goToStep(1)">Edit</a>
+                        </div>
+                    </div>
+                    <h2 class="step-title">Where do you work?</h2>
+                    <form class="workplace-form">
+                        <div class="form-group">
+                            <label for="companyName">Company Name</label>
+                            <input type="text" id="companyName" name="companyName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="jobTitle">Job Title</label>
+                            <input type="text" id="jobTitle" name="jobTitle" required>
+                        </div>
+                    </form>
+                    <p class="form-note">We won't come visit, but we need these details to confirm your employment status so you can get the best rates possible.</p>
+                    <div class="form-buttons">
+                        <button class="btn btn-secondary" onclick="prevStep()">Back</button>
+                        <button class="btn btn-primary form-continue" onclick="nextStep()" disabled>Continue</button>
+                    </div>
+                </div>
+
+                <!-- Step 10: Income Verification -->
+                <div class="form-step" id="step10">
+                    <h2 class="step-title">Based on the info you have provided, your current monthly income before taxes & deductions is:</h2>
+                    <div class="income-verification">
+                        <div class="income-amount" id="calculatedIncome">$833</div>
+                        <p class="verification-question">Is this correct?</p>
+                        <div class="verification-options">
+                            <label class="verification-option">
+                                <input type="radio" name="incomeverify" value="yes">
+                                <span class="verification-label">Yes</span>
+                            </label>
+                            <label class="verification-option">
+                                <input type="radio" name="incomeverify" value="no">
+                                <span class="verification-label">No</span>
+                            </label>
+                        </div>
+                    </div>
+                    <p class="form-note">Your income details help us make sure your vehicle payments are easy and affordable.</p>
+                    <div class="form-buttons">
+                        <button class="btn btn-secondary" onclick="prevStep()">Back</button>
+                        <button class="btn btn-primary form-continue" onclick="nextStep()" disabled>Continue</button>
+                    </div>
+                </div>
+
+                <!-- Step 11: Contact Information -->
+                <div class="form-step" id="step11">
+                    <h2 class="step-title">Almost done! Enter your contact information</h2>
+                    <form class="contact-form">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" name="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" name="lastName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="postalCode">Postal Code</label>
+                            <input type="text" id="postalCode" name="postalCode" required>
+                        </div>
+                        <div class="consent-checkbox">
+                            <label>
+                                <input type="checkbox" id="consent" name="consent" required>
+                                <span>I agree to the terms and conditions and privacy policy</span>
+                            </label>
+                        </div>
+                    </form>
+                    <div class="form-buttons">
+                        <button class="btn btn-secondary" onclick="prevStep()">Back</button>
+                        <button class="btn btn-primary form-continue" onclick="nextStep()">Continue</button>
+                    </div>
+                </div>
+
+                <!-- Step 12: Document Upload (Optional) -->
+                <div class="form-step" id="step12">
+                    <h2 class="step-title">Optional: Upload Supporting Documents</h2>
+                    <p class="step-subtitle">Uploading these documents can help speed up your approval process</p>
+                    
+                    <div class="document-upload-section">
+                        <!-- Paystub Upload -->
+                        <div class="upload-box">
+                            <h3><i class="fas fa-file-invoice-dollar"></i> Income Verification</h3>
+                            <p>Upload a recent paystub to verify your income</p>
+                            <div class="upload-area" id="paystubUploadArea">
+                                <input type="file" id="paystubFile" accept="image/*,.pdf" style="display: none;" onchange="handleDocumentUpload('paystub', this)">
+                                <div class="upload-placeholder" onclick="document.getElementById('paystubFile').click()">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Click to upload paystub</p>
+                                    <span class="file-types">PDF, JPG, PNG (Max 10MB)</span>
+                                </div>
+                                <div class="upload-preview" style="display: none;">
+                                    <i class="fas fa-file-check"></i>
+                                    <span class="file-name"></span>
+                                    <button class="remove-file" onclick="removeDocumentFile('paystub')">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Driver's License Upload -->
+                        <div class="upload-box">
+                            <h3><i class="fas fa-id-card"></i> Identity Verification</h3>
+                            <p>Upload your driver's license for identity verification</p>
+                            <div class="upload-area" id="licenseUploadArea">
+                                <input type="file" id="licenseFile" accept="image/*,.pdf" style="display: none;" onchange="handleDocumentUpload('license', this)">
+                                <div class="upload-placeholder" onclick="document.getElementById('licenseFile').click()">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Click to upload driver's license</p>
+                                    <span class="file-types">PDF, JPG, PNG (Max 10MB)</span>
+                                </div>
+                                <div class="upload-preview" style="display: none;">
+                                    <i class="fas fa-file-check"></i>
+                                    <span class="file-name"></span>
+                                    <button class="remove-file" onclick="removeDocumentFile('license')">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="optional-notice">
+                        <i class="fas fa-info-circle"></i>
+                        <p>These documents are optional but can help expedite your application. Your information is encrypted and stored securely.</p>
+                    </div>
+
+                    <div class="form-buttons">
+                        <button class="btn btn-secondary" onclick="prevStep()">Back</button>
+                        <button class="btn btn-primary form-continue" onclick="submitForm()">Get Pre-Approved</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Original buttons for alternative flow -->
+            <div class="hero-buttons-alternative" style="display: none;">
+                <a href="#get-approved" class="btn btn-primary">Get Pre-Approved</a>
+                <a href="#sell-car" class="btn btn-secondary">Sell My Car</a>
+            </div>
+        </div>
+        
+        <!-- Shop for a Car Section - Moved Up -->
+        <section class="hero-confidence-section" id="get-approved">
+            <div class="container">
+                <div class="content-grid">
+                    <div class="content-text">
+                        <h3>Shop For a Car With Confidence</h3>
+                        <p>Getting pre-approved for car financing has never been easier. Our simple online application takes just minutes to complete, and you'll get an instant decision.</p>
+                        <ul class="benefits-list">
+                            <li><i class="fas fa-check"></i> No impact on your credit score</li>
+                            <li><i class="fas fa-check"></i> Know your budget before you shop</li>
+                            <li><i class="fas fa-check"></i> Access to thousands of vehicles</li>
+                            <li><i class="fas fa-check"></i> Competitive interest rates</li>
+                        </ul>
+                        <a href="#" class="btn btn-primary" onclick="showPreApprovalForm()">Get Started</a>
+                    </div>
+                    <div class="content-image">
+                        <div class="image-placeholder">
+                            <img src="assets/images/family-car-keys.jpg" alt="Happy family with their new car keys" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <!-- Main Content -->
+    <main>
+
+        <!-- Sell Your Car Section -->
+        <section class="content-section bg-gray" id="sell-car">
+            <div class="container">
+                <div class="content-grid reverse">
+                    <div class="content-text">
+                        <h3>Sell Your Car Directly to Green Light Automotive</h3>
+                        <p>Skip the hassle of private sales. Get an instant online offer for your vehicle and sell it directly to us. It's fast, safe, and convenient.</p>
+                        <ul class="benefits-list">
+                            <li><i class="fas fa-check"></i> Instant online valuation</li>
+                            <li><i class="fas fa-check"></i> Free vehicle pickup</li>
+                            <li><i class="fas fa-check"></i> Payment on the spot</li>
+                            <li><i class="fas fa-check"></i> No haggling or negotiations</li>
+                        </ul>
+                        <a href="sell-car-wizard.html" class="btn btn-secondary">Get My Offer</a>
+                    </div>
+                    <div class="content-image">
+                        <div class="image-placeholder">
+                            <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=600&h=400&fit=crop&auto=format" alt="Car keys handover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Vehicle Types Section -->
+        <section class="vehicle-types">
+            <div class="container">
+                <h3 class="section-title">Browse by Vehicle Type</h3>
+                <div class="vehicle-grid">
+                    <div class="vehicle-card">
+                        <i class="fas fa-car-side"></i>
+                        <h4>Coupes</h4>
+                    </div>
+                    <div class="vehicle-card">
+                        <i class="fas fa-car"></i>
+                        <h4>Hatchbacks</h4>
+                    </div>
+                    <div class="vehicle-card">
+                        <i class="fas fa-car-alt"></i>
+                        <h4>Sedans</h4>
+                    </div>
+                    <div class="vehicle-card">
+                        <i class="fas fa-van-shuttle"></i>
+                        <h4>Minivans</h4>
+                    </div>
+                    <div class="vehicle-card">
+                        <i class="fas fa-truck"></i>
+                        <h4>SUVs</h4>
+                    </div>
+                    <div class="vehicle-card">
+                        <i class="fas fa-truck-pickup"></i>
+                        <h4>Trucks</h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Story Section -->
+        <section class="our-story" id="why-us">
+            <div class="container">
+                <h2 class="section-title">Our Story</h2>
+                <div class="story-content">
+                    <div class="story-grid">
+                        <div class="story-text">
+                            <h3>Serving British Columbia with Pride</h3>
+                            <p>Founded in 2019, Green Light Automotive began with a simple mission: to revolutionize the car buying and selling experience across British Columbia. What started as a small operation in Vancouver has grown into the province's most trusted automotive service, with dedicated teams serving Victoria, Kelowna, and the Greater Vancouver area.</p>
+                            
+                            <div class="location-highlights">
+                                <div class="location-item">
+                                    <h4><i class="fas fa-map-marker-alt"></i> Victoria</h4>
+                                    <p>Our Victoria team serves the capital region with same-day approvals and island-wide delivery. From James Bay to Oak Bay, we've helped over 5,000 families find their perfect vehicle.</p>
+                                </div>
+                                <div class="location-item">
+                                    <h4><i class="fas fa-map-marker-alt"></i> Kelowna</h4>
+                                    <p>In the heart of the Okanagan, our Kelowna branch specializes in vehicles perfect for both city driving and mountain adventures. We understand the unique needs of interior BC drivers.</p>
+                                </div>
+                                <div class="location-item">
+                                    <h4><i class="fas fa-map-marker-alt"></i> Vancouver</h4>
+                                    <p>Our flagship Vancouver location serves the entire Lower Mainland, from Richmond to North Vancouver. With the largest inventory in BC, we guarantee to find your dream car.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="founder-section">
+                            <div class="founder-image">
+                                <img src="assets/images/tom-reid.jpg" alt="Tom Reid - Founder & CEO" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
+                            </div>
+                            <div class="founder-info">
+                                <h4>Tom Reid</h4>
+                                <p class="founder-title">Founder & CEO</p>
+                                <p class="founder-quote">"Growing up in Vancouver and studying in Victoria, I saw firsthand how challenging car ownership could be in BC. That's why we created Green Light - to make it easier for every British Columbian to get behind the wheel."</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="achievements">
+                        <div class="achievement-item">
+                            <div class="achievement-number">15,000+</div>
+                            <div class="achievement-label">Happy Customers</div>
+                        </div>
+                        <div class="achievement-item">
+                            <div class="achievement-number">3</div>
+                            <div class="achievement-label">Major BC Cities</div>
+                        </div>
+                        <div class="achievement-item">
+                            <div class="achievement-number">98%</div>
+                            <div class="achievement-label">Approval Rate</div>
+                        </div>
+                        <div class="achievement-item">
+                            <div class="achievement-number">24hr</div>
+                            <div class="achievement-label">Delivery Available</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="testimonials bg-gray">
+            <div class="container">
+                <h3 class="section-title">What Our Customers Say</h3>
+                <div class="testimonial-carousel">
+                    <div class="testimonial">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p>"The process was incredibly easy and straightforward. I got pre-approved in minutes and found my dream car!"</p>
+                        <cite>- Sarah M.</cite>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="#">Car Financing</a></li>
+                        <li><a href="#">Sell Your Car</a></li>
+                        <li><a href="#">Trade-In</a></li>
+                        <li><a href="#">Car Loans</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Car Reviews</a></li>
+                        <li><a href="#">Financing Guide</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Connect With Green Light</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Green Light Automotive. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/sell-form.js"></script>
+</body>
+</html>

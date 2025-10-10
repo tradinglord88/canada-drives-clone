@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Google Maps</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            color: #333;
+        }
+        #map {
+            width: 100%;
+            height: 500px;
+            border: 2px solid #ccc;
+            margin-top: 20px;
+        }
+        .status {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>Google Maps API Test</h1>
+    
+    <div class="status" id="status">Loading Google Maps...</div>
+    
+    <div id="map"></div>
+    
+    <div class="status" style="margin-top: 20px;">
+        <p><strong>Test Information:</strong></p>
+        <ul>
+            <li>API Key: AIzaSyBEBdu5vOONDHNbAu0Hxv9Ko5BQRd20C_Y</li>
+            <li>If the map shows, the API is working correctly</li>
+            <li>If you see an error, check the browser console (F12)</li>
+            <li>Make sure "Maps JavaScript API" is enabled in Google Cloud Console</li>
+        </ul>
+    </div>
+
+    <script>
+        let map;
+        let statusDiv = document.getElementById('status');
+        
+        function initMap() {
+            try {
+                // Test location: Ottawa, Canada
+                const ottawa = { lat: 45.4215, lng: -75.6972 };
+                
+                // Create the map
+                map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 12,
+                    center: ottawa,
+                    mapTypeId: 'roadmap'
+                });
+                
+                // Add a marker
+                const marker = new google.maps.Marker({
+                    position: ottawa,
+                    map: map,
+                    title: 'Ottawa'
+                });
+                
+                // Update status
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = '✓ Google Maps loaded successfully!';
+                
+                console.log('Google Maps initialized successfully');
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = '✗ Error loading map: ' + error.message;
+                console.error('Map initialization error:', error);
+            }
+        }
+        
+        // Handle API loading errors
+        window.gm_authFailure = function() {
+            statusDiv.className = 'status error';
+            statusDiv.innerHTML = '✗ Google Maps authentication failed. Please check your API key and ensure the Maps JavaScript API is enabled.';
+            console.error('Google Maps authentication failure');
+        };
+        
+        // Check if Google Maps is loaded
+        function checkGoogleMaps() {
+            if (typeof google !== 'undefined' && google.maps) {
+                console.log('Google Maps API is loaded');
+            } else {
+                console.log('Google Maps API is not loaded yet');
+            }
+        }
+        
+        // Check after a delay
+        setTimeout(checkGoogleMaps, 3000);
+    </script>
+    
+    <!-- Google Maps JavaScript API -->
+    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBEBdu5vOONDHNbAu0Hxv9Ko5BQRd20C_Y&callback=initMap"></script>
+</body>
+</html>

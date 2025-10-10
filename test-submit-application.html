@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Application Submission</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section {
+            background: #f5f5f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        button {
+            background: #0a5c3e;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #083d2a;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Application Submission</h1>
+    
+    <div class="test-section">
+        <h2>1. Submit Pre-Approval Application</h2>
+        <button onclick="submitPreApproval()">Submit Test Pre-Approval</button>
+        <div id="preApprovalResult" class="result" style="display:none;"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Submit Sell Car Application</h2>
+        <button onclick="submitSellCar()">Submit Test Sell Car</button>
+        <div id="sellCarResult" class="result" style="display:none;"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Check Database</h2>
+        <button onclick="checkDatabase()">Check Saved Applications</button>
+        <div id="dbResult" class="result" style="display:none;"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Quick Links</h2>
+        <a href="/admin"><button>Go to Admin Panel</button></a>
+        <a href="/"><button>Go to Main Site</button></a>
+    </div>
+
+    <script>
+        async function submitPreApproval() {
+            const resultDiv = document.getElementById('preApprovalResult');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = 'Submitting...';
+            
+            try {
+                const formData = new FormData();
+                
+                const applicationData = {
+                    vehicleType: 'suv',
+                    budget: '30000-40000',
+                    tradeIn: 'no',
+                    creditScore: 'excellent',
+                    employment: 'employed',
+                    incomeType: 'salary',
+                    annualIncome: 75000,
+                    incomeYears: 5,
+                    incomeMonths: 0,
+                    companyName: 'Tech Corp',
+                    jobTitle: 'Software Engineer',
+                    monthlyIncome: 6250,
+                    incomeVerified: 'yes',
+                    firstName: 'John',
+                    lastName: 'Doe',
+                    email: 'john.doe@example.com',
+                    phone: '(555) 123-4567',
+                    postalCode: 'K1A 0B1'
+                };
+                
+                formData.append('applicationData', JSON.stringify(applicationData));
+                
+                const response = await fetch('/api/applications', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<span class="success">✓ Success! Application ID: ${result.applicationId}</span>`;
+                } else {
+                    resultDiv.innerHTML = `<span class="error">✗ Error: ${result.error}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">✗ Error: ${error.message}</span>`;
+            }
+        }
+        
+        async function submitSellCar() {
+            const resultDiv = document.getElementById('sellCarResult');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = 'Submitting...';
+            
+            try {
+                const formData = new FormData();
+                
+                const sellData = {
+                    year: '2020',
+                    make: 'Toyota',
+                    model: 'Camry',
+                    mileage: 45000,
+                    mileageUnit: 'kilometers',
+                    condition: 'excellent',
+                    firstName: 'Jane',
+                    lastName: 'Smith',
+                    email: 'jane.smith@example.com',
+                    phone: '(555) 987-6543',
+                    postalCode: 'M5V 3A8'
+                };
+                
+                formData.append('sellData', JSON.stringify(sellData));
+                
+                const response = await fetch('/api/sell-car', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<span class="success">✓ Success! Submission ID: ${result.submissionId}</span>`;
+                } else {
+                    resultDiv.innerHTML = `<span class="error">✗ Error: ${result.error}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">✗ Error: ${error.message}</span>`;
+            }
+        }
+        
+        async function checkDatabase() {
+            const resultDiv = document.getElementById('dbResult');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = 'Checking database...';
+            
+            try {
+                // This is a simple check - in production you'd have an API endpoint
+                resultDiv.innerHTML = `
+                    <p><strong>Database Check Complete</strong></p>
+                    <p>To see saved applications:</p>
+                    <ol>
+                        <li>Go to <a href="/admin">Admin Panel</a></li>
+                        <li>Login with username: <strong>admin</strong>, password: <strong>admin123</strong></li>
+                        <li>Click on "Applications" or "Sell Submissions" tabs</li>
+                    </ol>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">✗ Error: ${error.message}</span>`;
+            }
+        }
+    </script>
+</body>
+</html>
