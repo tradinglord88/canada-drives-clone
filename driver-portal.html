@@ -9,6 +9,46 @@
     <link rel="stylesheet" href="assets/css/delivery-bidding.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .image-preview {
+            margin-top: 10px;
+            max-width: 100%;
+            display: none;
+        }
+        .image-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 5px;
+            background: #f9f9f9;
+        }
+        .image-preview.active {
+            display: block;
+        }
+        .upload-status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .upload-status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .upload-status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 0.875rem;
+        }
+    </style>
 </head>
 <body>
     <header class="header">
@@ -186,6 +226,22 @@
                             <option value="Tow Truck">Tow Truck</option>
                             <option value="Car Carrier">Car Carrier</option>
                         </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label><i class="fas fa-id-card"></i> Driver's License (Front) <span style="color: red;">*</span></label>
+                        <input type="file" name="license_front" id="licenseFront" accept="image/*,.pdf" required>
+                        <small>Upload front side of your driver's license (JPG, PNG, or PDF - Max 5MB)</small>
+                        <div id="licenseFrontPreview" class="image-preview"></div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label><i class="fas fa-id-card"></i> Driver's License (Back) <span style="color: red;">*</span></label>
+                        <input type="file" name="license_back" id="licenseBack" accept="image/*,.pdf" required>
+                        <small>Upload back side of your driver's license (JPG, PNG, or PDF - Max 5MB)</small>
+                        <div id="licenseBackPreview" class="image-preview"></div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>License Expiry Date</label>
+                        <input type="date" name="license_expiry" required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -457,29 +513,101 @@
             document.getElementById('registerForm').reset();
         }
 
-        // Driver registration
+        // File preview functionality
+        document.getElementById('licenseFront').addEventListener('change', function(e) {
+            previewImage(e.target, 'licenseFrontPreview');
+            validateFile(e.target);
+        });
+
+        document.getElementById('licenseBack').addEventListener('change', function(e) {
+            previewImage(e.target, 'licenseBackPreview');
+            validateFile(e.target);
+        });
+
+        function previewImage(input, previewId) {
+            const preview = document.getElementById(previewId);
+            preview.innerHTML = '';
+
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        preview.appendChild(img);
+                        preview.classList.add('active');
+                    };
+                    reader.readAsDataURL(file);
+                } else if (file.type === 'application/pdf') {
+                    preview.innerHTML = '<p style="padding: 20px; background: #f0f0f0; border-radius: 8px;"><i class="fas fa-file-pdf" style="color: #dc3545; font-size: 2em;"></i><br>PDF File: ' + file.name + '</p>';
+                    preview.classList.add('active');
+                }
+            }
+        }
+
+        function validateFile(input) {
+            const file = input.files[0];
+            if (file) {
+                // Check file size (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('File size must be less than 5MB');
+                    input.value = '';
+                    return false;
+                }
+
+                // Check file type
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+                if (!allowedTypes.includes(file.type)) {
+                    alert('Only JPG, PNG, and PDF files are allowed');
+                    input.value = '';
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Driver registration with file upload
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
+            // Validate files
+            const licenseFront = document.getElementById('licenseFront');
+            const licenseBack = document.getElementById('licenseBack');
+
+            if (!validateFile(licenseFront) || !validateFile(licenseBack)) {
+                return;
+            }
+
             const formData = new FormData(e.target);
-            const driverData = Object.fromEntries(formData);
-            
+
+            // Show loading state
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Uploading...';
+            submitBtn.disabled = true;
+
             try {
                 const response = await fetch('/api/driver/register', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(driverData)
+                    body: formData // Send as FormData for file upload
                 });
-                
+
+                const result = await response.json();
+
                 if (response.ok) {
-                    alert('Registration successful! Please login.');
+                    alert(result.message || 'Registration successful! Your account is pending verification.');
                     closeRegisterModal();
                 } else {
-                    alert('Error registering driver');
+                    alert(result.error || 'Error registering driver');
                 }
             } catch (error) {
                 console.error('Error registering:', error);
-                alert('Error registering driver');
+                alert('Error registering driver: ' + error.message);
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
             }
         });
 
