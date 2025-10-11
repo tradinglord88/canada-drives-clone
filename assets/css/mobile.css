@@ -150,6 +150,10 @@
         justify-content: center;
     }
 
+    .hero-banner::before {
+        display: none !important; /* Remove green overlay from desktop styles */
+    }
+
     .hero-title {
         font-size: 2rem;
         line-height: 1.2;
