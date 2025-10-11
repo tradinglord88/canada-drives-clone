@@ -110,18 +110,30 @@
 
     /* Hero Section Mobile */
     .hero {
-        padding: 20px 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        padding: 0;
+        background: url('https://images.unsplash.com/photo-1511576661531-b34d7da5d0bb?w=1920&h=1080&fit=crop&auto=format') center/cover !important;
         min-height: auto;
+        position: relative;
+        display: flex;
+        flex-direction: column;
     }
 
     .hero::before {
-        display: none !important; /* Remove any overlay on mobile */
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.6) 100%);
+        z-index: 1;
     }
 
     .hero-banner {
-        padding: 40px 0;
+        padding: 60px 0 80px;
         background: transparent !important;
+        position: relative;
+        z-index: 2;
     }
 
     .hero-title {
@@ -145,6 +157,10 @@
         gap: 15px;
         align-items: center;
         padding: 0 20px;
+        position: relative;
+        z-index: 2;
+        margin-bottom: 0;
+        padding-bottom: 40px;
     }
 
     .choice-btn {
@@ -592,6 +608,7 @@
     .hero-confidence-section {
         padding: 40px 0;
         background: #ffffff !important;
+        margin-top: 0 !important;
     }
 
     .hero-confidence-section h3 {
