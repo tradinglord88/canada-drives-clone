@@ -18,12 +18,15 @@
     .header {
         background: #ffffff !important;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+        position: sticky;
+        top: 0;
+        z-index: 1001;
     }
 
     .navbar {
         padding: 12px 0;
         position: relative;
-        background: #ffffff !important;
+        background: transparent !important;
     }
 
     .nav-wrapper {
@@ -111,7 +114,8 @@
     /* Hero Section Mobile */
     .hero {
         padding: 0;
-        background: url('https://images.unsplash.com/photo-1511576661531-b34d7da5d0bb?w=1920&h=1080&fit=crop&auto=format') center/cover !important;
+        background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4)),
+                    url('https://images.unsplash.com/photo-1511497584788-876760111969?w=1920&h=1080&fit=crop&auto=format') center/cover !important;
         min-height: auto;
         position: relative;
         display: flex;
@@ -119,14 +123,7 @@
     }
 
     .hero::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.6) 100%);
-        z-index: 1;
+        display: none; /* Remove conflicting overlay */
     }
 
     .hero-banner {
@@ -175,28 +172,35 @@
     }
 
     .choice-btn-primary {
-        background: #ffffff !important;
-        color: #667eea !important;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        background: rgba(255, 255, 255, 0.95) !important;
+        color: #5B5FED !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
     }
 
     .choice-btn-primary:hover,
     .choice-btn-primary:active {
-        background: #f0f0f0 !important;
+        background: #ffffff !important;
         transform: translateY(-2px);
+        box-shadow: 0 6px 25px rgba(0,0,0,0.3);
     }
 
     .choice-btn-secondary {
-        background: rgba(255,255,255,0.15) !important;
+        background: rgba(26, 26, 46, 0.85) !important;
         color: #ffffff !important;
-        border: 2px solid #ffffff !important;
+        border: 2px solid rgba(255,255,255,0.8) !important;
         backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
 
     .choice-btn-secondary:hover,
     .choice-btn-secondary:active {
-        background: rgba(255,255,255,0.25) !important;
+        background: rgba(26, 26, 46, 0.95) !important;
         transform: translateY(-2px);
+        border-color: #ffffff !important;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.25);
     }
 
     .choice-separator {
