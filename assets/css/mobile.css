@@ -16,8 +16,8 @@
 
     /* Navigation Mobile */
     .header {
-        background: #ffffff !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+        background: linear-gradient(135deg, #0f4336 0%, #0a2e24 100%) !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
         position: sticky;
         top: 0;
         z-index: 1001;
@@ -39,7 +39,7 @@
     .logo h1 {
         font-size: 1.2rem;
         margin: 0;
-        color: #333333 !important;
+        color: #ffffff !important;
         font-weight: 700;
     }
 
@@ -63,7 +63,7 @@
         display: block;
         width: 25px;
         height: 3px;
-        background: #333333;
+        background: #ffffff;
         margin: 3px 0;
         transition: all 0.3s ease;
         border-radius: 2px;
@@ -89,14 +89,14 @@
         left: -100%;
         width: 100%;
         height: calc(100vh - 60px);
-        background: white;
+        background: linear-gradient(135deg, #145240 0%, #0f4336 100%);
         flex-direction: column;
         justify-content: flex-start;
         align-items: flex-start;
         padding: 20px;
         transition: left 0.3s ease;
         z-index: 1000;
-        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        box-shadow: 2px 0 10px rgba(0,0,0,0.2);
     }
 
     .nav-menu.active {
@@ -113,14 +113,18 @@
         width: 100%;
         padding: 12px 0;
         font-size: 16px;
-        border-bottom: 1px solid #eee;
+        color: #ffffff !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     /* Hero Section Mobile */
     .hero {
         padding: 0;
         background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4)),
-                    url('https://images.unsplash.com/photo-1511497584788-876760111969?w=1920&h=1080&fit=crop&auto=format') center/cover !important;
+                    url('https://images.unsplash.com/photo-1511497584788-876760111969?w=1920&h=1080&fit=crop&auto=format') !important;
+        background-size: 120% auto !important;
+        background-position: center 40% !important;
+        background-repeat: no-repeat !important;
         min-height: auto;
         position: relative;
         display: flex;
@@ -262,9 +266,19 @@
     }
 
     .option-item {
-        padding: 12px;
+        padding: 12px 12px 12px 45px;
         margin-bottom: 10px;
         font-size: 14px;
+        position: relative;
+    }
+
+    /* Adjust radio button position on mobile */
+    .option-item input[type="radio"] {
+        left: 12px !important;
+    }
+
+    .option-item::before {
+        left: 14px !important;
     }
 
     /* Form Buttons Mobile */
@@ -661,6 +675,12 @@
 
 /* Extra Small Devices (phones in portrait) */
 @media screen and (max-width: 480px) {
+    /* Adjust hero background for smaller screens */
+    .hero {
+        background-size: 150% auto !important;
+        background-position: center 35% !important;
+    }
+
     .hero-title {
         font-size: 1.5rem;
     }
