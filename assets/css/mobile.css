@@ -126,7 +126,7 @@
         background-size: cover !important;
         background-position: center center !important;
         background-repeat: no-repeat !important;
-        background-attachment: fixed !important;
+        background-attachment: scroll !important; /* Fixed to scroll for mobile performance */
         min-height: 100vh;
         height: auto;
         width: 100%;

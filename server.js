@@ -5,13 +5,30 @@ const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const path = require('path');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 8000;
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this';
+const JWT_SECRET = process.env.JWT_SECRET;
 
-// Middleware
-app.use(cors());
+if (!JWT_SECRET) {
+    console.error('FATAL ERROR: JWT_SECRET is not defined in environment variables');
+    process.exit(1);
+}
+
+// CORS Configuration
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:8000').split(',');
+app.use(cors({
+    origin: function(origin, callback) {
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true
+}));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('.'));
@@ -46,8 +63,15 @@ db.serialize(() => {
     )`);
 
     // Create default admin user if not exists
-    const defaultPassword = bcrypt.hashSync('admin123', 10);
-    db.run(`INSERT OR IGNORE INTO users (username, password) VALUES (?, ?)`, ['admin', defaultPassword]);
+    const adminUsername = process.env.ADMIN_USERNAME || 'admin';
+    const adminPassword = process.env.ADMIN_DEFAULT_PASSWORD || 'admin123';
+    const defaultPassword = bcrypt.hashSync(adminPassword, 10);
+    db.run(`INSERT OR IGNORE INTO users (username, password) VALUES (?, ?)`, [adminUsername, defaultPassword], function(err) {
+        if (!err && this.changes > 0) {
+            console.warn(`⚠️  WARNING: Default admin account created!`);
+            console.warn(`⚠️  Please change the admin password immediately after first login`);
+        }
+    });
 });
 
 // API Routes
@@ -161,7 +185,7 @@ app.get('/admin', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Green Light Automotive Server running on http://localhost:${PORT}`);
-    console.log(`Admin panel: http://localhost:${PORT}/admin`);
-    console.log(`Default login - Username: admin, Password: admin123`);
+    console.log(`✓ Green Light Automotive Server running on http://localhost:${PORT}`);
+    console.log(`✓ Admin panel: http://localhost:${PORT}/admin`);
+    console.log(`✓ Environment: ${process.env.NODE_ENV || 'development'}`);
 });
