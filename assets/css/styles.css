@@ -729,6 +729,32 @@ body::before {
     border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
+/* Required field indicator */
+label[for] {
+    position: relative;
+}
+
+input[required] + label::after,
+label:has(input[required])::after {
+    content: ' *';
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* Form validation */
+.form-group input.error,
+.form-group select.error {
+    border-color: #dc3545;
+    background-color: #fff5f5;
+}
+
+.field-error {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
 .form-wizard::before {
     content: '';
     position: absolute;
