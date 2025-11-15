@@ -93,12 +93,12 @@ body::before {
 }
 
 .navbar {
-    padding: clamp(1rem, 2vw, 1.5rem) 0;
+    padding: 0.75rem 0;
 }
 
 .nav-wrapper {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     flex-wrap: wrap;
     gap: 20px;
@@ -106,7 +106,7 @@ body::before {
 
 .logo h1 {
     color: var(--white);
-    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-size: clamp(1.35rem, 2.5vw, 1.75rem);
     font-weight: 800;
     letter-spacing: -0.02em;
     transition: var(--transition);
@@ -122,10 +122,10 @@ body::before {
 .logo::before {
     content: '🚦';
     position: absolute;
-    left: -35px;
+    left: -32px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     opacity: 0.8;
     transition: var(--transition);
 }
@@ -158,10 +158,11 @@ body::before {
 .nav-menu {
     display: flex;
     list-style: none;
-    gap: clamp(1rem, 2vw, 2rem);
+    gap: clamp(1rem, 2vw, 1.5rem);
     flex-wrap: wrap;
     align-items: center;
     justify-content: flex-end;
+    margin-left: auto;
 }
 
 .nav-menu a {
