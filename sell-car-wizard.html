@@ -37,14 +37,84 @@
             display: block;
         }
 
+        .sell-progress-container {
+            margin-bottom: 3rem;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0 0.5rem;
+        }
+
+        .progress-step-text {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-dark);
+        }
+
+        .progress-time-estimate {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
         .sell-progress-bar {
             height: 12px;
             background: rgba(99, 102, 241, 0.1);
             border-radius: 24px;
             overflow: hidden;
-            margin-bottom: 3rem;
+            margin-bottom: 1.5rem;
             position: relative;
             box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .progress-steps-labels {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.5rem;
+            padding: 0 0.25rem;
+        }
+
+        .step-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.35rem;
+            opacity: 0.4;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .step-label i {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+        }
+
+        .step-label small {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        .step-label.active {
+            opacity: 1;
+        }
+
+        .step-label.completed {
+            opacity: 0.7;
+        }
+
+        .step-label.completed i::before {
+            content: '\f00c';
+            color: #10b981;
         }
 
         .sell-progress-bar::before {
@@ -801,11 +871,51 @@
     <!-- Main Content -->
     <main class="sell-wizard-container">
         <div class="sell-car-wizard">
-            <!-- Progress Bar -->
-            <div class="sell-progress-bar">
-                <div class="sell-progress-fill" id="sellProgressFill"></div>
+            <!-- Progress Indicator -->
+            <div class="sell-progress-container">
+                <div class="progress-header">
+                    <span class="progress-step-text" id="progressStepText">Step 1 of 8</span>
+                    <span class="progress-time-estimate" id="progressTimeEstimate">⏱ 3 minutes remaining</span>
+                </div>
+                <div class="sell-progress-bar">
+                    <div class="sell-progress-fill" id="sellProgressFill"></div>
+                </div>
+                <div class="progress-steps-labels">
+                    <span class="step-label active" data-step="1">
+                        <i class="fas fa-calendar"></i>
+                        <small>Year</small>
+                    </span>
+                    <span class="step-label" data-step="2">
+                        <i class="fas fa-car"></i>
+                        <small>Make</small>
+                    </span>
+                    <span class="step-label" data-step="3">
+                        <i class="fas fa-car-side"></i>
+                        <small>Model</small>
+                    </span>
+                    <span class="step-label" data-step="4">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <small>Mileage</small>
+                    </span>
+                    <span class="step-label" data-step="5">
+                        <i class="fas fa-star"></i>
+                        <small>Condition</small>
+                    </span>
+                    <span class="step-label" data-step="6">
+                        <i class="fas fa-camera"></i>
+                        <small>Photos</small>
+                    </span>
+                    <span class="step-label" data-step="7">
+                        <i class="fas fa-user"></i>
+                        <small>Contact</small>
+                    </span>
+                    <span class="step-label" data-step="8">
+                        <i class="fas fa-file-upload"></i>
+                        <small>Docs</small>
+                    </span>
+                </div>
             </div>
-            
+
             <!-- Step 1: Vehicle Year -->
             <div class="sell-form-step active" id="sellStep1">
                 <h2 class="step-title">What year is your vehicle?</h2>
@@ -1379,6 +1489,32 @@
         function updateProgress() {
             const progress = (currentSellStep / totalSellSteps) * 100;
             document.getElementById('sellProgressFill').style.width = progress + '%';
+
+            // Update step text
+            document.getElementById('progressStepText').textContent = `Step ${currentSellStep} of ${totalSellSteps}`;
+
+            // Update time estimate (rough estimate: 20-30 seconds per step)
+            const avgTimePerStep = 25; // seconds
+            const remainingSteps = totalSellSteps - currentSellStep;
+            const remainingSeconds = remainingSteps * avgTimePerStep;
+            const remainingMinutes = Math.ceil(remainingSeconds / 60);
+
+            const timeText = remainingMinutes === 0
+                ? "⏱ Almost done!"
+                : `⏱ ${remainingMinutes} minute${remainingMinutes > 1 ? 's' : ''} remaining`;
+            document.getElementById('progressTimeEstimate').textContent = timeText;
+
+            // Update step labels
+            document.querySelectorAll('.step-label').forEach((label, index) => {
+                const stepNumber = index + 1;
+                label.classList.remove('active', 'completed');
+
+                if (stepNumber < currentSellStep) {
+                    label.classList.add('completed');
+                } else if (stepNumber === currentSellStep) {
+                    label.classList.add('active');
+                }
+            });
         }
         
         function validatePhotos() {
