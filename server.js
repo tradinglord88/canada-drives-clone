@@ -13,6 +13,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this';
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('.'));
 
 // Create database

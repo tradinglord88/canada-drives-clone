@@ -38,26 +38,10 @@
 
     <!-- Hero Section -->
     <section class="hero">
-        <!-- Hero Banner -->
-        <div class="hero-banner">
-            <div class="container">
-                <h1 class="hero-title">The Easiest Way to Buy or Sell a Car</h1>
-                <p class="hero-subtitle">Get pre-approved for a new car or sell your car directly to Green Light Automotive.</p>
-                <div class="hero-choice-buttons">
-                    <button class="choice-btn choice-btn-primary" onclick="showPreApprovalForm()">Get Pre-Approved</button>
-                    <span class="choice-separator">Or</span>
-                    <a href="sell-car-wizard.html" class="choice-btn choice-btn-secondary">Sell My Car</a>
-                </div>
-            </div>
-        </div>
-
         <!-- Form Section -->
         <div class="hero-content">
-            <!-- Sell Car Wizard Container -->
-            <div class="sell-car-wizard" id="sellCarWizard" style="display: none;"></div>
-            
             <!-- Pre-Approval Form Wizard -->
-            <div class="form-wizard" id="formWizard" style="display: none;">
+            <div class="form-wizard" id="formWizard" style="display: block;">
                 <!-- Progress Bar -->
                 <div class="progress-container">
                     <div class="progress-text">3 minutes from finish</div>
@@ -578,6 +562,7 @@
                         <div class="consent-checkbox">
                             <label>
                                 <input type="checkbox" id="consent" name="consent" required>
+                                <span class="checkbox-custom"></span>
                                 <span>I agree to the terms and conditions and privacy policy</span>
                             </label>
                         </div>
