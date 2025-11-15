@@ -5,11 +5,46 @@ const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const path = require('path');
+const multer = require('multer');
+const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 8000;
 const JWT_SECRET = process.env.JWT_SECRET;
+
+// Create uploads directory if it doesn't exist
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, uploadsDir);
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+    fileFilter: function (req, file, cb) {
+        const allowedTypes = /jpeg|jpg|png|pdf/;
+        const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = allowedTypes.test(file.mimetype);
+
+        if (mimetype && extname) {
+            return cb(null, true);
+        } else {
+            cb(new Error('Only image and PDF files are allowed'));
+        }
+    }
+});
 
 if (!JWT_SECRET) {
     console.error('FATAL ERROR: JWT_SECRET is not defined in environment variables');
@@ -59,6 +94,17 @@ db.serialize(() => {
         email TEXT NOT NULL,
         phone TEXT NOT NULL,
         postal_code TEXT NOT NULL,
+        income_type TEXT,
+        annual_income TEXT,
+        income_years INTEGER,
+        income_months INTEGER,
+        company_name TEXT,
+        job_title TEXT,
+        monthly_income TEXT,
+        income_verified TEXT,
+        paystub_path TEXT,
+        drivers_license_path TEXT,
+        trade_in_photos TEXT,
         submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
@@ -76,36 +122,99 @@ db.serialize(() => {
 
 // API Routes
 
-// Submit application
-app.post('/api/applications', (req, res) => {
-    const {
-        vehicleType,
-        budget,
-        tradeIn,
-        creditScore,
-        employment,
-        contactInfo
-    } = req.body;
-
-    const { firstName, lastName, email, phone, postalCode } = contactInfo;
-
-    db.run(
-        `INSERT INTO applications (
-            vehicle_type, budget, trade_in, credit_score, employment,
-            first_name, last_name, email, phone, postal_code
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [vehicleType, budget, tradeIn, creditScore, employment, firstName, lastName, email, phone, postalCode],
-        function(err) {
-            if (err) {
-                return res.status(500).json({ error: 'Failed to submit application' });
-            }
-            res.json({ 
-                success: true, 
-                message: 'Application submitted successfully',
-                applicationId: this.lastID 
+// Submit application with file uploads
+app.post('/api/applications', upload.fields([
+    { name: 'paystub', maxCount: 1 },
+    { name: 'driversLicense', maxCount: 1 },
+    { name: 'tradeInPhotos', maxCount: 5 }
+]), (req, res) => {
+    try {
+        // Parse the applicationData JSON string from FormData
+        let applicationData;
+        try {
+            applicationData = JSON.parse(req.body.applicationData);
+        } catch (parseError) {
+            console.error('JSON Parse Error:', parseError);
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid application data format'
             });
         }
-    );
+
+        const {
+            vehicleType,
+            budget,
+            tradeIn,
+            creditScore,
+            employment,
+            contactInfo,
+            incomeType,
+            annualIncome,
+            incomeYears,
+            incomeMonths,
+            companyName,
+            jobTitle,
+            monthlyIncome,
+            incomeVerified
+        } = applicationData;
+
+        const { firstName, lastName, email, phone, postalCode } = contactInfo || {};
+
+        // Validate required fields
+        if (!vehicleType || !budget || !tradeIn || !creditScore || !employment || !firstName || !lastName || !email || !phone) {
+            return res.status(400).json({
+                success: false,
+                error: 'Missing required fields'
+            });
+        }
+
+        // Get uploaded file paths
+        const paystubPath = req.files && req.files['paystub'] ? req.files['paystub'][0].path : null;
+        const driversLicensePath = req.files && req.files['driversLicense'] ? req.files['driversLicense'][0].path : null;
+        const tradeInPhotos = req.files && req.files['tradeInPhotos']
+            ? JSON.stringify(req.files['tradeInPhotos'].map(file => file.path))
+            : null;
+
+        // Insert into database
+        db.run(
+            `INSERT INTO applications (
+                vehicle_type, budget, trade_in, credit_score, employment,
+                first_name, last_name, email, phone, postal_code,
+                income_type, annual_income, income_years, income_months,
+                company_name, job_title, monthly_income, income_verified,
+                paystub_path, drivers_license_path, trade_in_photos
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                vehicleType, budget, tradeIn, creditScore, employment,
+                firstName, lastName, email, phone, postalCode,
+                incomeType, annualIncome, incomeYears, incomeMonths,
+                companyName, jobTitle, monthlyIncome, incomeVerified,
+                paystubPath, driversLicensePath, tradeInPhotos
+            ],
+            function(err) {
+                if (err) {
+                    console.error('Database Error:', err);
+                    return res.status(500).json({
+                        success: false,
+                        error: 'Failed to submit application'
+                    });
+                }
+
+                console.log(`✓ Application submitted successfully - ID: ${this.lastID}`);
+                res.json({
+                    success: true,
+                    message: 'Application submitted successfully',
+                    applicationId: this.lastID
+                });
+            }
+        );
+    } catch (error) {
+        console.error('Application Submission Error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'An error occurred while processing your application'
+        });
+    }
 });
 
 // Admin login
