@@ -282,19 +282,26 @@
     .vehicle-option {
         padding: 20px 15px;
         border-radius: 12px;
-        background: #f8f9fa;
-        border: 2px solid transparent;
-        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.95);
+        border: 2px solid rgba(255, 255, 255, 0.6);
+        transition: all 0.2s ease;
         text-align: center;
         cursor: pointer;
+        box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
     }
 
     .vehicle-option:hover,
     .vehicle-option:active {
-        border-color: #5B5FED;
-        background: #ffffff;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(91, 95, 237, 0.15);
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.15);
+        border-color: rgba(99, 102, 241, 0.3);
+    }
+
+    .vehicle-option.selected {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white;
+        border-color: transparent;
+        transform: translateY(-4px) scale(1.02);
     }
 
     .vehicle-icon {
@@ -794,6 +801,23 @@
         border-top: 2px solid #eee;
         padding-top: 12px !important;
         margin-top: 10px;
+    }
+
+    /* Trust Bar Mobile Optimization */
+    .trust-bar {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .trust-item {
+        font-size: 0.8rem;
+        justify-content: center;
+    }
+
+    .trust-item i {
+        font-size: 1.1rem;
     }
 }
 
