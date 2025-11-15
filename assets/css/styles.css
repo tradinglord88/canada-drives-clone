@@ -725,8 +725,7 @@ body::before {
 .hero-content {
     width: 100%;
     max-width: 800px;
-    margin-left: auto;
-    margin-right: 10%;
+    margin: 0 auto;
     padding: 10px 0;
 }
 
@@ -2138,36 +2137,6 @@ label:has(input[required])::after {
 }
 
 /* Responsive Design */
-
-/* Ultra-wide screens - push form further right */
-@media (min-width: 1400px) {
-    .hero-content {
-        margin-right: 15%;
-    }
-}
-
-/* Large screens - balanced right positioning */
-@media (min-width: 1024px) and (max-width: 1399px) {
-    .hero-content {
-        margin-right: 10%;
-    }
-}
-
-/* Tablets - slight right bias */
-@media (min-width: 768px) and (max-width: 1023px) {
-    .hero-content {
-        margin-right: 5%;
-    }
-}
-
-/* Mobile - center the form */
-@media (max-width: 767px) {
-    .hero-content {
-        margin-left: auto;
-        margin-right: auto;
-    }
-}
-
 @media (max-width: 768px) {
     .mobile-menu-toggle {
         display: flex;
