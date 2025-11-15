@@ -181,6 +181,11 @@ app.delete('/api/applications/:id', authenticateToken, (req, res) => {
 
 // Serve admin page
 app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin', 'index.html'));
+});
+
+// Serve old admin for backwards compatibility
+app.get('/admin-old', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
