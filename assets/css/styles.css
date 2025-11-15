@@ -970,22 +970,25 @@ label:has(input[required])::after {
 }
 
 .step-title {
-    font-size: clamp(1.1rem, 3vw, 1.3rem);
+    font-size: clamp(1.25rem, 3vw, 1.5rem);
     color: var(--text-dark);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
     text-align: center;
     font-weight: 700;
     line-height: 1.2;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
 }
 
 .step-subtitle {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     color: var(--text-light);
     text-align: center;
-    margin-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
     font-weight: 400;
-    line-height: 1.3;
+    line-height: 1.6;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* Vehicle Selection Grid */
@@ -1429,14 +1432,18 @@ label:has(input[required])::after {
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    position: relative;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
+    margin-bottom: 10px;
+    font-weight: 600;
     color: var(--text-dark);
+    font-size: 0.875rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
 }
 
 .form-group input {
@@ -1466,25 +1473,102 @@ label:has(input[required])::after {
     transform: translateY(-2px);
 }
 
+/* Modern Select Dropdown Styling */
+.form-group select {
+    width: 100%;
+    padding: 14px 18px;
+    padding-right: 40px;
+    border: 2px solid transparent;
+    border-radius: 16px;
+    font-size: 1rem;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, #e5e7eb 0%, #f3f4f6 100%) border-box;
+    transition: var(--transition);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236366f1' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+}
+
+.form-group select:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-group select:focus {
+    outline: none;
+    border-color: transparent;
+    background: white padding-box,
+                linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) border-box;
+    box-shadow:
+        0 0 0 4px rgba(99, 102, 241, 0.1),
+        0 8px 24px rgba(99, 102, 241, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Textarea Styling */
+.form-group textarea {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid transparent;
+    border-radius: 16px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, #e5e7eb 0%, #f3f4f6 100%) border-box;
+    transition: var(--transition);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    resize: vertical;
+    min-height: 120px;
+}
+
+.form-group textarea:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-group textarea:focus {
+    outline: none;
+    border-color: transparent;
+    background: white padding-box,
+                linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) border-box;
+    box-shadow:
+        0 0 0 4px rgba(99, 102, 241, 0.1),
+        0 8px 24px rgba(99, 102, 241, 0.15);
+    transform: translateY(-2px);
+}
+
 .consent-checkbox {
-    margin: 20px 0;
+    margin: 24px 0;
+    padding: 16px;
+    background: rgba(99, 102, 241, 0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(99, 102, 241, 0.1);
 }
 
 .consent-checkbox label {
     display: flex;
     align-items: flex-start;
     cursor: pointer;
+    gap: 12px;
 }
 
 .consent-checkbox input[type="checkbox"] {
-    margin-right: 10px;
-    margin-top: 4px;
+    margin-top: 2px;
     cursor: pointer;
+    width: 20px;
+    height: 20px;
+    accent-color: var(--primary-color);
+}
+
+.consent-checkbox .checkbox-custom {
+    flex-shrink: 0;
 }
 
 .consent-checkbox span {
     font-size: 0.9rem;
-    color: var(--text-light);
+    color: var(--text-dark);
+    line-height: 1.6;
 }
 
 /* Income Input Styles */
@@ -1509,32 +1593,35 @@ label:has(input[required])::after {
     width: 100%;
     padding: 24px 24px 24px 60px;
     font-size: 1.75rem;
-    border: 3px solid #e8eaed;
-    border-radius: 16px;
-    background: linear-gradient(145deg, #ffffff 0%, #fafbfc 100%);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 3px solid transparent;
+    border-radius: 20px;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, #e5e7eb 0%, #f3f4f6 100%) border-box;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-align: left;
     font-weight: 600;
     color: var(--text-dark);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
 .income-input::placeholder {
-    color: #c0c4cc;
+    color: #9ca3af;
     font-weight: 400;
 }
 
 .income-input:hover {
-    border-color: #d1d5db;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 }
 
 .income-input:focus {
     outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 5px rgba(0, 102, 204, 0.15), 0 8px 25px rgba(0,0,0,0.1);
-    background: #ffffff;
-    transform: translateY(-2px);
+    border-color: transparent;
+    background: white padding-box,
+                linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) border-box;
+    box-shadow:
+        0 0 0 5px rgba(99, 102, 241, 0.1),
+        0 12px 32px rgba(99, 102, 241, 0.2);
+    transform: translateY(-3px);
 }
 
 /* Duration Input Styles */
@@ -1558,41 +1645,45 @@ label:has(input[required])::after {
     padding: 20px;
     font-size: 1.5rem;
     text-align: center;
-    border: 3px solid #e8eaed;
-    border-radius: 16px;
-    background: linear-gradient(145deg, #ffffff 0%, #fafbfc 100%);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 3px solid transparent;
+    border-radius: 20px;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, #e5e7eb 0%, #f3f4f6 100%) border-box;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-weight: 600;
     color: var(--text-dark);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
 .duration-input::placeholder {
-    color: #c0c4cc;
+    color: #9ca3af;
     font-weight: 400;
 }
 
 .duration-input:hover {
-    border-color: #d1d5db;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 }
 
 .duration-input:focus {
     outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 5px rgba(0, 102, 204, 0.15), 0 8px 25px rgba(0,0,0,0.1);
-    background: #ffffff;
-    transform: translateY(-2px);
+    border-color: transparent;
+    background: white padding-box,
+                linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) border-box;
+    box-shadow:
+        0 0 0 5px rgba(99, 102, 241, 0.1),
+        0 12px 32px rgba(99, 102, 241, 0.2);
+    transform: translateY(-3px);
 }
 
 .duration-input-group label {
     display: block;
-    margin-top: 12px;
-    font-size: 1.15rem;
+    margin-top: 16px;
+    font-size: 0.875rem;
     color: var(--text-dark);
     font-weight: 600;
     text-align: center;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
 }
 
 /* Income Verification Styles */
