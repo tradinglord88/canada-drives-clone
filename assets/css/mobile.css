@@ -619,30 +619,30 @@
     /* Testimonials Mobile */
     .testimonials {
         padding: 60px 20px;
-        text-align: center;
-        background: #f8f9fa;
+    }
+
+    .testimonial-carousel {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
     }
 
     .testimonial {
-        padding: 30px 25px;
-        background: #ffffff;
-        border-radius: 15px;
-        margin-bottom: 20px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        padding: 2rem 1.5rem;
+        border-radius: 16px;
+    }
+
+    .testimonial::before {
+        font-size: 4rem;
+        left: 10px;
     }
 
     .testimonial p {
-        font-size: 15px;
-        line-height: 1.8;
-        font-style: italic;
-        color: #555;
-        margin-bottom: 15px;
+        font-size: 0.9375rem;
+        line-height: 1.7;
     }
 
-    .testimonial-author {
-        font-weight: 600;
-        color: #333;
-        font-size: 16px;
+    .testimonial cite {
+        font-size: 0.875rem;
     }
 
     /* Footer Mobile */
