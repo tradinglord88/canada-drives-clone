@@ -264,15 +264,16 @@ body::before {
 
 .upload-box {
     background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: none;
     border-radius: 15px;
     padding: 1.5rem;
     transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 .upload-box:hover {
     background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .upload-box h3 {
@@ -288,6 +289,11 @@ body::before {
     color: #666;
     font-size: 0.9rem;
     margin-bottom: 1rem;
+    min-height: 2.5em;
+}
+
+.upload-box .upload-area {
+    flex: 1;
 }
 
 .upload-area {
@@ -296,18 +302,30 @@ body::before {
 }
 
 .upload-placeholder {
-    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border: 2px dashed rgba(200, 200, 220, 0.5);
     border-radius: 10px;
     padding: 2rem;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(255, 255, 255, 0.5);
 }
 
 .upload-placeholder:hover {
     border-color: var(--primary-color);
-    background: rgba(10, 92, 62, 0.1);
+    background: rgba(99, 102, 241, 0.05);
+}
+
+/* Remove border from upload-area inside document-upload-section */
+.document-upload-section .upload-area {
+    border: none;
+    background: transparent;
+    min-height: auto;
+}
+
+.document-upload-section .upload-area:hover {
+    border: none;
+    background: transparent;
 }
 
 .upload-placeholder i {
@@ -2986,5 +3004,134 @@ textarea {
         grid-template-columns: repeat(2, 1fr);
         padding: 2rem;
     }
+}
+
+/* Success Animation Overlay */
+.success-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.success-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.success-content {
+    background: white;
+    padding: 3rem 4rem;
+    border-radius: 24px;
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    transform: scale(0.8) translateY(20px);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+}
+
+.success-overlay.active .success-content {
+    transform: scale(1) translateY(0);
+}
+
+.checkmark-circle {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 1.5rem;
+}
+
+.checkmark {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: block;
+    stroke-width: 2;
+    stroke: #4bb71b;
+    stroke-miterlimit: 10;
+    box-shadow: inset 0px 0px 0px #4bb71b;
+}
+
+.checkmark-circle-bg {
+    stroke: #4bb71b;
+    stroke-width: 2;
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmark-check {
+    stroke: #4bb71b;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+@keyframes stroke {
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+.success-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #4bb71b 0%, #22c55e 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.success-message {
+    font-size: 1.1rem;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+.success-submessage {
+    font-size: 1.2rem;
+    color: #6366f1;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.success-app-id {
+    background: #f3f4f6;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    color: #64748b;
+    margin-bottom: 2rem;
+}
+
+.success-app-id strong {
+    color: #1a1a2e;
+}
+
+.success-btn {
+    padding: 1rem 3rem;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.success-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
 }
 

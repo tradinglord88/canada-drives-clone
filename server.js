@@ -123,11 +123,23 @@ db.serialize(() => {
 // API Routes
 
 // Submit application with file uploads
-app.post('/api/applications', upload.fields([
+const applicationUpload = upload.fields([
     { name: 'paystub', maxCount: 1 },
     { name: 'driversLicense', maxCount: 1 },
     { name: 'tradeInPhotos', maxCount: 5 }
-]), (req, res) => {
+]);
+
+app.post('/api/applications', (req, res) => {
+    applicationUpload(req, res, function(err) {
+        if (err) {
+            console.error('Multer error:', err);
+            // Continue without files if there's a multer error
+        }
+        handleApplicationSubmission(req, res);
+    });
+});
+
+function handleApplicationSubmission(req, res) {
     try {
         // Parse the applicationData JSON string from FormData
         let applicationData;
@@ -147,7 +159,11 @@ app.post('/api/applications', upload.fields([
             tradeIn,
             creditScore,
             employment,
-            contactInfo,
+            firstName,
+            lastName,
+            email,
+            phone,
+            postalCode,
             incomeType,
             annualIncome,
             incomeYears,
@@ -158,10 +174,22 @@ app.post('/api/applications', upload.fields([
             incomeVerified
         } = applicationData;
 
-        const { firstName, lastName, email, phone, postalCode } = contactInfo || {};
+        // Log received data for debugging
+        console.log('Received application data:', { vehicleType, budget, tradeIn, creditScore, employment, firstName, lastName, email, phone });
 
         // Validate required fields
         if (!vehicleType || !budget || !tradeIn || !creditScore || !employment || !firstName || !lastName || !email || !phone) {
+            console.log('Missing fields:', {
+                vehicleType: !vehicleType,
+                budget: !budget,
+                tradeIn: !tradeIn,
+                creditScore: !creditScore,
+                employment: !employment,
+                firstName: !firstName,
+                lastName: !lastName,
+                email: !email,
+                phone: !phone
+            });
             return res.status(400).json({
                 success: false,
                 error: 'Missing required fields'
@@ -182,14 +210,14 @@ app.post('/api/applications', upload.fields([
                 first_name, last_name, email, phone, postal_code,
                 income_type, annual_income, income_years, income_months,
                 company_name, job_title, monthly_income, income_verified,
-                paystub_path, drivers_license_path, trade_in_photos
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                paystub_file, drivers_license_file
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 vehicleType, budget, tradeIn, creditScore, employment,
                 firstName, lastName, email, phone, postalCode,
                 incomeType, annualIncome, incomeYears, incomeMonths,
                 companyName, jobTitle, monthlyIncome, incomeVerified,
-                paystubPath, driversLicensePath, tradeInPhotos
+                paystubPath, driversLicensePath
             ],
             function(err) {
                 if (err) {
@@ -215,7 +243,7 @@ app.post('/api/applications', upload.fields([
             error: 'An error occurred while processing your application'
         });
     }
-});
+}
 
 // Admin login
 app.post('/api/login', (req, res) => {

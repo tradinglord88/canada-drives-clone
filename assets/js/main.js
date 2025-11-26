@@ -289,8 +289,14 @@ function showSellForm() {
 // Submit Form
 async function submitForm() {
     // Validate all data is collected
-    if (formData.vehicleType && formData.budget && formData.tradeIn && 
-        formData.creditScore && formData.employment && formData.contactInfo) {
+    const hasContactInfo = formData.contactInfo &&
+        formData.contactInfo.firstName &&
+        formData.contactInfo.lastName &&
+        formData.contactInfo.email &&
+        formData.contactInfo.phone;
+
+    if (formData.vehicleType && formData.budget && formData.tradeIn &&
+        formData.creditScore && formData.employment && hasContactInfo) {
         
         try {
             // Create FormData for file uploads
@@ -321,12 +327,12 @@ async function submitForm() {
             // Add trade-in details if applicable
             if (formData.tradeIn === 'yes' && formData.tradeInDetails) {
                 applicationData.tradeInDetails = formData.tradeInDetails;
-                
-                // Add photo files
+
+                // Add photo files under 'tradeInPhotos' field name
                 if (formData.tradeInPhotos) {
                     Object.entries(formData.tradeInPhotos).forEach(([key, file]) => {
                         if (file) {
-                            submitData.append(key + 'Photo', file);
+                            submitData.append('tradeInPhotos', file);
                         }
                     });
                 }
@@ -337,10 +343,10 @@ async function submitForm() {
             
             // Add optional document uploads
             if (uploadedDocuments.paystub) {
-                submitData.append('paystubFile', uploadedDocuments.paystub);
+                submitData.append('paystub', uploadedDocuments.paystub);
             }
             if (uploadedDocuments.license) {
-                submitData.append('driversLicenseFile', uploadedDocuments.license);
+                submitData.append('driversLicense', uploadedDocuments.license);
             }
             
             console.log('Submitting application data:', applicationData);
@@ -355,33 +361,8 @@ async function submitForm() {
             console.log('Server response:', result);
 
             if (response.ok && result.success) {
-                // Show success message
-                alert(`Congratulations! Your pre-approval application has been submitted. Your application ID is: ${result.applicationId}. We will contact you shortly.`);
-                
-                // Reset form and go back to hero
-                currentStep = 1;
-                document.querySelector('.hero-banner').style.display = 'block';
-                document.querySelector('.hero-confidence-section').style.display = 'block';
-                document.getElementById('formWizard').style.display = 'none';
-                
-                // Reset form data
-                formData = {
-                    vehicleType: '',
-                    budget: '',
-                    tradeIn: '',
-                    creditScore: '',
-                    employment: '',
-                    contactInfo: {}
-                };
-
-                // Reset form UI
-                document.querySelectorAll('.form-step').forEach(step => step.classList.remove('active'));
-                document.getElementById('step1').classList.add('active');
-                document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
-                document.querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
-                document.querySelectorAll('.vehicle-option').forEach(option => option.classList.remove('selected'));
-                document.getElementById('step6').querySelectorAll('input').forEach(input => input.value = '');
-                document.getElementById('consent').checked = false;
+                // Show animated success screen
+                showSuccessAnimation(result.applicationId);
             } else {
                 console.error('Submission failed:', result);
                 alert(`Error: ${result.error || 'Failed to submit application. Please try again.'}`);
@@ -390,6 +371,17 @@ async function submitForm() {
             console.error('Error submitting form:', error);
             alert(`Error: ${error.message || 'Failed to submit application. Please check your connection and try again.'}`);
         }
+    } else {
+        // Show which fields are missing
+        let missing = [];
+        if (!formData.vehicleType) missing.push('Vehicle Type');
+        if (!formData.budget) missing.push('Budget');
+        if (!formData.tradeIn) missing.push('Trade-In Selection');
+        if (!formData.creditScore) missing.push('Credit Score');
+        if (!formData.employment) missing.push('Employment Status');
+        if (!hasContactInfo) missing.push('Contact Information');
+
+        alert(`Please complete all required fields: ${missing.join(', ')}`);
     }
 }
 
@@ -1223,4 +1215,72 @@ window.removeDocumentFile = function(type) {
     // Show placeholder
     placeholder.style.display = 'block';
     preview.style.display = 'none';
+}
+
+// Success Animation Function
+function showSuccessAnimation(applicationId) {
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'success-overlay';
+    overlay.innerHTML = `
+        <div class="success-content">
+            <div class="checkmark-circle">
+                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="checkmark-circle-bg" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+            </div>
+            <h2 class="success-title">Congratulations!</h2>
+            <p class="success-message">Your pre-approval application has been submitted successfully.</p>
+            <p class="success-submessage">You will be receiving a call shortly!</p>
+            <div class="success-app-id">Application ID: <strong>${applicationId}</strong></div>
+            <button class="btn btn-primary success-btn" onclick="closeSuccessAndReset()">Back to Home</button>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    // Trigger animation
+    setTimeout(() => {
+        overlay.classList.add('active');
+    }, 10);
+}
+
+// Close success overlay and reset form
+function closeSuccessAndReset() {
+    const overlay = document.querySelector('.success-overlay');
+    if (overlay) {
+        overlay.classList.remove('active');
+        setTimeout(() => {
+            overlay.remove();
+
+            // Reset form and go back to hero
+            currentStep = 1;
+            document.querySelector('.hero-banner').style.display = 'block';
+            document.querySelector('.hero-confidence-section').style.display = 'block';
+            document.getElementById('formWizard').style.display = 'none';
+
+            // Reset form data
+            formData = {
+                vehicleType: '',
+                budget: '',
+                tradeIn: '',
+                creditScore: '',
+                employment: '',
+                contactInfo: {}
+            };
+
+            // Reset form UI
+            document.querySelectorAll('.form-step').forEach(step => step.classList.remove('active'));
+            document.getElementById('step1').classList.add('active');
+            document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+            document.querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
+            document.querySelectorAll('.vehicle-option').forEach(option => option.classList.remove('selected'));
+            document.getElementById('step6').querySelectorAll('input').forEach(input => input.value = '');
+            document.getElementById('consent').checked = false;
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 300);
+    }
 }
