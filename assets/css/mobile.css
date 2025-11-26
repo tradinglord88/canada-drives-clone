@@ -84,10 +84,10 @@
 
     /* Mobile Navigation Menu */
     .nav-menu {
-        display: flex !important; /* Always flex on mobile to allow transition */
+        display: none; /* Hidden by default on mobile */
         position: fixed;
         top: 60px;
-        left: -100%;
+        left: 0;
         width: 100%;
         height: calc(100vh - 60px);
         background: linear-gradient(135deg, #145240 0%, #0f4336 100%);
@@ -101,6 +101,7 @@
     }
 
     .nav-menu.active {
+        display: flex !important;
         left: 0 !important;
     }
 
