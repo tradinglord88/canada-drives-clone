@@ -17,7 +17,7 @@
     },
     {
       "src": "/admin",
-      "dest": "/admin.html"
+      "dest": "/admin/index.html"
     },
     {
       "src": "/admin-enhanced",
