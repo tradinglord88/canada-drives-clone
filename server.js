@@ -13,9 +13,10 @@ const isVercel = process.env.VERCEL === '1' || process.env.POSTGRES_URL;
 let sql, db;
 
 if (isVercel) {
-    const { sql: vercelSql } = require('@vercel/postgres');
-    sql = vercelSql;
+    // Import Vercel Postgres
+    sql = require('@vercel/postgres').sql;
 } else {
+    // Use SQLite for local development
     const sqlite3 = require('sqlite3').verbose();
     db = new sqlite3.Database('./database.db');
 }
