@@ -14,7 +14,9 @@ const PORT = process.env.PORT || 8000;
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // Create uploads directory if it doesn't exist
-const uploadsDir = path.join(__dirname, 'uploads');
+// Use /tmp on Vercel (serverless), local directory otherwise
+const isVercel = process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
+const uploadsDir = isVercel ? '/tmp/uploads' : path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
 }
@@ -69,7 +71,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('.'));
 
 // Create database
-const db = new sqlite3.Database('./database.db');
+// Use /tmp on Vercel for database (note: data won't persist between cold starts)
+const dbPath = isVercel ? '/tmp/database.db' : './database.db';
+const db = new sqlite3.Database(dbPath);
 
 // Initialize database tables
 db.serialize(() => {
@@ -326,8 +330,14 @@ app.get('/admin-old', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
-app.listen(PORT, () => {
-    console.log(`✓ Green Light Automotive Server running on http://localhost:${PORT}`);
-    console.log(`✓ Admin panel: http://localhost:${PORT}/admin`);
-    console.log(`✓ Environment: ${process.env.NODE_ENV || 'development'}`);
-});
+// Only start server if not running on Vercel
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`✓ Green Light Automotive Server running on http://localhost:${PORT}`);
+        console.log(`✓ Admin panel: http://localhost:${PORT}/admin`);
+        console.log(`✓ Environment: ${process.env.NODE_ENV || 'development'}`);
+    });
+}
+
+// Export for Vercel
+module.exports = app;
