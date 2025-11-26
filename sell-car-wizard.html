@@ -9,6 +9,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        body {
+            background: linear-gradient(135deg, rgba(10, 92, 62, 0.85) 0%, rgba(5, 46, 31, 0.9) 100%),
+                        url('https://images.unsplash.com/photo-1448375240586-882707db888b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
         .sell-wizard-container {
             max-width: 900px;
             margin: 100px auto 50px;
@@ -821,23 +830,60 @@
         }
 
         /* Checkbox Alignment Fix */
+        .consent-checkbox {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(99, 102, 241, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(99, 102, 241, 0.1);
+        }
+
         .consent-checkbox label {
             display: flex;
             align-items: center;
             gap: 12px;
+            cursor: pointer;
         }
 
         .consent-checkbox input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
+            appearance: none;
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
             margin: 0;
             cursor: pointer;
-            accent-color: #6366f1;
             flex-shrink: 0;
+            border: 2px solid #6366f1;
+            border-radius: 6px;
+            background: white;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .consent-checkbox input[type="checkbox"]:checked {
+            background: #6366f1;
+            border-color: #6366f1;
+        }
+
+        .consent-checkbox input[type="checkbox"]:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .consent-checkbox input[type="checkbox"]:hover {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
         .consent-checkbox span {
             line-height: 1.5;
+            color: #4a5568;
         }
     </style>
 </head>
