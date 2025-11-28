@@ -93,7 +93,7 @@ body::before {
 }
 
 .navbar {
-    padding: 0.75rem 0;
+    padding: 0.4rem 0;
 }
 
 .nav-wrapper {
@@ -106,7 +106,7 @@ body::before {
 
 .logo h1 {
     color: var(--white);
-    font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+    font-size: clamp(1rem, 2vw, 1.25rem);
     font-weight: 800;
     letter-spacing: -0.02em;
     transition: var(--transition);
@@ -119,21 +119,7 @@ body::before {
     text-decoration: none;
 }
 
-.logo::before {
-    content: '🚦';
-    position: absolute;
-    left: -32px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 1.35rem;
-    opacity: 0.8;
-    transition: var(--transition);
-}
-
-.logo:hover::before {
-    opacity: 1;
-    transform: translateY(-50%) scale(1.2);
-}
+/* Traffic light icon removed */
 
 .logo h1::after {
     content: '';
@@ -466,9 +452,10 @@ body::before {
 
 /* Hero Section */
 .hero {
-    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center center no-repeat;
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center center no-repeat;
     background-size: cover;
     background-position: center center;
+    background-attachment: fixed;
     min-height: auto;
     padding-top: 20px;
     padding-bottom: 80px;
@@ -1009,8 +996,8 @@ label:has(input[required])::after {
 .vehicle-selection {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 12px;
+    gap: 16px;
+    margin-bottom: 16px;
 }
 
 .vehicle-option {
@@ -1018,7 +1005,7 @@ label:has(input[required])::after {
     backdrop-filter: blur(20px) saturate(180%);
     border: 2px solid rgba(255, 255, 255, 0.6);
     border-radius: 16px;
-    padding: 10px 8px;
+    padding: 16px 12px;
     text-align: center;
     cursor: pointer;
     transition: var(--transition);
@@ -1076,13 +1063,13 @@ label:has(input[required])::after {
 
 .vehicle-icon {
     width: 100%;
-    height: 80px;
-    margin-bottom: 5px;
+    height: 120px;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: 10px;
     background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
     position: relative;
 }
@@ -1122,11 +1109,11 @@ label:has(input[required])::after {
 .vehicle-option span {
     font-weight: 600;
     color: var(--text-dark);
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     letter-spacing: 0.02em;
     text-transform: uppercase;
     transition: color 0.3s ease;
-    margin-top: 0.25rem;
+    margin-top: 0.5rem;
     display: block;
 }
 

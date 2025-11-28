@@ -694,11 +694,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mobile menu toggle
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const navMenu = document.getElementById('navMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+
+    function closeMenu() {
+        navMenu.classList.remove('active');
+        mobileMenuToggle.classList.remove('active');
+        if (menuOverlay) menuOverlay.classList.remove('active');
+
+        const spans = mobileMenuToggle.querySelectorAll('span');
+        spans[0].style.transform = 'none';
+        spans[1].style.opacity = '1';
+        spans[2].style.transform = 'none';
+    }
 
     if (mobileMenuToggle && navMenu) {
         mobileMenuToggle.addEventListener('click', function() {
             navMenu.classList.toggle('active');
             this.classList.toggle('active');
+            if (menuOverlay) menuOverlay.classList.toggle('active');
 
             // Animate hamburger menu
             const spans = this.querySelectorAll('span');
@@ -712,6 +725,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 spans[2].style.transform = 'none';
             }
         });
+
+        // Close menu when clicking overlay
+        if (menuOverlay) {
+            menuOverlay.addEventListener('click', closeMenu);
+        }
     }
 
     // Smooth scrolling for anchor links
@@ -734,11 +752,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 // Close mobile menu if open
-                navMenu.classList.remove('active');
-                const spans = mobileMenuToggle.querySelectorAll('span');
-                spans[0].style.transform = 'none';
-                spans[1].style.opacity = '1';
-                spans[2].style.transform = 'none';
+                closeMenu();
             }
         });
     });
