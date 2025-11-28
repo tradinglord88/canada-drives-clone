@@ -399,42 +399,42 @@ async function handleApplicationSubmission(req, res) {
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
 
+    // Simple environment-based login (works without database)
+    const adminUsername = process.env.ADMIN_USERNAME || 'admin';
+    const adminPassword = process.env.ADMIN_DEFAULT_PASSWORD || 'admin123';
+
+    if (username === adminUsername && password === adminPassword) {
+        const token = jwt.sign({ id: 1, username: adminUsername }, JWT_SECRET);
+        return res.json({ token, username: adminUsername });
+    }
+
+    // Fallback to database login if env login fails
     try {
         if (isVercel) {
             const result = await sql`SELECT * FROM users WHERE username = ${username}`;
             const user = result.rows[0];
 
-            if (!user) {
-                return res.status(401).json({ error: 'Invalid credentials' });
+            if (user && bcrypt.compareSync(password, user.password)) {
+                const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET);
+                return res.json({ token, username: user.username });
             }
-
-            const isMatch = bcrypt.compareSync(password, user.password);
-            if (!isMatch) {
-                return res.status(401).json({ error: 'Invalid credentials' });
-            }
-
-            const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET);
-            res.json({ token, username: user.username });
         } else {
-            db.get('SELECT * FROM users WHERE username = ?', [username], (err, user) => {
-                if (err || !user) {
-                    return res.status(401).json({ error: 'Invalid credentials' });
-                }
-
-                bcrypt.compare(password, user.password, (err, isMatch) => {
-                    if (!isMatch) {
-                        return res.status(401).json({ error: 'Invalid credentials' });
+            return new Promise((resolve) => {
+                db.get('SELECT * FROM users WHERE username = ?', [username], (err, user) => {
+                    if (user && bcrypt.compareSync(password, user.password)) {
+                        const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET);
+                        return res.json({ token, username: user.username });
                     }
-
-                    const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET);
-                    res.json({ token, username: user.username });
+                    res.status(401).json({ error: 'Invalid credentials' });
+                    resolve();
                 });
             });
         }
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({ error: 'Login failed' });
     }
+
+    res.status(401).json({ error: 'Invalid credentials' });
 });
 
 // Middleware to verify JWT token
