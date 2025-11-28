@@ -176,6 +176,55 @@ async function viewLead(id) {
 // Display Lead Detail
 function displayLeadDetail(lead) {
     const content = document.getElementById('leadDetailContent');
+
+    // Build documents section HTML
+    let documentsHtml = '';
+    if (lead.paystub_file || lead.drivers_license_file) {
+        documentsHtml = `
+            <div class="detail-section documents-section">
+                <h3><i class="fas fa-file-alt"></i> Uploaded Documents</h3>
+                <div class="documents-grid">
+                    ${lead.paystub_file ? `
+                        <div class="document-item">
+                            <div class="document-label"><i class="fas fa-file-invoice-dollar"></i> Paystub</div>
+                            <div class="document-preview">
+                                <a href="${lead.paystub_file}" target="_blank" class="document-link">
+                                    ${isImageFile(lead.paystub_file) ?
+                                        `<img src="${lead.paystub_file}" alt="Paystub" class="document-thumbnail">` :
+                                        `<i class="fas fa-file-pdf"></i> View PDF`
+                                    }
+                                </a>
+                            </div>
+                        </div>
+                    ` : ''}
+                    ${lead.drivers_license_file ? `
+                        <div class="document-item">
+                            <div class="document-label"><i class="fas fa-id-card"></i> Driver's License</div>
+                            <div class="document-preview">
+                                <a href="${lead.drivers_license_file}" target="_blank" class="document-link">
+                                    ${isImageFile(lead.drivers_license_file) ?
+                                        `<img src="${lead.drivers_license_file}" alt="Driver's License" class="document-thumbnail">` :
+                                        `<i class="fas fa-file-pdf"></i> View PDF`
+                                    }
+                                </a>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    } else {
+        documentsHtml = `
+            <div class="detail-section documents-section">
+                <h3><i class="fas fa-file-alt"></i> Uploaded Documents</h3>
+                <div class="no-documents">
+                    <i class="fas fa-folder-open"></i>
+                    <p>No documents uploaded</p>
+                </div>
+            </div>
+        `;
+    }
+
     content.innerHTML = `
         <div class="lead-detail-grid">
             <div class="detail-section">
@@ -243,8 +292,18 @@ function displayLeadDetail(lead) {
                     <div class="detail-value">${formatTime(lead.submitted_at)}</div>
                 </div>
             </div>
+
+            ${documentsHtml}
         </div>
     `;
+}
+
+// Check if file is an image
+function isImageFile(filename) {
+    if (!filename) return false;
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'];
+    const lowerFilename = filename.toLowerCase();
+    return imageExtensions.some(ext => lowerFilename.endsWith(ext));
 }
 
 // Close Lead Modal

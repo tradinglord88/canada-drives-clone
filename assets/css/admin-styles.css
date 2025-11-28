@@ -595,6 +595,98 @@ body {
     color: #1a202c;
 }
 
+/* Documents Section */
+.documents-section {
+    grid-column: 1 / -1;
+}
+
+.documents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.document-item {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.document-item:hover {
+    border-color: #10b981;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+}
+
+.document-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.document-label i {
+    color: #10b981;
+}
+
+.document-preview {
+    text-align: center;
+}
+
+.document-link {
+    display: block;
+    text-decoration: none;
+    color: #6366f1;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.document-link:hover {
+    color: #4f46e5;
+}
+
+.document-thumbnail {
+    max-width: 100%;
+    max-height: 150px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.document-thumbnail:hover {
+    border-color: #6366f1;
+    transform: scale(1.02);
+}
+
+.document-link i.fa-file-pdf {
+    font-size: 3rem;
+    color: #dc2626;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.no-documents {
+    text-align: center;
+    padding: 2rem;
+    color: #94a3b8;
+}
+
+.no-documents i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.no-documents p {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
 /* Print Styles */
 @media print {
     body * {
