@@ -134,10 +134,18 @@ async function initDatabase() {
             const adminPassword = process.env.ADMIN_DEFAULT_PASSWORD || 'admin123';
             const hashedPassword = bcrypt.hashSync(adminPassword, 10);
 
+            console.log('Checking for admin user:', adminUsername);
+
             const existingUser = await sql`SELECT * FROM users WHERE username = ${adminUsername}`;
+            console.log('Existing users found:', existingUser.rows.length);
+
             if (existingUser.rows.length === 0) {
                 await sql`INSERT INTO users (username, password) VALUES (${adminUsername}, ${hashedPassword})`;
                 console.log('Default admin user created');
+            } else {
+                // Update the password in case it changed
+                await sql`UPDATE users SET password = ${hashedPassword} WHERE username = ${adminUsername}`;
+                console.log('Admin user password updated');
             }
 
             // Delivery Jobs Tables for Vercel Postgres
