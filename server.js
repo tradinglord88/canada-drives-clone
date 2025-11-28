@@ -395,18 +395,37 @@ async function handleApplicationSubmission(req, res) {
     }
 }
 
+// Debug endpoint to check environment
+app.get('/api/debug-env', (req, res) => {
+    res.json({
+        hasJwtSecret: !!process.env.JWT_SECRET,
+        hasAdminUsername: !!process.env.ADMIN_USERNAME,
+        hasAdminPassword: !!process.env.ADMIN_DEFAULT_PASSWORD,
+        adminUsername: process.env.ADMIN_USERNAME || 'admin',
+        isVercel: isVercel,
+        nodeEnv: process.env.NODE_ENV
+    });
+});
+
 // Admin login
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
+
+    console.log('Login attempt:', { username, passwordLength: password?.length });
 
     // Simple environment-based login (works without database)
     const adminUsername = process.env.ADMIN_USERNAME || 'admin';
     const adminPassword = process.env.ADMIN_DEFAULT_PASSWORD || 'admin123';
 
+    console.log('Expected:', { adminUsername, adminPasswordLength: adminPassword?.length });
+
     if (username === adminUsername && password === adminPassword) {
         const token = jwt.sign({ id: 1, username: adminUsername }, JWT_SECRET);
+        console.log('Login successful');
         return res.json({ token, username: adminUsername });
     }
+
+    console.log('Env login failed, trying database...');
 
     // Fallback to database login if env login fails
     try {
