@@ -1410,4 +1410,95 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     console.log('Scroll animations initialized');
+
+    // ====== ANIMATED COUNTERS ======
+    initAnimatedCounters();
 });
+
+// Animated Counter Functions
+function animateCounter(element, target, duration = 2000, suffix = '') {
+    let start = 0;
+    const startTime = performance.now();
+
+    const updateCounter = (currentTime) => {
+        const elapsedTime = currentTime - startTime;
+        const progress = Math.min(elapsedTime / duration, 1);
+
+        // Easing function for smooth animation
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        const currentValue = Math.floor(easeOutQuart * target);
+
+        element.textContent = currentValue.toLocaleString() + suffix;
+        element.classList.add('counting');
+
+        if (progress < 1) {
+            requestAnimationFrame(updateCounter);
+        } else {
+            element.textContent = target.toLocaleString() + suffix;
+            element.classList.remove('counting');
+        }
+    };
+
+    requestAnimationFrame(updateCounter);
+}
+
+function initAnimatedCounters() {
+    const achievementsSection = document.getElementById('achievements-section');
+    if (!achievementsSection) return;
+
+    const counterElements = achievementsSection.querySelectorAll('.achievement-number[data-target]');
+    let hasAnimated = false;
+
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !hasAnimated) {
+                hasAnimated = true;
+
+                counterElements.forEach((counter, index) => {
+                    const target = parseInt(counter.dataset.target);
+                    const suffix = counter.dataset.suffix || '';
+
+                    // Stagger the animations
+                    setTimeout(() => {
+                        animateCounter(counter, target, 2000, suffix);
+                    }, index * 200);
+                });
+
+                counterObserver.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.3,
+        rootMargin: '0px 0px -100px 0px'
+    });
+
+    counterObserver.observe(achievementsSection);
+    console.log('Animated counters initialized');
+}
+
+// ====== 3D TILT EFFECT ======
+function init3DTiltEffect() {
+    const tiltCards = document.querySelectorAll('.vehicle-card');
+
+    tiltCards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            const rotateX = (y - centerY) / 10;
+            const rotateY = (centerX - x) / 10;
+
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px) scale(1.02)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1)';
+        });
+    });
+}
+
+// Initialize 3D tilt on load
+document.addEventListener('DOMContentLoaded', init3DTiltEffect);

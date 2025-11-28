@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
+const http = require('http');
+const socketIo = require('socket.io');
 require('dotenv').config();
 
 // Database imports - use Vercel Postgres in production, SQLite locally
@@ -22,6 +24,13 @@ if (isVercel) {
 }
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
 const PORT = process.env.PORT || 8000;
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -131,6 +140,53 @@ async function initDatabase() {
                 console.log('Default admin user created');
             }
 
+            // Delivery Jobs Tables for Vercel Postgres
+            await sql`
+                CREATE TABLE IF NOT EXISTS delivery_jobs (
+                    id SERIAL PRIMARY KEY,
+                    customer_name TEXT,
+                    pickup_address TEXT,
+                    delivery_address TEXT,
+                    vehicle_info TEXT,
+                    distance REAL,
+                    estimated_time INTEGER,
+                    delivery_date TEXT,
+                    delivery_window TEXT,
+                    special_instructions TEXT,
+                    status TEXT DEFAULT 'open',
+                    winning_bid_id INTEGER,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            `;
+
+            await sql`
+                CREATE TABLE IF NOT EXISTS drivers (
+                    id SERIAL PRIMARY KEY,
+                    name TEXT,
+                    email TEXT UNIQUE,
+                    phone TEXT,
+                    license_number TEXT UNIQUE,
+                    vehicle_type TEXT,
+                    rating REAL DEFAULT 5.0,
+                    completed_deliveries INTEGER DEFAULT 0,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            `;
+
+            await sql`
+                CREATE TABLE IF NOT EXISTS driver_bids (
+                    id SERIAL PRIMARY KEY,
+                    job_id INTEGER,
+                    driver_id INTEGER,
+                    bid_amount REAL,
+                    estimated_completion_time TEXT,
+                    message TEXT,
+                    status TEXT DEFAULT 'pending',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE(job_id, driver_id)
+                )
+            `;
+
             console.log('Vercel Postgres database initialized');
         } catch (error) {
             console.error('Error initializing Vercel Postgres:', error);
@@ -174,6 +230,47 @@ async function initDatabase() {
             const adminPassword = process.env.ADMIN_DEFAULT_PASSWORD || 'admin123';
             const hashedPassword = bcrypt.hashSync(adminPassword, 10);
             db.run(`INSERT OR IGNORE INTO users (username, password) VALUES (?, ?)`, [adminUsername, hashedPassword]);
+
+            // Delivery Jobs Tables
+            db.run(`CREATE TABLE IF NOT EXISTS delivery_jobs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                customer_name TEXT,
+                pickup_address TEXT,
+                delivery_address TEXT,
+                vehicle_info TEXT,
+                distance REAL,
+                estimated_time INTEGER,
+                delivery_date TEXT,
+                delivery_window TEXT,
+                special_instructions TEXT,
+                status TEXT DEFAULT 'open',
+                winning_bid_id INTEGER,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )`);
+
+            db.run(`CREATE TABLE IF NOT EXISTS drivers (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT,
+                email TEXT UNIQUE,
+                phone TEXT,
+                license_number TEXT UNIQUE,
+                vehicle_type TEXT,
+                rating REAL DEFAULT 5.0,
+                completed_deliveries INTEGER DEFAULT 0,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )`);
+
+            db.run(`CREATE TABLE IF NOT EXISTS driver_bids (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                job_id INTEGER,
+                driver_id INTEGER,
+                bid_amount REAL,
+                estimated_completion_time TEXT,
+                message TEXT,
+                status TEXT DEFAULT 'pending',
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(job_id, driver_id)
+            )`);
         });
         console.log('SQLite database initialized');
     }
@@ -408,11 +505,419 @@ app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin', 'index.html'));
 });
 
+// ========================================
+// SOCKET.IO CONNECTION HANDLER
+// ========================================
+io.on('connection', (socket) => {
+    console.log('New client connected');
+
+    socket.on('newBid', (data) => {
+        io.emit('newBid', data);
+    });
+
+    socket.on('jobStatusUpdate', (data) => {
+        io.emit('jobStatusUpdate', data);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('Client disconnected');
+    });
+});
+
+// ========================================
+// DELIVERY JOBS API ENDPOINTS
+// ========================================
+
+// Get all delivery jobs
+app.get('/api/delivery-jobs', async (req, res) => {
+    try {
+        const { status, location, date } = req.query;
+
+        if (isVercel) {
+            // Vercel Postgres - simplified query without complex joins for now
+            let result;
+            if (status) {
+                result = await sql`SELECT * FROM delivery_jobs WHERE status = ${status} ORDER BY created_at DESC`;
+            } else {
+                result = await sql`SELECT * FROM delivery_jobs ORDER BY created_at DESC`;
+            }
+            res.json(result.rows);
+        } else {
+            // SQLite
+            let query = `
+                SELECT j.*,
+                       COUNT(DISTINCT b.id) as bid_count,
+                       AVG(b.bid_amount) as average_bid,
+                       d.name as winning_driver
+                FROM delivery_jobs j
+                LEFT JOIN driver_bids b ON j.id = b.job_id
+                LEFT JOIN drivers d ON j.winning_bid_id = b.id AND b.driver_id = d.id
+                WHERE 1=1
+            `;
+            const params = [];
+
+            if (status) {
+                query += ' AND j.status = ?';
+                params.push(status);
+            }
+            if (location) {
+                query += ' AND (j.pickup_address LIKE ? OR j.delivery_address LIKE ?)';
+                params.push(`%${location}%`, `%${location}%`);
+            }
+            if (date) {
+                query += ' AND j.delivery_date = ?';
+                params.push(date);
+            }
+            query += ' GROUP BY j.id ORDER BY j.created_at DESC';
+
+            db.all(query, params, (err, rows) => {
+                if (err) return res.status(500).json({ error: err.message });
+                res.json(rows);
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get single delivery job
+app.get('/api/delivery-jobs/:id', async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        if (isVercel) {
+            const result = await sql`SELECT * FROM delivery_jobs WHERE id = ${id}`;
+            res.json(result.rows[0]);
+        } else {
+            db.get('SELECT * FROM delivery_jobs WHERE id = ?', [id], (err, row) => {
+                if (err) return res.status(500).json({ error: err.message });
+                res.json(row);
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Create new delivery job
+app.post('/api/delivery-jobs', async (req, res) => {
+    try {
+        const {
+            customer_name,
+            pickup_address,
+            delivery_address,
+            vehicle_info,
+            delivery_date,
+            delivery_window,
+            special_instructions
+        } = req.body;
+
+        const distance = Math.floor(Math.random() * 50) + 10;
+        const estimated_time = Math.floor(distance * 2);
+
+        if (isVercel) {
+            const result = await sql`
+                INSERT INTO delivery_jobs (
+                    customer_name, pickup_address, delivery_address,
+                    vehicle_info, distance, estimated_time,
+                    delivery_date, delivery_window, special_instructions
+                ) VALUES (
+                    ${customer_name}, ${pickup_address}, ${delivery_address},
+                    ${vehicle_info}, ${distance}, ${estimated_time},
+                    ${delivery_date}, ${delivery_window}, ${special_instructions}
+                ) RETURNING id
+            `;
+            io.emit('newJob', { id: result.rows[0].id });
+            res.json({ id: result.rows[0].id, message: 'Job posted successfully' });
+        } else {
+            db.run(`
+                INSERT INTO delivery_jobs (
+                    customer_name, pickup_address, delivery_address,
+                    vehicle_info, distance, estimated_time,
+                    delivery_date, delivery_window, special_instructions
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `, [customer_name, pickup_address, delivery_address, vehicle_info, distance, estimated_time, delivery_date, delivery_window, special_instructions],
+            function(err) {
+                if (err) return res.status(500).json({ error: err.message });
+                io.emit('newJob', { id: this.lastID });
+                res.json({ id: this.lastID, message: 'Job posted successfully' });
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get bids for a job
+app.get('/api/delivery-jobs/:id/bids', async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        if (isVercel) {
+            const jobResult = await sql`SELECT * FROM delivery_jobs WHERE id = ${id}`;
+            const bidsResult = await sql`
+                SELECT b.*, d.name as driver_name, d.rating as driver_rating,
+                       d.completed_deliveries, d.vehicle_type
+                FROM driver_bids b
+                JOIN drivers d ON b.driver_id = d.id
+                WHERE b.job_id = ${id}
+                ORDER BY b.bid_amount ASC
+            `;
+            res.json({ job: jobResult.rows[0], bids: bidsResult.rows });
+        } else {
+            db.get('SELECT * FROM delivery_jobs WHERE id = ?', [id], (err, job) => {
+                if (err) return res.status(500).json({ error: err.message });
+                db.all(`
+                    SELECT b.*, d.name as driver_name, d.rating as driver_rating,
+                           d.completed_deliveries, d.vehicle_type
+                    FROM driver_bids b
+                    JOIN drivers d ON b.driver_id = d.id
+                    WHERE b.job_id = ?
+                    ORDER BY b.bid_amount ASC
+                `, [id], (err, bids) => {
+                    if (err) return res.status(500).json({ error: err.message });
+                    res.json({ job, bids });
+                });
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Accept a bid
+app.post('/api/delivery-jobs/:id/accept-bid', async (req, res) => {
+    try {
+        const { bidId } = req.body;
+        const jobId = parseInt(req.params.id);
+
+        if (isVercel) {
+            await sql`UPDATE delivery_jobs SET status = 'assigned', winning_bid_id = ${bidId} WHERE id = ${jobId}`;
+            await sql`UPDATE driver_bids SET status = 'accepted' WHERE id = ${bidId}`;
+            await sql`UPDATE driver_bids SET status = 'rejected' WHERE job_id = ${jobId} AND id != ${bidId}`;
+            const bid = await sql`SELECT driver_id FROM driver_bids WHERE id = ${bidId}`;
+            if (bid.rows[0]) {
+                io.emit('bidAccepted', { jobId, bidId, driverId: bid.rows[0].driver_id });
+            }
+            res.json({ message: 'Bid accepted successfully' });
+        } else {
+            db.serialize(() => {
+                db.run('UPDATE delivery_jobs SET status = ?, winning_bid_id = ? WHERE id = ?', ['assigned', bidId, jobId]);
+                db.run('UPDATE driver_bids SET status = ? WHERE id = ?', ['accepted', bidId]);
+                db.run('UPDATE driver_bids SET status = ? WHERE job_id = ? AND id != ?', ['rejected', jobId, bidId]);
+                db.get('SELECT driver_id FROM driver_bids WHERE id = ?', [bidId], (err, bid) => {
+                    if (!err && bid) io.emit('bidAccepted', { jobId, bidId, driverId: bid.driver_id });
+                });
+                res.json({ message: 'Bid accepted successfully' });
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Update job status
+app.put('/api/delivery-jobs/:id/status', async (req, res) => {
+    try {
+        const { status } = req.body;
+        const id = parseInt(req.params.id);
+
+        if (isVercel) {
+            await sql`UPDATE delivery_jobs SET status = ${status} WHERE id = ${id}`;
+            io.emit('jobStatusUpdate', { jobId: id, status });
+            res.json({ message: 'Status updated successfully' });
+        } else {
+            db.run('UPDATE delivery_jobs SET status = ? WHERE id = ?', [status, id], (err) => {
+                if (err) return res.status(500).json({ error: err.message });
+                io.emit('jobStatusUpdate', { jobId: id, status });
+                res.json({ message: 'Status updated successfully' });
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ========================================
+// DRIVER API ENDPOINTS
+// ========================================
+
+// Driver login
+app.post('/api/driver/login', async (req, res) => {
+    try {
+        const { email, licenseNumber } = req.body;
+
+        if (isVercel) {
+            const result = await sql`SELECT * FROM drivers WHERE email = ${email} AND license_number = ${licenseNumber}`;
+            if (result.rows.length === 0) {
+                return res.status(401).json({ error: 'Invalid credentials' });
+            }
+            res.json(result.rows[0]);
+        } else {
+            db.get('SELECT * FROM drivers WHERE email = ? AND license_number = ?', [email, licenseNumber], (err, driver) => {
+                if (err) return res.status(500).json({ error: err.message });
+                if (!driver) return res.status(401).json({ error: 'Invalid credentials' });
+                res.json(driver);
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Driver registration
+app.post('/api/driver/register', async (req, res) => {
+    try {
+        const { name, email, phone, license_number, vehicle_type } = req.body;
+
+        if (isVercel) {
+            const result = await sql`
+                INSERT INTO drivers (name, email, phone, license_number, vehicle_type)
+                VALUES (${name}, ${email}, ${phone}, ${license_number}, ${vehicle_type})
+                RETURNING id
+            `;
+            res.json({ id: result.rows[0].id, message: 'Registration successful' });
+        } else {
+            db.run(`INSERT INTO drivers (name, email, phone, license_number, vehicle_type) VALUES (?, ?, ?, ?, ?)`,
+                [name, email, phone, license_number, vehicle_type], function(err) {
+                if (err) {
+                    if (err.message.includes('UNIQUE')) {
+                        return res.status(400).json({ error: 'Email or license number already exists' });
+                    }
+                    return res.status(500).json({ error: err.message });
+                }
+                res.json({ id: this.lastID, message: 'Registration successful' });
+            });
+        }
+    } catch (error) {
+        if (error.message.includes('unique') || error.message.includes('duplicate')) {
+            return res.status(400).json({ error: 'Email or license number already exists' });
+        }
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Place a bid
+app.post('/api/driver/place-bid', async (req, res) => {
+    try {
+        const { job_id, driver_id, bid_amount, estimated_completion_time, message } = req.body;
+
+        if (isVercel) {
+            const result = await sql`
+                INSERT INTO driver_bids (job_id, driver_id, bid_amount, estimated_completion_time, message)
+                VALUES (${job_id}, ${driver_id}, ${bid_amount}, ${estimated_completion_time}, ${message})
+                RETURNING id
+            `;
+            io.emit('newBid', { jobId: job_id, bidId: result.rows[0].id });
+            res.json({ id: result.rows[0].id, message: 'Bid placed successfully' });
+        } else {
+            db.run(`INSERT INTO driver_bids (job_id, driver_id, bid_amount, estimated_completion_time, message) VALUES (?, ?, ?, ?, ?)`,
+                [job_id, driver_id, bid_amount, estimated_completion_time, message], function(err) {
+                if (err) {
+                    if (err.message.includes('UNIQUE')) {
+                        return res.status(400).json({ error: 'You have already bid on this job' });
+                    }
+                    return res.status(500).json({ error: err.message });
+                }
+                io.emit('newBid', { jobId: job_id, bidId: this.lastID });
+                res.json({ id: this.lastID, message: 'Bid placed successfully' });
+            });
+        }
+    } catch (error) {
+        if (error.message.includes('unique') || error.message.includes('duplicate')) {
+            return res.status(400).json({ error: 'You have already bid on this job' });
+        }
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get driver's bids
+app.get('/api/driver/:id/bids', async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+
+        if (isVercel) {
+            const result = await sql`
+                SELECT b.*, j.vehicle_info, j.pickup_address, j.delivery_address,
+                       j.delivery_date, j.delivery_window
+                FROM driver_bids b
+                JOIN delivery_jobs j ON b.job_id = j.id
+                WHERE b.driver_id = ${id}
+                ORDER BY b.created_at DESC
+            `;
+            res.json(result.rows);
+        } else {
+            db.all(`
+                SELECT b.*, j.vehicle_info, j.pickup_address, j.delivery_address,
+                       j.delivery_date, j.delivery_window
+                FROM driver_bids b
+                JOIN delivery_jobs j ON b.job_id = j.id
+                WHERE b.driver_id = ?
+                ORDER BY b.created_at DESC
+            `, [id], (err, bids) => {
+                if (err) return res.status(500).json({ error: err.message });
+                res.json(bids);
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get driver's assigned jobs
+app.get('/api/driver/:id/assigned-jobs', async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+
+        if (isVercel) {
+            const result = await sql`
+                SELECT j.*
+                FROM delivery_jobs j
+                JOIN driver_bids b ON j.winning_bid_id = b.id
+                WHERE b.driver_id = ${id} AND j.status IN ('assigned', 'in_progress')
+                ORDER BY j.delivery_date ASC
+            `;
+            res.json(result.rows);
+        } else {
+            db.all(`
+                SELECT j.*
+                FROM delivery_jobs j
+                JOIN driver_bids b ON j.winning_bid_id = b.id
+                WHERE b.driver_id = ? AND j.status IN ('assigned', 'in_progress')
+                ORDER BY j.delivery_date ASC
+            `, [id], (err, jobs) => {
+                if (err) return res.status(500).json({ error: err.message });
+                res.json(jobs);
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Cancel a bid
+app.delete('/api/driver/cancel-bid/:id', async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        if (isVercel) {
+            await sql`DELETE FROM driver_bids WHERE id = ${id}`;
+            res.json({ message: 'Bid cancelled successfully' });
+        } else {
+            db.run('DELETE FROM driver_bids WHERE id = ?', [id], (err) => {
+                if (err) return res.status(500).json({ error: err.message });
+                res.json({ message: 'Bid cancelled successfully' });
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Only start server if not running on Vercel
 if (!isVercel) {
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
         console.log(`✓ Greenlight Automotive Server running on http://localhost:${PORT}`);
         console.log(`✓ Admin panel: http://localhost:${PORT}/admin`);
+        console.log(`✓ Delivery Jobs: http://localhost:${PORT}/delivery-jobs.html`);
+        console.log(`✓ Delivery Admin: http://localhost:${PORT}/delivery-admin.html`);
         console.log(`✓ Environment: ${process.env.NODE_ENV || 'development'}`);
     });
 }

@@ -1079,3 +1079,125 @@
         transform: none !important;
     }
 }
+
+/* ====== SELL MY CAR - MOBILE OPTIMIZATION ====== */
+@media screen and (max-width: 768px) {
+    /* Main Container */
+    .sell-car-wizard {
+        padding: 1.5rem;
+        border-radius: 20px;
+        margin: 0 10px;
+    }
+
+    /* Title & Subtitle */
+    .sell-title {
+        font-size: 1.75rem;
+        text-align: center;
+    }
+
+    .sell-subtitle {
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    .sell-car-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    /* Photo Upload Grid - Single Column */
+    .sell-car-upload-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    /* Form Grids - Single Column */
+    .vehicle-form-grid,
+    .contact-form-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    /* Vehicle & Contact Info Sections */
+    .sell-vehicle-info,
+    .sell-contact-info {
+        padding: 1.5rem;
+        border-radius: 16px;
+    }
+
+    /* Photo Tips Box */
+    .photo-tips {
+        padding: 1.25rem;
+    }
+
+    .photo-tips ul {
+        padding-left: 1rem;
+    }
+
+    .photo-tips h4 {
+        font-size: 1rem;
+    }
+
+    /* Touch-Friendly Inputs */
+    .sell-vehicle-info input,
+    .sell-vehicle-info select,
+    .sell-contact-info input,
+    .sell-contact-info textarea {
+        padding: 14px 16px;
+        font-size: 16px; /* Prevents iOS zoom */
+    }
+
+    /* Step Headers */
+    .sell-car-steps h3,
+    .sell-vehicle-info h3,
+    .sell-contact-info h3 {
+        font-size: 1.35rem;
+        padding-left: 45px;
+    }
+}
+
+/* Extra Small Devices */
+@media screen and (max-width: 480px) {
+    .sell-car-wizard {
+        padding: 1.25rem;
+        margin: 0 5px;
+    }
+
+    .sell-title {
+        font-size: 1.5rem;
+    }
+
+    /* Stack step number above text */
+    .sell-car-steps h3,
+    .sell-vehicle-info h3,
+    .sell-contact-info h3 {
+        font-size: 1.25rem;
+        padding-left: 0;
+        padding-top: 45px;
+        text-align: center;
+    }
+
+    .sell-car-steps h3::before,
+    .sell-vehicle-info h3::before,
+    .sell-contact-info h3::before {
+        left: 50%;
+        transform: translateX(-50%);
+        top: 0;
+    }
+
+    /* Full-width stacked buttons */
+    .sell-form-buttons {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .sell-form-buttons .btn {
+        min-width: unset;
+        width: 100%;
+    }
+
+    /* Consent checkbox text */
+    .consent-text {
+        font-size: 0.85rem;
+    }
+}
