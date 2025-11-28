@@ -1429,6 +1429,8 @@
                     this.classList.add('selected');
                     sellData.year = this.dataset.year;
                     document.querySelector('#sellStep1 .form-continue').disabled = false;
+                    // Auto-advance after brief delay
+                    setTimeout(() => nextSellStep(), 350);
                 });
             });
             
@@ -1441,6 +1443,8 @@
                     sellData.make = this.dataset.make;
                     document.getElementById('other-make').value = '';
                     document.querySelector('#sellStep2 .form-continue').disabled = false;
+                    // Auto-advance after brief delay
+                    setTimeout(() => nextSellStep(), 350);
                 });
             });
             
@@ -1453,6 +1457,8 @@
                     sellData.make = this.dataset.make;
                     document.getElementById('other-make').value = '';
                     document.querySelector('#sellStep2 .form-continue').disabled = false;
+                    // Auto-advance after brief delay
+                    setTimeout(() => nextSellStep(), 350);
                 });
             });
             
@@ -1498,6 +1504,8 @@
                 radio.addEventListener('change', function() {
                     sellData.condition = this.value;
                     document.querySelector('#sellStep5 .form-continue').disabled = false;
+                    // Auto-advance after brief delay
+                    setTimeout(() => nextSellStep(), 350);
                 });
             });
             

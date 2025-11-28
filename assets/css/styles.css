@@ -234,10 +234,10 @@ body::before {
 
 .nav-wrapper {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
+    flex-wrap: nowrap;
+    gap: 15px;
 }
 
 .logo h1 {
@@ -253,6 +253,8 @@ body::before {
 .logo {
     position: relative;
     text-decoration: none;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 /* Traffic light icon removed */
@@ -280,8 +282,8 @@ body::before {
 .nav-menu {
     display: flex;
     list-style: none;
-    gap: clamp(1rem, 2vw, 1.5rem);
-    flex-wrap: wrap;
+    gap: clamp(0.8rem, 1.5vw, 1.2rem);
+    flex-wrap: nowrap;
     align-items: center;
     justify-content: flex-end;
     margin-left: auto;
@@ -291,10 +293,12 @@ body::before {
     text-decoration: none;
     color: var(--white);
     font-weight: 500;
+    font-size: clamp(0.8rem, 1.2vw, 0.95rem);
     transition: var(--transition);
     position: relative;
     padding: 5px 0;
     opacity: 0.9;
+    white-space: nowrap;
 }
 
 .nav-menu a::after {
@@ -320,12 +324,13 @@ body::before {
 /* Admin Link Styling */
 .nav-menu .admin-link {
     background: rgba(255, 255, 255, 0.1);
-    padding: 8px 16px !important;
-    border-radius: 20px;
-    margin-left: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 5px 10px !important;
+    border-radius: 14px;
+    margin-left: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
     transition: all 0.3s ease;
     white-space: nowrap;
+    font-size: 0.8rem;
 }
 
 .nav-menu .admin-link:hover {
@@ -339,8 +344,8 @@ body::before {
 }
 
 .nav-menu .admin-link i {
-    margin-right: 5px;
-    font-size: 0.9em;
+    margin-right: 4px;
+    font-size: 0.75em;
 }
 
 .mobile-menu-toggle {
@@ -448,6 +453,73 @@ body::before {
 .document-upload-section .upload-area:hover {
     border: none;
     background: transparent;
+}
+
+/* License Front/Back Upload Grid */
+.license-upload-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.license-side {
+    display: flex;
+    flex-direction: column;
+}
+
+.license-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.license-side .upload-area {
+    min-height: 120px;
+    border: 2px dashed rgba(255, 255, 255, 0.3) !important;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.license-side .upload-area:hover {
+    border-color: var(--primary-color) !important;
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.license-side .upload-placeholder {
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+}
+
+.license-side .upload-placeholder i {
+    font-size: 2rem;
+    margin-bottom: 0.3rem;
+}
+
+.license-side .upload-placeholder p {
+    font-size: 0.9rem;
+    margin: 0.3rem 0;
+}
+
+.license-side .upload-preview {
+    padding: 1rem;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 480px) {
+    .license-upload-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .upload-placeholder i {
@@ -2957,14 +3029,16 @@ textarea {
 }
 
 .checkbox-custom {
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    border: 2px solid #e8eaed;
-    border-radius: 4px;
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    border: 2px solid var(--primary-color);
+    border-radius: 6px;
     margin-right: 12px;
     transition: all 0.3s ease;
     position: relative;
+    background: white;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15);
 }
 
 .consent-checkbox input[type="checkbox"]:checked + .checkbox-custom {
@@ -2981,6 +3055,17 @@ textarea {
     color: white;
     font-size: 14px;
     font-weight: bold;
+}
+
+.consent-checkbox:hover .checkbox-custom {
+    border-color: var(--primary-hover);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+    transform: scale(1.05);
+}
+
+.consent-checkbox input[type="checkbox"]:focus + .checkbox-custom {
+    outline: 2px solid rgba(99, 102, 241, 0.5);
+    outline-offset: 2px;
 }
 
 .consent-text {

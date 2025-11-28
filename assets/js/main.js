@@ -345,8 +345,11 @@ async function submitForm() {
             if (uploadedDocuments.paystub) {
                 submitData.append('paystub', uploadedDocuments.paystub);
             }
-            if (uploadedDocuments.license) {
-                submitData.append('driversLicense', uploadedDocuments.license);
+            if (uploadedDocuments.licenseFront) {
+                submitData.append('driversLicenseFront', uploadedDocuments.licenseFront);
+            }
+            if (uploadedDocuments.licenseBack) {
+                submitData.append('driversLicenseBack', uploadedDocuments.licenseBack);
             }
             
             console.log('Submitting application data:', applicationData);
@@ -495,6 +498,8 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.vehicleType = this.dataset.vehicle;
             // Enable continue button
             document.querySelector('#step1 .form-continue').disabled = false;
+            // Auto-advance after brief delay
+            setTimeout(() => nextStep(), 350);
         });
     });
 
@@ -512,6 +517,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     item.classList.remove('selected');
                 }
             });
+            // Auto-advance after brief delay
+            setTimeout(() => nextStep(), 350);
         });
     });
 
@@ -529,6 +536,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     item.classList.remove('selected');
                 }
             });
+            // Auto-advance after brief delay
+            setTimeout(() => nextStep(), 350);
         });
     });
 
@@ -546,6 +555,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     item.classList.remove('selected');
                 }
             });
+            // Auto-advance after brief delay
+            setTimeout(() => nextStep(), 350);
         });
     });
 
@@ -563,6 +574,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     item.classList.remove('selected');
                 }
             });
+            // Auto-advance after brief delay
+            setTimeout(() => nextStep(), 350);
         });
     });
 
@@ -580,6 +593,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     item.classList.remove('selected');
                 }
             });
+            // Auto-advance after brief delay
+            setTimeout(() => nextStep(), 350);
         });
     });
 
@@ -659,6 +674,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     option.classList.remove('selected');
                 }
             });
+            // Auto-advance after brief delay
+            setTimeout(() => nextStep(), 350);
         });
     });
 
@@ -1184,7 +1201,8 @@ document.addEventListener('DOMContentLoaded', function() {
 // Document upload handling
 let uploadedDocuments = {
     paystub: null,
-    license: null
+    licenseFront: null,
+    licenseBack: null
 };
 
 window.handleDocumentUpload = function(type, input) {
@@ -1273,6 +1291,14 @@ function closeSuccessAndReset() {
             document.querySelector('.hero-banner').style.display = 'block';
             document.querySelector('.hero-confidence-section').style.display = 'block';
             document.getElementById('formWizard').style.display = 'none';
+
+            // Smooth scroll to the confidence section
+            const confidenceSection = document.getElementById('get-approved');
+            if (confidenceSection) {
+                setTimeout(() => {
+                    confidenceSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
 
             // Reset form data
             formData = {

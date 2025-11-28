@@ -601,23 +601,48 @@
                             </div>
                         </div>
 
-                        <!-- Driver's License Upload -->
+                        <!-- Driver's License Upload - Front & Back -->
                         <div class="upload-box">
                             <h3><i class="fas fa-id-card"></i> Identity Verification</h3>
-                            <p>Upload your driver's license for identity verification</p>
-                            <div class="upload-area" id="licenseUploadArea">
-                                <input type="file" id="licenseFile" accept="image/*,.pdf" style="display: none;" onchange="handleDocumentUpload('license', this)">
-                                <div class="upload-placeholder" onclick="document.getElementById('licenseFile').click()">
-                                    <i class="fas fa-cloud-upload-alt"></i>
-                                    <p>Click to upload driver's license</p>
-                                    <span class="file-types">PDF, JPG, PNG (Max 10MB)</span>
+                            <p>Upload the front and back of your driver's license</p>
+                            <div class="license-upload-grid">
+                                <!-- Front of License -->
+                                <div class="license-side">
+                                    <span class="license-label">Front of ID</span>
+                                    <div class="upload-area" id="licenseFrontUploadArea">
+                                        <input type="file" id="licenseFrontFile" accept="image/*,.pdf" style="display: none;" onchange="handleDocumentUpload('licenseFront', this)">
+                                        <div class="upload-placeholder" onclick="document.getElementById('licenseFrontFile').click()">
+                                            <i class="fas fa-id-card"></i>
+                                            <p>Front of ID</p>
+                                            <span class="file-types">JPG, PNG, PDF</span>
+                                        </div>
+                                        <div class="upload-preview" style="display: none;">
+                                            <i class="fas fa-file-check"></i>
+                                            <span class="file-name"></span>
+                                            <button class="remove-file" onclick="removeDocumentFile('licenseFront')">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="upload-preview" style="display: none;">
-                                    <i class="fas fa-file-check"></i>
-                                    <span class="file-name"></span>
-                                    <button class="remove-file" onclick="removeDocumentFile('license')">
-                                        <i class="fas fa-times"></i>
-                                    </button>
+                                <!-- Back of License -->
+                                <div class="license-side">
+                                    <span class="license-label">Back of ID</span>
+                                    <div class="upload-area" id="licenseBackUploadArea">
+                                        <input type="file" id="licenseBackFile" accept="image/*,.pdf" style="display: none;" onchange="handleDocumentUpload('licenseBack', this)">
+                                        <div class="upload-placeholder" onclick="document.getElementById('licenseBackFile').click()">
+                                            <i class="fas fa-id-card-alt"></i>
+                                            <p>Back of ID</p>
+                                            <span class="file-types">JPG, PNG, PDF</span>
+                                        </div>
+                                        <div class="upload-preview" style="display: none;">
+                                            <i class="fas fa-file-check"></i>
+                                            <span class="file-name"></span>
+                                            <button class="remove-file" onclick="removeDocumentFile('licenseBack')">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
