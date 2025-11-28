@@ -284,7 +284,22 @@ async function initDatabase() {
     }
 }
 
-initDatabase();
+// Database initialization promise
+let dbInitialized = false;
+let dbInitPromise = initDatabase().then(() => {
+    dbInitialized = true;
+    console.log('Database initialization complete');
+}).catch(err => {
+    console.error('Database initialization failed:', err);
+});
+
+// Middleware to ensure DB is ready
+app.use(async (req, res, next) => {
+    if (!dbInitialized) {
+        await dbInitPromise;
+    }
+    next();
+});
 
 // API Routes
 
