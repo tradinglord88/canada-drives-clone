@@ -1021,3 +1021,61 @@
         display: none;
     }
 }
+/* ====== MOBILE ANIMATION OPTIMIZATIONS ====== */
+@media screen and (max-width: 768px) {
+    /* Reduce animation intensity on mobile for performance */
+    .animate-on-scroll {
+        transform: translateY(20px);
+    }
+
+    .vehicle-option:hover,
+    .testimonial:hover {
+        transform: translateY(-6px);
+    }
+
+    .btn-primary:hover,
+    .btn-secondary:hover {
+        transform: translateY(-2px) scale(1.01);
+    }
+
+    /* Disable parallax on mobile for performance */
+    .hero {
+        background-attachment: scroll !important;
+    }
+
+    /* Simplified shadows for mobile performance */
+    .form-wizard {
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    .testimonial {
+        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.06);
+    }
+
+    /* Disable star twinkle on mobile */
+    .testimonial:hover .stars i {
+        animation: none !important;
+    }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .animate-on-scroll {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    .stagger-children > * {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}

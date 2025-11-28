@@ -1298,3 +1298,90 @@ function closeSuccessAndReset() {
         }, 300);
     }
 }
+// ====== SCROLL ANIMATIONS ======
+// Initialize scroll animations for sections
+document.addEventListener('DOMContentLoaded', function() {
+    // Add animation classes to sections
+    const animatedSections = [
+        '.hero-confidence-section',
+        '.content-section',
+        '.our-story',
+        '.vehicle-types',
+        '.testimonials'
+    ];
+
+    // Add animate-on-scroll class to sections
+    animatedSections.forEach(selector => {
+        const sections = document.querySelectorAll(selector);
+        sections.forEach(section => {
+            section.classList.add('animate-on-scroll');
+        });
+    });
+
+    // Add stagger-children to grids
+    const staggerContainers = [
+        '.testimonial-carousel',
+        '.vehicle-grid',
+        '.location-highlights',
+        '.achievements'
+    ];
+
+    staggerContainers.forEach(selector => {
+        const containers = document.querySelectorAll(selector);
+        containers.forEach(container => {
+            container.classList.add('stagger-children');
+        });
+    });
+
+    // Create Intersection Observer for scroll animations
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px 0px -100px 0px',
+        threshold: 0.1
+    };
+
+    const scrollObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                // Don't unobserve to allow re-animation if desired
+            }
+        });
+    }, observerOptions);
+
+    // Observe all animated elements
+    document.querySelectorAll('.animate-on-scroll, .stagger-children').forEach(el => {
+        scrollObserver.observe(el);
+    });
+
+    // Parallax effect for hero background
+    const hero = document.querySelector('.hero');
+    if (hero) {
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const rate = scrolled * 0.3;
+            hero.style.backgroundPositionY = `calc(center + ${rate}px)`;
+        }, { passive: true });
+    }
+
+    // Smooth reveal for form wizard
+    const formWizard = document.querySelector('.form-wizard');
+    if (formWizard) {
+        formWizard.style.opacity = '0';
+        formWizard.style.transform = 'translateY(30px)';
+        
+        setTimeout(() => {
+            formWizard.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+            formWizard.style.opacity = '1';
+            formWizard.style.transform = 'translateY(0)';
+        }, 200);
+    }
+
+    // Add hover effect enhancement to vehicle cards
+    const vehicleCards = document.querySelectorAll('.vehicle-card');
+    vehicleCards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+    });
+
+    console.log('Scroll animations initialized');
+});
