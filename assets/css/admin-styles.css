@@ -72,13 +72,17 @@ body {
     margin-bottom: 2.5rem;
 }
 
+.login-logo {
+    max-width: 200px;
+    height: auto;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+}
+
 .login-header h1 {
     font-size: 2rem;
     font-weight: 800;
-    background: linear-gradient(135deg, #0f4336 0%, #10b981 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #000000;
     margin-bottom: 0.5rem;
 }
 
@@ -86,6 +90,9 @@ body {
     font-size: 1.5rem;
     font-weight: 700;
     letter-spacing: -0.5px;
+    color: #000000 !important;
+    background: none !important;
+    -webkit-text-fill-color: #000000 !important;
 }
 
 .login-header p {
