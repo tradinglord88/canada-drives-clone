@@ -18,8 +18,8 @@
     --secondary-color: #ec4899;
     --secondary-gradient: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
 
-    /* Dark pine green header gradient */
-    --header-gradient: linear-gradient(135deg, #0f4336 0%, #0a2e24 50%, #052418 100%);
+    /* Dark pine green header - matches logo background */
+    --header-gradient: #151f21;
     --header-shadow: rgba(15, 67, 54, 0.3);
 
     /* Updated neutrals */
@@ -240,43 +240,22 @@ body::before {
     gap: 15px;
 }
 
-.logo h1 {
-    color: var(--white);
-    font-size: clamp(1rem, 2vw, 1.25rem);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    transition: var(--transition);
-    position: relative;
-    display: inline-block;
-}
-
 .logo {
     position: relative;
     text-decoration: none;
     flex-shrink: 0;
-    white-space: nowrap;
+    display: flex;
+    align-items: center;
 }
 
-/* Traffic light icon removed */
-
-.logo h1::after {
-    content: '';
-    position: absolute;
-    bottom: -3px;
-    left: 0;
-    width: 0;
-    height: 3px;
-    background: rgba(99, 102, 241, 0.05);
-    transition: width 0.4s ease;
-    border-radius: 2px;
+.logo-img {
+    height: 50px;
+    width: auto;
+    transition: transform 0.3s ease;
 }
 
-.logo:hover h1 {
+.logo:hover .logo-img {
     transform: scale(1.05);
-}
-
-.logo:hover h1::after {
-    width: 100%;
 }
 
 .nav-menu {

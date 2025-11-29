@@ -893,7 +893,7 @@
             <div class="container">
                 <div class="nav-wrapper">
                     <a href="index.html" class="logo">
-                        <h1>Green Light Automotive</h1>
+                        <img src="assets/images/logo.png" alt="Greenlight Automotive" class="logo-img">
                     </a>
                     <button class="mobile-menu-toggle" id="mobileMenuToggle">
                         <span></span>
@@ -1000,10 +1000,74 @@
             <div class="sell-form-step" id="sellStep2">
                 <h2 class="step-title">What make is your vehicle?</h2>
                 <p class="step-subtitle">Select your vehicle manufacturer</p>
-                
-                <!-- Popular Makes Section -->
-                <h3 style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dark);">Popular Makes</h3>
-                <div class="popular-makes">
+
+                <!-- Mobile Dropdown (shown only on mobile) -->
+                <div class="mobile-make-dropdown" style="display: none;">
+                    <label for="mobile-make-select" style="font-weight: 600; display: block; margin-bottom: 0.75rem; color: var(--text-dark);">Select Make</label>
+                    <select id="mobile-make-select" class="form-control" style="font-size: 1.1rem; padding: 1rem; border-radius: 12px; border: 2px solid rgba(99, 102, 241, 0.2); background: white; width: 100%; cursor: pointer;">
+                        <option value="">-- Choose a make --</option>
+                        <optgroup label="Popular Makes">
+                            <option value="Toyota">Toyota</option>
+                            <option value="Honda">Honda</option>
+                            <option value="Ford">Ford</option>
+                            <option value="Chevrolet">Chevrolet</option>
+                            <option value="Nissan">Nissan</option>
+                            <option value="Mazda">Mazda</option>
+                            <option value="Hyundai">Hyundai</option>
+                            <option value="Kia">Kia</option>
+                        </optgroup>
+                        <optgroup label="All Makes">
+                            <option value="Acura">Acura</option>
+                            <option value="Alfa Romeo">Alfa Romeo</option>
+                            <option value="Aston Martin">Aston Martin</option>
+                            <option value="Audi">Audi</option>
+                            <option value="Bentley">Bentley</option>
+                            <option value="BMW">BMW</option>
+                            <option value="Buick">Buick</option>
+                            <option value="Cadillac">Cadillac</option>
+                            <option value="Chrysler">Chrysler</option>
+                            <option value="Dodge">Dodge</option>
+                            <option value="Ferrari">Ferrari</option>
+                            <option value="Fiat">Fiat</option>
+                            <option value="Genesis">Genesis</option>
+                            <option value="GMC">GMC</option>
+                            <option value="Infiniti">Infiniti</option>
+                            <option value="Jaguar">Jaguar</option>
+                            <option value="Jeep">Jeep</option>
+                            <option value="Lamborghini">Lamborghini</option>
+                            <option value="Land Rover">Land Rover</option>
+                            <option value="Lexus">Lexus</option>
+                            <option value="Lincoln">Lincoln</option>
+                            <option value="Lotus">Lotus</option>
+                            <option value="Maserati">Maserati</option>
+                            <option value="McLaren">McLaren</option>
+                            <option value="Mercedes-Benz">Mercedes-Benz</option>
+                            <option value="MINI">MINI</option>
+                            <option value="Mitsubishi">Mitsubishi</option>
+                            <option value="Polestar">Polestar</option>
+                            <option value="Pontiac">Pontiac</option>
+                            <option value="Porsche">Porsche</option>
+                            <option value="RAM">RAM</option>
+                            <option value="Rivian">Rivian</option>
+                            <option value="Rolls-Royce">Rolls-Royce</option>
+                            <option value="Saturn">Saturn</option>
+                            <option value="Scion">Scion</option>
+                            <option value="Smart">Smart</option>
+                            <option value="Subaru">Subaru</option>
+                            <option value="Suzuki">Suzuki</option>
+                            <option value="Tesla">Tesla</option>
+                            <option value="Volkswagen">Volkswagen</option>
+                            <option value="Volvo">Volvo</option>
+                            <option value="Other">Other (Enter Below)</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <!-- Desktop Grid (hidden on mobile) -->
+                <div class="desktop-make-grid">
+                    <!-- Popular Makes Section -->
+                    <h3 style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dark);">Popular Makes</h3>
+                    <div class="popular-makes">
                     <div class="make-option" data-make="Toyota">
                         <i class="fas fa-car" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 10px;"></i>
                         <span>Toyota</span>
@@ -1092,17 +1156,20 @@
                     <div class="make-text-option" data-make="Volvo">Volvo</div>
                 </div>
                 
+                </div><!-- End desktop-make-grid -->
+
+                <!-- Other make input - visible on both mobile and desktop -->
                 <div class="other-make-input" style="margin-top: 20px;">
                     <label for="other-make">Don't see your make? Enter it here:</label>
                     <input type="text" id="other-make" placeholder="e.g., Peugeot, Renault, etc." class="form-control">
                 </div>
-                
+
                 <div class="form-buttons">
                     <button class="btn btn-secondary" onclick="prevSellStep()">Back</button>
                     <button class="btn btn-primary form-continue" onclick="nextSellStep()" disabled>Continue</button>
                 </div>
             </div>
-            
+
             <!-- Step 3: Vehicle Model -->
             <div class="sell-form-step" id="sellStep3">
                 <h2 class="step-title">What model is your <span id="selectedMake"></span>?</h2>
@@ -1467,8 +1534,31 @@
                 if (this.value.trim()) {
                     document.querySelectorAll('.make-option').forEach(o => o.classList.remove('selected'));
                     document.querySelectorAll('.make-text-option').forEach(o => o.classList.remove('selected'));
+                    document.getElementById('mobile-make-select').value = ''; // Reset mobile dropdown
                     sellData.make = this.value.trim();
                     document.querySelector('#sellStep2 .form-continue').disabled = false;
+                } else {
+                    document.querySelector('#sellStep2 .form-continue').disabled = true;
+                }
+            });
+
+            // Mobile dropdown make selection
+            document.getElementById('mobile-make-select').addEventListener('change', function() {
+                if (this.value && this.value !== 'Other') {
+                    // Clear other selections
+                    document.querySelectorAll('.make-option').forEach(o => o.classList.remove('selected'));
+                    document.querySelectorAll('.make-text-option').forEach(o => o.classList.remove('selected'));
+                    document.getElementById('other-make').value = '';
+
+                    sellData.make = this.value;
+                    document.querySelector('#sellStep2 .form-continue').disabled = false;
+
+                    // Auto-advance after brief delay
+                    setTimeout(() => nextSellStep(), 350);
+                } else if (this.value === 'Other') {
+                    // Focus on the other make input
+                    document.getElementById('other-make').focus();
+                    document.querySelector('#sellStep2 .form-continue').disabled = true;
                 } else {
                     document.querySelector('#sellStep2 .form-continue').disabled = true;
                 }

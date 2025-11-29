@@ -17,7 +17,7 @@
 
     /* Navigation Mobile */
     .header {
-        background: linear-gradient(135deg, #0f4336 0%, #0a2e24 100%) !important;
+        background: #151f21 !important;
         box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
         position: fixed !important;
         top: 0;
@@ -44,11 +44,9 @@
         padding: 0;
     }
 
-    .logo h1 {
-        font-size: 1.1rem;
-        margin: 0;
-        color: #ffffff !important;
-        font-weight: 700;
+    .logo-img {
+        height: 40px;
+        width: auto;
     }
 
     /* Mobile Menu Toggle */
@@ -124,7 +122,7 @@
         left: auto;
         width: 70%;
         height: calc(100vh - 60px);
-        background: linear-gradient(135deg, #145240 0%, #0f4336 100%);
+        background: #151f21;
         flex-direction: column;
         justify-content: flex-start;
         align-items: flex-start;
@@ -1082,6 +1080,54 @@
 
 /* ====== SELL MY CAR - MOBILE OPTIMIZATION ====== */
 @media screen and (max-width: 768px) {
+    /* Mobile Make Dropdown - Show on mobile */
+    .mobile-make-dropdown {
+        display: block !important;
+        margin-bottom: 1.5rem;
+    }
+
+    .mobile-make-dropdown select {
+        font-size: 16px !important; /* Prevents iOS zoom */
+        padding: 16px !important;
+        border-radius: 12px !important;
+        border: 2px solid rgba(99, 102, 241, 0.3) !important;
+        background: white !important;
+        width: 100% !important;
+        cursor: pointer;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+        background-repeat: no-repeat !important;
+        background-position: right 16px center !important;
+        background-size: 20px !important;
+    }
+
+    .mobile-make-dropdown select:focus {
+        outline: none;
+        border-color: #6366f1 !important;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+    }
+
+    .mobile-make-dropdown label {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1a202c;
+        margin-bottom: 0.75rem;
+        display: block;
+    }
+
+    /* Desktop Make Grid - Hide on mobile */
+    .desktop-make-grid {
+        display: none !important;
+    }
+
+    /* Other make input for mobile - show it outside the hidden grid */
+    .sell-form-step .other-make-input {
+        display: block !important;
+        margin-top: 1rem;
+    }
+
     /* Main Container */
     .sell-car-wizard {
         padding: 1.5rem;
