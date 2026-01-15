@@ -825,6 +825,21 @@ body::before {
     flex-wrap: wrap;
 }
 
+.security-badges-images {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+}
+
+.security-badges-images img {
+    height: 60px;
+    width: auto;
+    object-fit: contain;
+}
+
 .security-badge {
     display: flex;
     flex-direction: column;
