@@ -394,17 +394,19 @@ async function handleApplicationSubmission(req, res) {
             firstName, lastName, email, phone, streetAddress, city, province, postalCode,
             incomeType, annualIncome, incomeYears, incomeMonths,
             companyName, jobTitle, monthlyIncome, incomeVerified,
-            referrerCode
+            referrerCode, paystubBase64, driversLicenseBase64
         } = applicationData;
 
         console.log('Received application:', { firstName, lastName, email, phone, vehicleType });
+        console.log('Documents received:', { hasPaystub: !!paystubBase64, hasLicense: !!driversLicenseBase64 });
 
         if (!vehicleType || !budget || !tradeIn || !creditScore || !employment || !firstName || !lastName || !email || !phone) {
             return res.status(400).json({ success: false, error: 'Missing required fields' });
         }
 
-        const paystubPath = req.files?.['paystub']?.[0]?.path || null;
-        const driversLicensePath = req.files?.['driversLicense']?.[0]?.path || null;
+        // Use base64 data directly (persists in database on Vercel)
+        const paystubData = paystubBase64 || null;
+        const driversLicenseData = driversLicenseBase64 || null;
 
         if (isVercel) {
             // Vercel Postgres
@@ -420,7 +422,7 @@ async function handleApplicationSubmission(req, res) {
                     ${firstName}, ${lastName}, ${email}, ${phone}, ${streetAddress || ''}, ${city || ''}, ${province || ''}, ${postalCode || ''},
                     ${incomeType || ''}, ${annualIncome || ''}, ${incomeYears || null}, ${incomeMonths || null},
                     ${companyName || ''}, ${jobTitle || ''}, ${monthlyIncome || ''}, ${incomeVerified || ''},
-                    ${paystubPath || ''}, ${driversLicensePath || ''}, ${referrerCode || null}
+                    ${paystubData || ''}, ${driversLicenseData || ''}, ${referrerCode || null}
                 ) RETURNING id
             `;
             console.log('Application submitted successfully - ID:', result.rows[0].id);
@@ -439,7 +441,7 @@ async function handleApplicationSubmission(req, res) {
                  firstName, lastName, email, phone, streetAddress, city, province, postalCode,
                  incomeType, annualIncome, incomeYears, incomeMonths,
                  companyName, jobTitle, monthlyIncome, incomeVerified,
-                 paystubPath, driversLicensePath, referrerCode || null],
+                 paystubData, driversLicenseData, referrerCode || null],
                 function(err) {
                     if (err) {
                         console.error('Database Error:', err);

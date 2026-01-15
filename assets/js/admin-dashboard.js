@@ -179,34 +179,41 @@ function displayLeadDetail(lead) {
 
     // Build documents section HTML
     let documentsHtml = '';
-    if (lead.paystub_file || lead.drivers_license_file) {
+    const hasPaystub = lead.paystub_file && lead.paystub_file.length > 10;
+    const hasLicense = lead.drivers_license_file && lead.drivers_license_file.length > 10;
+
+    if (hasPaystub || hasLicense) {
         documentsHtml = `
             <div class="detail-section documents-section">
                 <h3><i class="fas fa-file-alt"></i> Uploaded Documents</h3>
                 <div class="documents-grid">
-                    ${lead.paystub_file ? `
+                    ${hasPaystub ? `
                         <div class="document-item">
                             <div class="document-label"><i class="fas fa-file-invoice-dollar"></i> Paystub</div>
                             <div class="document-preview">
-                                <a href="${lead.paystub_file}" target="_blank" class="document-link">
-                                    ${isImageFile(lead.paystub_file) ?
-                                        `<img src="${lead.paystub_file}" alt="Paystub" class="document-thumbnail">` :
-                                        `<i class="fas fa-file-pdf"></i> View PDF`
-                                    }
-                                </a>
+                                ${isImageFile(lead.paystub_file) ?
+                                    `<a href="${lead.paystub_file}" target="_blank" class="document-link">
+                                        <img src="${lead.paystub_file}" alt="Paystub" class="document-thumbnail">
+                                    </a>` :
+                                    `<a href="${lead.paystub_file}" download="paystub.pdf" class="document-link">
+                                        <i class="fas fa-file-pdf"></i> Download PDF
+                                    </a>`
+                                }
                             </div>
                         </div>
                     ` : ''}
-                    ${lead.drivers_license_file ? `
+                    ${hasLicense ? `
                         <div class="document-item">
                             <div class="document-label"><i class="fas fa-id-card"></i> Driver's License</div>
                             <div class="document-preview">
-                                <a href="${lead.drivers_license_file}" target="_blank" class="document-link">
-                                    ${isImageFile(lead.drivers_license_file) ?
-                                        `<img src="${lead.drivers_license_file}" alt="Driver's License" class="document-thumbnail">` :
-                                        `<i class="fas fa-file-pdf"></i> View PDF`
-                                    }
-                                </a>
+                                ${isImageFile(lead.drivers_license_file) ?
+                                    `<a href="${lead.drivers_license_file}" target="_blank" class="document-link">
+                                        <img src="${lead.drivers_license_file}" alt="Driver's License" class="document-thumbnail">
+                                    </a>` :
+                                    `<a href="${lead.drivers_license_file}" download="drivers-license.pdf" class="document-link">
+                                        <i class="fas fa-file-pdf"></i> Download PDF
+                                    </a>`
+                                }
                             </div>
                         </div>
                     ` : ''}
@@ -242,8 +249,20 @@ function displayLeadDetail(lead) {
                     <div class="detail-value">${lead.phone}</div>
                 </div>
                 <div class="detail-row">
+                    <div class="detail-label">Street Address</div>
+                    <div class="detail-value">${lead.street_address || 'Not provided'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">City</div>
+                    <div class="detail-value">${lead.city || 'Not provided'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Province</div>
+                    <div class="detail-value">${lead.province || 'Not provided'}</div>
+                </div>
+                <div class="detail-row">
                     <div class="detail-label">Postal Code</div>
-                    <div class="detail-value">${lead.postal_code}</div>
+                    <div class="detail-value">${lead.postal_code || 'Not provided'}</div>
                 </div>
             </div>
 
@@ -275,6 +294,38 @@ function displayLeadDetail(lead) {
                     <div class="detail-label">Employment Status</div>
                     <div class="detail-value">${lead.employment}</div>
                 </div>
+                <div class="detail-row">
+                    <div class="detail-label">Income Type</div>
+                    <div class="detail-value">${lead.income_type || 'Not provided'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Annual Income</div>
+                    <div class="detail-value">${lead.annual_income || 'Not provided'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Monthly Income</div>
+                    <div class="detail-value">${lead.monthly_income || 'Not provided'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Income Duration</div>
+                    <div class="detail-value">${lead.income_years ? lead.income_years + ' years' : ''} ${lead.income_months ? lead.income_months + ' months' : ''} ${!lead.income_years && !lead.income_months ? 'Not provided' : ''}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Income Verified</div>
+                    <div class="detail-value">${lead.income_verified || 'Not provided'}</div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h3><i class="fas fa-briefcase"></i> Employment Details</h3>
+                <div class="detail-row">
+                    <div class="detail-label">Company Name</div>
+                    <div class="detail-value">${lead.company_name || 'Not provided'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Job Title</div>
+                    <div class="detail-value">${lead.job_title || 'Not provided'}</div>
+                </div>
             </div>
 
             <div class="detail-section">
@@ -291,6 +342,14 @@ function displayLeadDetail(lead) {
                     <div class="detail-label">Time</div>
                     <div class="detail-value">${formatTime(lead.submitted_at)}</div>
                 </div>
+                <div class="detail-row">
+                    <div class="detail-label">Referrer Code</div>
+                    <div class="detail-value">${lead.referrer_code || 'Direct (No referral)'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Deal Status</div>
+                    <div class="detail-value">${lead.deal_status || 'pending'}</div>
+                </div>
             </div>
 
             ${documentsHtml}
@@ -298,12 +357,15 @@ function displayLeadDetail(lead) {
     `;
 }
 
-// Check if file is an image
-function isImageFile(filename) {
-    if (!filename) return false;
+// Check if file is an image (supports both file paths and base64 data URLs)
+function isImageFile(data) {
+    if (!data) return false;
+    // Check for base64 image data URL
+    if (data.startsWith('data:image/')) return true;
+    // Check for file extension
     const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'];
-    const lowerFilename = filename.toLowerCase();
-    return imageExtensions.some(ext => lowerFilename.endsWith(ext));
+    const lowerData = data.toLowerCase();
+    return imageExtensions.some(ext => lowerData.endsWith(ext));
 }
 
 // Close Lead Modal
@@ -365,7 +427,14 @@ function filterLeads() {
 
 // Export to CSV
 function exportToCSV() {
-    const headers = ['ID', 'Date', 'First Name', 'Last Name', 'Email', 'Phone', 'Postal Code', 'Vehicle Type', 'Budget', 'Trade-In', 'Credit Score', 'Employment'];
+    const headers = [
+        'ID', 'Date', 'First Name', 'Last Name', 'Email', 'Phone',
+        'Street Address', 'City', 'Province', 'Postal Code',
+        'Vehicle Type', 'Budget', 'Trade-In', 'Credit Score', 'Employment',
+        'Income Type', 'Annual Income', 'Monthly Income', 'Income Years', 'Income Months',
+        'Company Name', 'Job Title', 'Income Verified',
+        'Referrer Code', 'Deal Status'
+    ];
 
     const rows = currentLeads.map(lead => [
         lead.id,
@@ -374,24 +443,37 @@ function exportToCSV() {
         lead.last_name,
         lead.email,
         lead.phone,
-        lead.postal_code,
+        lead.street_address || '',
+        lead.city || '',
+        lead.province || '',
+        lead.postal_code || '',
         lead.vehicle_type,
         lead.budget,
         lead.trade_in,
         lead.credit_score,
-        lead.employment
+        lead.employment,
+        lead.income_type || '',
+        lead.annual_income || '',
+        lead.monthly_income || '',
+        lead.income_years || '',
+        lead.income_months || '',
+        lead.company_name || '',
+        lead.job_title || '',
+        lead.income_verified || '',
+        lead.referrer_code || '',
+        lead.deal_status || 'pending'
     ]);
 
     let csv = headers.join(',') + '\n';
     rows.forEach(row => {
-        csv += row.map(cell => `"${cell}"`).join(',') + '\n';
+        csv += row.map(cell => `"${cell || ''}"`).join(',') + '\n';
     });
 
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `canada-drives-leads-${formatDate(new Date())}.csv`;
+    a.download = `greenlight-leads-${formatDate(new Date())}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
 }

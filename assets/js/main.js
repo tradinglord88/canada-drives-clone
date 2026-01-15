@@ -361,21 +361,27 @@ async function submitForm() {
                 }
             }
             
+            // Convert documents to base64 for persistent storage
+            const paystubBase64 = await fileToBase64(uploadedDocuments.paystub);
+            const licenseFrontBase64 = await fileToBase64(uploadedDocuments.licenseFront);
+            const licenseBackBase64 = await fileToBase64(uploadedDocuments.licenseBack);
+
+            // Combine license front and back if both exist
+            let driversLicenseBase64 = null;
+            if (licenseFrontBase64) {
+                driversLicenseBase64 = licenseFrontBase64;
+                // If both sides uploaded, store front (can be extended to store both)
+            }
+
+            // Add base64 documents to application data
+            applicationData.paystubBase64 = paystubBase64;
+            applicationData.driversLicenseBase64 = driversLicenseBase64;
+
             // Add application data as JSON string
             submitData.append('applicationData', JSON.stringify(applicationData));
-            
-            // Add optional document uploads
-            if (uploadedDocuments.paystub) {
-                submitData.append('paystub', uploadedDocuments.paystub);
-            }
-            if (uploadedDocuments.licenseFront) {
-                submitData.append('driversLicenseFront', uploadedDocuments.licenseFront);
-            }
-            if (uploadedDocuments.licenseBack) {
-                submitData.append('driversLicenseBack', uploadedDocuments.licenseBack);
-            }
-            
+
             console.log('Submitting application data:', applicationData);
+            console.log('Documents included:', { hasPaystub: !!paystubBase64, hasLicense: !!driversLicenseBase64 });
             
             // Submit to enhanced backend API
             const response = await fetch('/api/applications', {
@@ -1239,6 +1245,20 @@ let uploadedDocuments = {
     licenseFront: null,
     licenseBack: null
 };
+
+// Helper function to convert file to base64
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        if (!file) {
+            resolve(null);
+            return;
+        }
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
 
 window.handleDocumentUpload = function(type, input) {
     const file = input.files[0];
