@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Become a Referral Partner - Green Light Automotive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #151f21 0%, #1a2a2d 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #151f21;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .logo p {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        h2 {
+            color: #151f21;
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .benefits {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .benefits h3 {
+            color: #151f21;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .benefit-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .benefit-icon {
+            width: 24px;
+            height: 24px;
+            background: #151f21;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #151f21;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: #151f21;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(21, 31, 33, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .switch-form {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .switch-form a {
+            color: #151f21;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .switch-form a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c00;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .success-message {
+            background: #efe;
+            color: #060;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            display: none;
+        }
+
+        .success-message h3 {
+            margin-bottom: 10px;
+        }
+
+        .referral-code {
+            background: #151f21;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin: 15px 0;
+            display: inline-block;
+        }
+
+        .referral-link {
+            background: #f0f0f0;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            word-break: break-all;
+            margin: 15px 0;
+        }
+
+        .copy-btn {
+            background: #151f21;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .copy-btn:hover {
+            background: #2a3a3d;
+        }
+
+        #registerForm, #loginForm {
+            display: none;
+        }
+
+        #registerForm.active, #loginForm.active {
+            display: block;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            padding: 5px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #151f21;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="logo">
+                <h1>Green Light Automotive</h1>
+                <p>Referral Partner Program</p>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" onclick="showForm('register')">Sign Up</div>
+                <div class="tab" onclick="showForm('login')">Login</div>
+            </div>
+
+            <div id="errorMessage" class="error-message"></div>
+
+            <div id="successMessage" class="success-message">
+                <h3>Welcome to the Team!</h3>
+                <p>Your unique referral code is:</p>
+                <div class="referral-code" id="displayCode"></div>
+                <p>Share this link with potential customers:</p>
+                <div class="referral-link" id="displayLink"></div>
+                <button class="copy-btn" onclick="copyLink()">Copy Link</button>
+                <p style="margin-top: 20px;">
+                    <a href="referral-dashboard.html" style="color: #151f21; font-weight: 600;">Go to Dashboard →</a>
+                </p>
+            </div>
+
+            <form id="registerForm" class="active" onsubmit="handleRegister(event)">
+                <div class="benefits">
+                    <h3>Why Become a Partner?</h3>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">$</div>
+                        <span>Earn $500 for every approved deal</span>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">📊</div>
+                        <span>Track your referrals in real-time</span>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">🔗</div>
+                        <span>Get your unique shareable link</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required placeholder="John Smith">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="john@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number (Optional)</label>
+                    <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Create Password</label>
+                    <input type="password" id="password" name="password" required minlength="6" placeholder="Minimum 6 characters">
+                </div>
+
+                <button type="submit" class="btn" id="registerBtn">Create My Referral Account</button>
+            </form>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" name="email" required placeholder="john@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" name="password" required placeholder="Your password">
+                </div>
+
+                <button type="submit" class="btn" id="loginBtn">Login to Dashboard</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showForm(form) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab')[form === 'register' ? 0 : 1].classList.add('active');
+
+            document.getElementById('registerForm').classList.toggle('active', form === 'register');
+            document.getElementById('loginForm').classList.toggle('active', form === 'login');
+
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function showError(message) {
+            const el = document.getElementById('errorMessage');
+            el.textContent = message;
+            el.style.display = 'block';
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const btn = document.getElementById('registerBtn');
+            btn.disabled = true;
+            btn.textContent = 'Creating Account...';
+
+            try {
+                const response = await fetch('/api/referral/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: document.getElementById('name').value,
+                        email: document.getElementById('email').value,
+                        phone: document.getElementById('phone').value,
+                        password: document.getElementById('password').value
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('registerForm').style.display = 'none';
+                    document.querySelector('.tabs').style.display = 'none';
+                    document.querySelector('.benefits')?.remove();
+
+                    const baseUrl = 'https://www.greenlightautosolutions.ca';
+                    document.getElementById('displayCode').textContent = data.referralCode;
+                    document.getElementById('displayLink').textContent = `${baseUrl}/?ref=${data.referralCode}`;
+                    document.getElementById('successMessage').style.display = 'block';
+                } else {
+                    showError(data.error || 'Registration failed');
+                }
+            } catch (error) {
+                showError('Connection error. Please try again.');
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Create My Referral Account';
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('loginBtn');
+            btn.disabled = true;
+            btn.textContent = 'Logging in...';
+
+            try {
+                const response = await fetch('/api/referral/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: document.getElementById('loginEmail').value,
+                        password: document.getElementById('loginPassword').value
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('referrerToken', data.token);
+                    localStorage.setItem('referrerName', data.name);
+                    localStorage.setItem('referralCode', data.referralCode);
+                    window.location.href = 'referral-dashboard.html';
+                } else {
+                    showError(data.error || 'Login failed');
+                }
+            } catch (error) {
+                showError('Connection error. Please try again.');
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Login to Dashboard';
+        }
+
+        function copyLink() {
+            const link = document.getElementById('displayLink').textContent;
+            navigator.clipboard.writeText(link).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = 'Copy Link', 2000);
+            });
+        }
+
+        // Check if already logged in
+        if (localStorage.getItem('referrerToken')) {
+            window.location.href = 'referral-dashboard.html';
+        }
+    </script>
+</body>
+</html>

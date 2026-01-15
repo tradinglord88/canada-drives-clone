@@ -209,6 +209,31 @@ async function initDatabase() {
                 )
             `;
 
+            // Referral Program Tables
+            await sql`
+                CREATE TABLE IF NOT EXISTS referrers (
+                    id SERIAL PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    email TEXT UNIQUE NOT NULL,
+                    phone TEXT,
+                    referral_code TEXT UNIQUE NOT NULL,
+                    password TEXT NOT NULL,
+                    commission_rate DECIMAL DEFAULT 500.00,
+                    total_earnings DECIMAL DEFAULT 0,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            `;
+
+            // Add referral columns to applications if they don't exist
+            try {
+                await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS referrer_code TEXT`;
+                await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS deal_status TEXT DEFAULT 'pending'`;
+                await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS commission_paid BOOLEAN DEFAULT FALSE`;
+                console.log('Referral columns migration complete');
+            } catch (alterError) {
+                console.log('Referral columns already exist or migration skipped');
+            }
+
             console.log('Vercel Postgres database initialized');
         } catch (error) {
             console.error('Error initializing Vercel Postgres:', error);
@@ -296,6 +321,24 @@ async function initDatabase() {
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 UNIQUE(job_id, driver_id)
             )`);
+
+            // Referral Program Tables
+            db.run(`CREATE TABLE IF NOT EXISTS referrers (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                email TEXT UNIQUE NOT NULL,
+                phone TEXT,
+                referral_code TEXT UNIQUE NOT NULL,
+                password TEXT NOT NULL,
+                commission_rate REAL DEFAULT 500.00,
+                total_earnings REAL DEFAULT 0,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )`);
+
+            // Add referral columns to applications (SQLite doesn't support ADD COLUMN IF NOT EXISTS)
+            db.run(`ALTER TABLE applications ADD COLUMN referrer_code TEXT`, () => {});
+            db.run(`ALTER TABLE applications ADD COLUMN deal_status TEXT DEFAULT 'pending'`, () => {});
+            db.run(`ALTER TABLE applications ADD COLUMN commission_paid INTEGER DEFAULT 0`, () => {});
         });
         console.log('SQLite database initialized');
     }
@@ -350,7 +393,8 @@ async function handleApplicationSubmission(req, res) {
             vehicleType, budget, tradeIn, creditScore, employment,
             firstName, lastName, email, phone, streetAddress, city, province, postalCode,
             incomeType, annualIncome, incomeYears, incomeMonths,
-            companyName, jobTitle, monthlyIncome, incomeVerified
+            companyName, jobTitle, monthlyIncome, incomeVerified,
+            referrerCode
         } = applicationData;
 
         console.log('Received application:', { firstName, lastName, email, phone, vehicleType });
@@ -370,13 +414,13 @@ async function handleApplicationSubmission(req, res) {
                     first_name, last_name, email, phone, street_address, city, province, postal_code,
                     income_type, annual_income, income_years, income_months,
                     company_name, job_title, monthly_income, income_verified,
-                    paystub_file, drivers_license_file
+                    paystub_file, drivers_license_file, referrer_code
                 ) VALUES (
                     ${vehicleType}, ${budget}, ${tradeIn}, ${creditScore}, ${employment},
                     ${firstName}, ${lastName}, ${email}, ${phone}, ${streetAddress || ''}, ${city || ''}, ${province || ''}, ${postalCode || ''},
                     ${incomeType || ''}, ${annualIncome || ''}, ${incomeYears || null}, ${incomeMonths || null},
                     ${companyName || ''}, ${jobTitle || ''}, ${monthlyIncome || ''}, ${incomeVerified || ''},
-                    ${paystubPath || ''}, ${driversLicensePath || ''}
+                    ${paystubPath || ''}, ${driversLicensePath || ''}, ${referrerCode || null}
                 ) RETURNING id
             `;
             console.log('Application submitted successfully - ID:', result.rows[0].id);
@@ -389,13 +433,13 @@ async function handleApplicationSubmission(req, res) {
                     first_name, last_name, email, phone, street_address, city, province, postal_code,
                     income_type, annual_income, income_years, income_months,
                     company_name, job_title, monthly_income, income_verified,
-                    paystub_file, drivers_license_file
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                    paystub_file, drivers_license_file, referrer_code
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [vehicleType, budget, tradeIn, creditScore, employment,
                  firstName, lastName, email, phone, streetAddress, city, province, postalCode,
                  incomeType, annualIncome, incomeYears, incomeMonths,
                  companyName, jobTitle, monthlyIncome, incomeVerified,
-                 paystubPath, driversLicensePath],
+                 paystubPath, driversLicensePath, referrerCode || null],
                 function(err) {
                     if (err) {
                         console.error('Database Error:', err);
@@ -967,6 +1011,272 @@ app.delete('/api/driver/cancel-bid/:id', async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+});
+
+// ==========================================
+// REFERRAL PROGRAM API ENDPOINTS
+// ==========================================
+
+// Generate unique referral code
+function generateReferralCode() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let code = '';
+    for (let i = 0; i < 8; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+}
+
+// Register as a referrer
+app.post('/api/referral/register', async (req, res) => {
+    try {
+        const { name, email, phone, password } = req.body;
+
+        if (!name || !email || !password) {
+            return res.status(400).json({ error: 'Name, email, and password are required' });
+        }
+
+        const referralCode = generateReferralCode();
+        const hashedPassword = bcrypt.hashSync(password, 10);
+
+        if (isVercel) {
+            const result = await sql`
+                INSERT INTO referrers (name, email, phone, referral_code, password)
+                VALUES (${name}, ${email}, ${phone || ''}, ${referralCode}, ${hashedPassword})
+                RETURNING id, referral_code
+            `;
+            res.json({
+                success: true,
+                referralCode: result.rows[0].referral_code,
+                message: 'Registration successful!'
+            });
+        } else {
+            db.run(
+                `INSERT INTO referrers (name, email, phone, referral_code, password) VALUES (?, ?, ?, ?, ?)`,
+                [name, email, phone || '', referralCode, hashedPassword],
+                function(err) {
+                    if (err) {
+                        if (err.message.includes('UNIQUE constraint failed')) {
+                            return res.status(400).json({ error: 'Email already registered' });
+                        }
+                        return res.status(500).json({ error: err.message });
+                    }
+                    res.json({
+                        success: true,
+                        referralCode: referralCode,
+                        message: 'Registration successful!'
+                    });
+                }
+            );
+        }
+    } catch (error) {
+        if (error.message?.includes('duplicate key')) {
+            return res.status(400).json({ error: 'Email already registered' });
+        }
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Referrer login
+app.post('/api/referral/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({ error: 'Email and password are required' });
+        }
+
+        if (isVercel) {
+            const result = await sql`SELECT * FROM referrers WHERE email = ${email}`;
+            if (result.rows.length === 0) {
+                return res.status(401).json({ error: 'Invalid email or password' });
+            }
+            const referrer = result.rows[0];
+            if (!bcrypt.compareSync(password, referrer.password)) {
+                return res.status(401).json({ error: 'Invalid email or password' });
+            }
+            const token = jwt.sign({ id: referrer.id, email: referrer.email, type: 'referrer' }, JWT_SECRET, { expiresIn: '7d' });
+            res.json({ success: true, token, referralCode: referrer.referral_code, name: referrer.name });
+        } else {
+            db.get(`SELECT * FROM referrers WHERE email = ?`, [email], (err, referrer) => {
+                if (err) return res.status(500).json({ error: err.message });
+                if (!referrer) return res.status(401).json({ error: 'Invalid email or password' });
+                if (!bcrypt.compareSync(password, referrer.password)) {
+                    return res.status(401).json({ error: 'Invalid email or password' });
+                }
+                const token = jwt.sign({ id: referrer.id, email: referrer.email, type: 'referrer' }, JWT_SECRET, { expiresIn: '7d' });
+                res.json({ success: true, token, referralCode: referrer.referral_code, name: referrer.name });
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get referrer stats
+app.get('/api/referral/stats', async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) return res.status(401).json({ error: 'No token provided' });
+
+        const token = authHeader.split(' ')[1];
+        const decoded = jwt.verify(token, JWT_SECRET);
+
+        if (decoded.type !== 'referrer') {
+            return res.status(403).json({ error: 'Invalid token type' });
+        }
+
+        if (isVercel) {
+            const referrer = await sql`SELECT * FROM referrers WHERE id = ${decoded.id}`;
+            const leads = await sql`
+                SELECT COUNT(*) as total,
+                       SUM(CASE WHEN deal_status = 'approved' THEN 1 ELSE 0 END) as converted
+                FROM applications WHERE referrer_code = ${referrer.rows[0].referral_code}
+            `;
+            res.json({
+                referralCode: referrer.rows[0].referral_code,
+                totalLeads: parseInt(leads.rows[0].total) || 0,
+                convertedLeads: parseInt(leads.rows[0].converted) || 0,
+                totalEarnings: parseFloat(referrer.rows[0].total_earnings) || 0,
+                commissionRate: parseFloat(referrer.rows[0].commission_rate) || 500
+            });
+        } else {
+            db.get(`SELECT * FROM referrers WHERE id = ?`, [decoded.id], (err, referrer) => {
+                if (err) return res.status(500).json({ error: err.message });
+                db.get(
+                    `SELECT COUNT(*) as total,
+                            SUM(CASE WHEN deal_status = 'approved' THEN 1 ELSE 0 END) as converted
+                     FROM applications WHERE referrer_code = ?`,
+                    [referrer.referral_code],
+                    (err, leads) => {
+                        if (err) return res.status(500).json({ error: err.message });
+                        res.json({
+                            referralCode: referrer.referral_code,
+                            totalLeads: leads.total || 0,
+                            convertedLeads: leads.converted || 0,
+                            totalEarnings: referrer.total_earnings || 0,
+                            commissionRate: referrer.commission_rate || 500
+                        });
+                    }
+                );
+            });
+        }
+    } catch (error) {
+        res.status(401).json({ error: 'Invalid token' });
+    }
+});
+
+// Get referrer's leads
+app.get('/api/referral/leads', async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) return res.status(401).json({ error: 'No token provided' });
+
+        const token = authHeader.split(' ')[1];
+        const decoded = jwt.verify(token, JWT_SECRET);
+
+        if (decoded.type !== 'referrer') {
+            return res.status(403).json({ error: 'Invalid token type' });
+        }
+
+        if (isVercel) {
+            const referrer = await sql`SELECT referral_code FROM referrers WHERE id = ${decoded.id}`;
+            const leads = await sql`
+                SELECT id, first_name, last_name, vehicle_type, budget, deal_status, submitted_at
+                FROM applications
+                WHERE referrer_code = ${referrer.rows[0].referral_code}
+                ORDER BY submitted_at DESC
+            `;
+            res.json(leads.rows);
+        } else {
+            db.get(`SELECT referral_code FROM referrers WHERE id = ?`, [decoded.id], (err, referrer) => {
+                if (err) return res.status(500).json({ error: err.message });
+                db.all(
+                    `SELECT id, first_name, last_name, vehicle_type, budget, deal_status, submitted_at
+                     FROM applications WHERE referrer_code = ? ORDER BY submitted_at DESC`,
+                    [referrer.referral_code],
+                    (err, leads) => {
+                        if (err) return res.status(500).json({ error: err.message });
+                        res.json(leads);
+                    }
+                );
+            });
+        }
+    } catch (error) {
+        res.status(401).json({ error: 'Invalid token' });
+    }
+});
+
+// Admin: Update application status (triggers commission on approved)
+app.put('/api/applications/:id/status', async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) return res.status(401).json({ error: 'No token provided' });
+
+        const token = authHeader.split(' ')[1];
+        jwt.verify(token, JWT_SECRET); // Just verify it's valid admin token
+
+        const { id } = req.params;
+        const { status } = req.body;
+
+        if (!['pending', 'contacted', 'approved', 'declined'].includes(status)) {
+            return res.status(400).json({ error: 'Invalid status' });
+        }
+
+        if (isVercel) {
+            // Get the application to check for referrer
+            const app = await sql`SELECT * FROM applications WHERE id = ${id}`;
+            if (app.rows.length === 0) {
+                return res.status(404).json({ error: 'Application not found' });
+            }
+
+            const application = app.rows[0];
+
+            // Update status
+            await sql`UPDATE applications SET deal_status = ${status} WHERE id = ${id}`;
+
+            // If approved and has referrer, credit commission
+            if (status === 'approved' && application.referrer_code && !application.commission_paid) {
+                const referrer = await sql`SELECT * FROM referrers WHERE referral_code = ${application.referrer_code}`;
+                if (referrer.rows.length > 0) {
+                    const commission = referrer.rows[0].commission_rate || 500;
+                    await sql`
+                        UPDATE referrers
+                        SET total_earnings = total_earnings + ${commission}
+                        WHERE referral_code = ${application.referrer_code}
+                    `;
+                    await sql`UPDATE applications SET commission_paid = TRUE WHERE id = ${id}`;
+                }
+            }
+
+            res.json({ success: true, message: 'Status updated' });
+        } else {
+            db.get(`SELECT * FROM applications WHERE id = ?`, [id], (err, application) => {
+                if (err) return res.status(500).json({ error: err.message });
+                if (!application) return res.status(404).json({ error: 'Application not found' });
+
+                db.run(`UPDATE applications SET deal_status = ? WHERE id = ?`, [status, id], function(err) {
+                    if (err) return res.status(500).json({ error: err.message });
+
+                    // If approved and has referrer, credit commission
+                    if (status === 'approved' && application.referrer_code && !application.commission_paid) {
+                        db.get(`SELECT * FROM referrers WHERE referral_code = ?`, [application.referrer_code], (err, referrer) => {
+                            if (!err && referrer) {
+                                const commission = referrer.commission_rate || 500;
+                                db.run(`UPDATE referrers SET total_earnings = total_earnings + ? WHERE referral_code = ?`,
+                                    [commission, application.referrer_code]);
+                                db.run(`UPDATE applications SET commission_paid = 1 WHERE id = ?`, [id]);
+                            }
+                        });
+                    }
+
+                    res.json({ success: true, message: 'Status updated' });
+                });
+            });
+        }
+    } catch (error) {
+        res.status(401).json({ error: 'Invalid token' });
     }
 });
 

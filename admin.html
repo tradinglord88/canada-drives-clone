@@ -477,6 +477,7 @@
 
         function showApplicationDetails(app) {
             const detailsDiv = document.getElementById('applicationDetails');
+            window.currentAppId = app.id;
 
             // Helper function to create document link
             function getDocumentLink(filename, label) {
@@ -484,8 +485,42 @@
                 return `<a href="/uploads/${filename}" target="_blank" style="color: #0066cc; text-decoration: none;">📄 View ${label}</a>`;
             }
 
+            // Get status badge color
+            function getStatusBadge(status) {
+                const colors = {
+                    'pending': '#fff3cd',
+                    'contacted': '#cce5ff',
+                    'approved': '#d4edda',
+                    'declined': '#f8d7da'
+                };
+                const textColors = {
+                    'pending': '#856404',
+                    'contacted': '#004085',
+                    'approved': '#155724',
+                    'declined': '#721c24'
+                };
+                return `<span style="background: ${colors[status] || '#eee'}; color: ${textColors[status] || '#333'}; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500;">${(status || 'pending').charAt(0).toUpperCase() + (status || 'pending').slice(1)}</span>`;
+            }
+
             detailsDiv.innerHTML = `
-                <h3 style="margin: 10px 0; color: #333; border-bottom: 2px solid #0066cc; padding-bottom: 5px;">Contact Information</h3>
+                <h3 style="margin: 10px 0; color: #333; border-bottom: 2px solid #0066cc; padding-bottom: 5px;">Lead Status & Referral</h3>
+                <div class="detail-row" style="background: #f0f7ff;">
+                    <div class="detail-label">Deal Status:</div>
+                    <div>
+                        <select id="statusSelect" onchange="updateStatus(${app.id}, this.value)" style="padding: 8px 12px; border-radius: 5px; border: 1px solid #ddd; font-size: 14px;">
+                            <option value="pending" ${app.deal_status === 'pending' ? 'selected' : ''}>Pending</option>
+                            <option value="contacted" ${app.deal_status === 'contacted' ? 'selected' : ''}>Contacted</option>
+                            <option value="approved" ${app.deal_status === 'approved' ? 'selected' : ''}>Approved</option>
+                            <option value="declined" ${app.deal_status === 'declined' ? 'selected' : ''}>Declined</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="detail-row" style="background: ${app.referrer_code ? '#e8f5e9' : '#f5f5f5'};">
+                    <div class="detail-label">Referral Source:</div>
+                    <div>${app.referrer_code ? '<strong style="color: #2e7d32;">📣 ' + app.referrer_code + '</strong>' : '<span style="color: #999;">Direct (No Referral)</span>'}</div>
+                </div>
+
+                <h3 style="margin: 20px 0 10px; color: #333; border-bottom: 2px solid #0066cc; padding-bottom: 5px;">Contact Information</h3>
                 <div class="detail-row">
                     <div class="detail-label">Application ID:</div>
                     <div>${app.id}</div>
@@ -585,6 +620,29 @@
                 </div>
             `;
             document.getElementById('detailsModal').style.display = 'block';
+        }
+
+        async function updateStatus(id, status) {
+            try {
+                const response = await fetch(`/api/applications/${id}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ status })
+                });
+
+                if (response.ok) {
+                    alert('Status updated successfully!' + (status === 'approved' ? ' Commission credited to referrer if applicable.' : ''));
+                    loadApplications();
+                } else {
+                    alert('Failed to update status');
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+                alert('Error updating status');
+            }
         }
 
         function closeModal() {

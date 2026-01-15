@@ -12,8 +12,27 @@ let formData = {
     incomeDuration: { years: 0, months: 0 },
     workplace: { company: '', jobTitle: '' },
     incomeVerified: false,
-    contactInfo: {}
+    contactInfo: {},
+    referrerCode: null
 };
+
+// Capture referral code from URL on page load
+(function captureReferralCode() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const refCode = urlParams.get('ref');
+    if (refCode) {
+        formData.referrerCode = refCode;
+        // Store in sessionStorage so it persists across page navigation
+        sessionStorage.setItem('referrerCode', refCode);
+        console.log('Referral code captured:', refCode);
+    } else {
+        // Check sessionStorage for previously captured code
+        const storedCode = sessionStorage.getItem('referrerCode');
+        if (storedCode) {
+            formData.referrerCode = storedCode;
+        }
+    }
+})();
 
 // Show Pre-Approval Form
 function showPreApprovalForm() {
@@ -324,7 +343,8 @@ async function submitForm() {
                 streetAddress: formData.contactInfo.streetAddress,
                 city: formData.contactInfo.city,
                 province: formData.contactInfo.province,
-                postalCode: formData.contactInfo.postalCode
+                postalCode: formData.contactInfo.postalCode,
+                referrerCode: formData.referrerCode
             };
             
             // Add trade-in details if applicable
