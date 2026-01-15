@@ -477,7 +477,15 @@
 
         function showApplicationDetails(app) {
             const detailsDiv = document.getElementById('applicationDetails');
+
+            // Helper function to create document link
+            function getDocumentLink(filename, label) {
+                if (!filename) return '<span style="color: #999;">Not uploaded</span>';
+                return `<a href="/uploads/${filename}" target="_blank" style="color: #0066cc; text-decoration: none;">📄 View ${label}</a>`;
+            }
+
             detailsDiv.innerHTML = `
+                <h3 style="margin: 10px 0; color: #333; border-bottom: 2px solid #0066cc; padding-bottom: 5px;">Contact Information</h3>
                 <div class="detail-row">
                     <div class="detail-label">Application ID:</div>
                     <div>${app.id}</div>
@@ -494,10 +502,26 @@
                     <div class="detail-label">Phone:</div>
                     <div>${app.phone}</div>
                 </div>
+
+                <h3 style="margin: 20px 0 10px; color: #333; border-bottom: 2px solid #0066cc; padding-bottom: 5px;">Address</h3>
+                <div class="detail-row">
+                    <div class="detail-label">Street Address:</div>
+                    <div>${app.street_address || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">City:</div>
+                    <div>${app.city || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Province:</div>
+                    <div>${app.province || 'N/A'}</div>
+                </div>
                 <div class="detail-row">
                     <div class="detail-label">Postal Code:</div>
-                    <div>${app.postal_code}</div>
+                    <div>${app.postal_code || 'N/A'}</div>
                 </div>
+
+                <h3 style="margin: 20px 0 10px; color: #333; border-bottom: 2px solid #0066cc; padding-bottom: 5px;">Vehicle Preferences</h3>
                 <div class="detail-row">
                     <div class="detail-label">Vehicle Type:</div>
                     <div>${app.vehicle_type}</div>
@@ -514,11 +538,48 @@
                     <div class="detail-label">Credit Score:</div>
                     <div>${app.credit_score}</div>
                 </div>
+
+                <h3 style="margin: 20px 0 10px; color: #333; border-bottom: 2px solid #0066cc; padding-bottom: 5px;">Employment & Income</h3>
                 <div class="detail-row">
-                    <div class="detail-label">Employment:</div>
+                    <div class="detail-label">Employment Status:</div>
                     <div>${app.employment}</div>
                 </div>
                 <div class="detail-row">
+                    <div class="detail-label">Company Name:</div>
+                    <div>${app.company_name || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Job Title:</div>
+                    <div>${app.job_title || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Income Type:</div>
+                    <div>${app.income_type || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Annual Income:</div>
+                    <div>${app.annual_income || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Monthly Income:</div>
+                    <div>${app.monthly_income || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Time at Job:</div>
+                    <div>${app.income_years ? app.income_years + ' years' : ''}${app.income_months ? ', ' + app.income_months + ' months' : ''} ${!app.income_years && !app.income_months ? 'N/A' : ''}</div>
+                </div>
+
+                <h3 style="margin: 20px 0 10px; color: #333; border-bottom: 2px solid #0066cc; padding-bottom: 5px;">Uploaded Documents</h3>
+                <div class="detail-row">
+                    <div class="detail-label">Driver's License:</div>
+                    <div>${getDocumentLink(app.drivers_license_file, 'License')}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Paystub/Income:</div>
+                    <div>${getDocumentLink(app.paystub_file, 'Paystub')}</div>
+                </div>
+
+                <div class="detail-row" style="margin-top: 20px; background: #e8f4f8;">
                     <div class="detail-label">Submitted:</div>
                     <div>${new Date(app.submitted_at).toLocaleString()}</div>
                 </div>

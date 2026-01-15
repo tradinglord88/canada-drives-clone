@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Green Light Automotive - The Easiest Way to Buy or Sell a Car</title>
-    <link rel="stylesheet" href="assets/css/styles.css">
-    <link rel="stylesheet" href="assets/css/mobile.css">
+    <link rel="stylesheet" href="assets/css/styles.css?v=7">
+    <link rel="stylesheet" href="assets/css/mobile.css?v=3">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -557,6 +557,33 @@
                             <input type="tel" id="phone" name="phone" required>
                         </div>
                         <div class="form-group">
+                            <label for="streetAddress">Street Address</label>
+                            <input type="text" id="streetAddress" name="streetAddress" placeholder="123 Main Street" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="city">City</label>
+                            <input type="text" id="city" name="city" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="province">Province</label>
+                            <select id="province" name="province" required>
+                                <option value="">Select Province</option>
+                                <option value="AB">Alberta</option>
+                                <option value="BC">British Columbia</option>
+                                <option value="MB">Manitoba</option>
+                                <option value="NB">New Brunswick</option>
+                                <option value="NL">Newfoundland and Labrador</option>
+                                <option value="NS">Nova Scotia</option>
+                                <option value="NT">Northwest Territories</option>
+                                <option value="NU">Nunavut</option>
+                                <option value="ON">Ontario</option>
+                                <option value="PE">Prince Edward Island</option>
+                                <option value="QC">Quebec</option>
+                                <option value="SK">Saskatchewan</option>
+                                <option value="YT">Yukon</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label for="postalCode">Postal Code</label>
                             <input type="text" id="postalCode" name="postalCode" required>
                         </div>
@@ -617,7 +644,7 @@
                                             <span class="file-types">JPG, PNG, PDF</span>
                                         </div>
                                         <div class="upload-preview" style="display: none;">
-                                            <i class="fas fa-file-check"></i>
+                                            <img class="preview-thumbnail" src="" alt="Preview">
                                             <span class="file-name"></span>
                                             <button class="remove-file" onclick="removeDocumentFile('licenseFront')">
                                                 <i class="fas fa-times"></i>
@@ -636,7 +663,7 @@
                                             <span class="file-types">JPG, PNG, PDF</span>
                                         </div>
                                         <div class="upload-preview" style="display: none;">
-                                            <i class="fas fa-file-check"></i>
+                                            <img class="preview-thumbnail" src="" alt="Preview">
                                             <span class="file-name"></span>
                                             <button class="remove-file" onclick="removeDocumentFile('licenseBack')">
                                                 <i class="fas fa-times"></i>
@@ -955,28 +982,28 @@
                     <div class="footer-column">
                         <h4>Company</h4>
                         <ul>
-                            <li><a href="#">About Us</a></li>
-                            <li><a href="#">Careers</a></li>
-                            <li><a href="#">Press</a></li>
-                            <li><a href="#">Contact</a></li>
+                            <li><a href="#why-us">About Us</a></li>
+                            <li><a href="#why-us">Careers</a></li>
+                            <li><a href="#why-us">Press</a></li>
+                            <li><a href="#get-approved">Contact</a></li>
                         </ul>
                     </div>
                     <div class="footer-column">
                         <h4>Services</h4>
                         <ul>
-                            <li><a href="#">Car Financing</a></li>
-                            <li><a href="#">Sell Your Car</a></li>
-                            <li><a href="#">Trade-In</a></li>
-                            <li><a href="#">Car Loans</a></li>
+                            <li><a href="#get-approved">Car Financing</a></li>
+                            <li><a href="sell-my-car.html">Sell Your Car</a></li>
+                            <li><a href="#sell-car">Trade-In</a></li>
+                            <li><a href="#get-approved">Car Loans</a></li>
                         </ul>
                     </div>
                     <div class="footer-column">
                         <h4>Resources</h4>
                         <ul>
-                            <li><a href="#">Blog</a></li>
-                            <li><a href="#">FAQs</a></li>
-                            <li><a href="#">Car Reviews</a></li>
-                            <li><a href="#">Financing Guide</a></li>
+                            <li><a href="#why-us">Blog</a></li>
+                            <li><a href="#get-approved">FAQs</a></li>
+                            <li><a href="#sell-car">Car Reviews</a></li>
+                            <li><a href="#get-approved">Financing Guide</a></li>
                         </ul>
                     </div>
                     <div class="footer-column">
@@ -1000,7 +1027,7 @@
         </div>
     </footer>
 
-    <script src="assets/js/main.js"></script>
+    <script src="assets/js/main.js?v=1"></script>
     <script src="assets/js/sell-form.js"></script>
 </body>
 </html>

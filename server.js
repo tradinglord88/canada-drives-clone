@@ -87,6 +87,7 @@ app.use(cors({
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('.'));
+app.use('/uploads', express.static(uploadsDir));
 
 // Initialize database tables
 async function initDatabase() {
@@ -114,6 +115,9 @@ async function initDatabase() {
                     last_name TEXT NOT NULL,
                     email TEXT NOT NULL,
                     phone TEXT NOT NULL,
+                    street_address TEXT,
+                    city TEXT,
+                    province TEXT,
                     postal_code TEXT,
                     income_type TEXT,
                     annual_income TEXT,
@@ -128,6 +132,16 @@ async function initDatabase() {
                     submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             `;
+
+            // Add new address columns if they don't exist (migration for existing databases)
+            try {
+                await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS street_address TEXT`;
+                await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS city TEXT`;
+                await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS province TEXT`;
+                console.log('Address columns migration complete');
+            } catch (alterError) {
+                console.log('Address columns already exist or migration skipped');
+            }
 
             // Create default admin user
             const adminUsername = process.env.ADMIN_USERNAME || 'admin';
@@ -220,6 +234,9 @@ async function initDatabase() {
                 last_name TEXT NOT NULL,
                 email TEXT NOT NULL,
                 phone TEXT NOT NULL,
+                street_address TEXT,
+                city TEXT,
+                province TEXT,
                 postal_code TEXT,
                 income_type TEXT,
                 annual_income TEXT,
@@ -331,7 +348,7 @@ async function handleApplicationSubmission(req, res) {
 
         const {
             vehicleType, budget, tradeIn, creditScore, employment,
-            firstName, lastName, email, phone, postalCode,
+            firstName, lastName, email, phone, streetAddress, city, province, postalCode,
             incomeType, annualIncome, incomeYears, incomeMonths,
             companyName, jobTitle, monthlyIncome, incomeVerified
         } = applicationData;
@@ -350,13 +367,13 @@ async function handleApplicationSubmission(req, res) {
             const result = await sql`
                 INSERT INTO applications (
                     vehicle_type, budget, trade_in, credit_score, employment,
-                    first_name, last_name, email, phone, postal_code,
+                    first_name, last_name, email, phone, street_address, city, province, postal_code,
                     income_type, annual_income, income_years, income_months,
                     company_name, job_title, monthly_income, income_verified,
                     paystub_file, drivers_license_file
                 ) VALUES (
                     ${vehicleType}, ${budget}, ${tradeIn}, ${creditScore}, ${employment},
-                    ${firstName}, ${lastName}, ${email}, ${phone}, ${postalCode || ''},
+                    ${firstName}, ${lastName}, ${email}, ${phone}, ${streetAddress || ''}, ${city || ''}, ${province || ''}, ${postalCode || ''},
                     ${incomeType || ''}, ${annualIncome || ''}, ${incomeYears || null}, ${incomeMonths || null},
                     ${companyName || ''}, ${jobTitle || ''}, ${monthlyIncome || ''}, ${incomeVerified || ''},
                     ${paystubPath || ''}, ${driversLicensePath || ''}
@@ -369,13 +386,13 @@ async function handleApplicationSubmission(req, res) {
             db.run(
                 `INSERT INTO applications (
                     vehicle_type, budget, trade_in, credit_score, employment,
-                    first_name, last_name, email, phone, postal_code,
+                    first_name, last_name, email, phone, street_address, city, province, postal_code,
                     income_type, annual_income, income_years, income_months,
                     company_name, job_title, monthly_income, income_verified,
                     paystub_file, drivers_license_file
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [vehicleType, budget, tradeIn, creditScore, employment,
-                 firstName, lastName, email, phone, postalCode,
+                 firstName, lastName, email, phone, streetAddress, city, province, postalCode,
                  incomeType, annualIncome, incomeYears, incomeMonths,
                  companyName, jobTitle, monthlyIncome, incomeVerified,
                  paystubPath, driversLicensePath],
@@ -953,8 +970,9 @@ app.delete('/api/driver/cancel-bid/:id', async (req, res) => {
     }
 });
 
-// Only start server if not running on Vercel
-if (!isVercel) {
+// Start server (skip on Vercel deployment, but allow local testing with Postgres)
+const shouldStartServer = process.env.VERCEL !== '1';
+if (shouldStartServer) {
     server.listen(PORT, () => {
         console.log(`✓ Greenlight Automotive Server running on http://localhost:${PORT}`);
         console.log(`✓ Admin panel: http://localhost:${PORT}/admin`);

@@ -311,16 +311,19 @@ async function submitForm() {
                 employment: formData.employment,
                 incomeType: formData.incomeType,
                 annualIncome: formData.annualIncome,
-                incomeYears: formData.incomeYears,
-                incomeMonths: formData.incomeMonths,
-                companyName: formData.companyName,
-                jobTitle: formData.jobTitle,
+                incomeYears: formData.incomeDuration.years,
+                incomeMonths: formData.incomeDuration.months,
+                companyName: formData.workplace.company,
+                jobTitle: formData.workplace.jobTitle,
                 monthlyIncome: formData.monthlyIncome,
                 incomeVerified: formData.incomeVerified,
                 firstName: formData.contactInfo.firstName,
                 lastName: formData.contactInfo.lastName,
                 email: formData.contactInfo.email,
                 phone: formData.contactInfo.phone,
+                streetAddress: formData.contactInfo.streetAddress,
+                city: formData.contactInfo.city,
+                province: formData.contactInfo.province,
                 postalCode: formData.contactInfo.postalCode
             };
             
@@ -686,23 +689,35 @@ document.addEventListener('DOMContentLoaded', function() {
         input.addEventListener('change', validateContactForm);
     });
 
+    // Also listen to province select
+    const provinceSelect = document.getElementById('province');
+    if (provinceSelect) {
+        provinceSelect.addEventListener('change', validateContactForm);
+    }
+
     function validateContactForm() {
         const firstName = document.getElementById('firstName').value;
         const lastName = document.getElementById('lastName').value;
         const email = document.getElementById('email').value;
         const phone = document.getElementById('phone').value;
+        const streetAddress = document.getElementById('streetAddress').value;
+        const city = document.getElementById('city').value;
+        const province = document.getElementById('province').value;
         const postalCode = document.getElementById('postalCode').value;
         const consent = document.getElementById('consent').checked;
-        
-        const isValid = firstName && lastName && email && phone && postalCode && consent;
+
+        const isValid = firstName && lastName && email && phone && streetAddress && city && province && postalCode && consent;
         document.querySelector('#step11 .form-continue').disabled = !isValid;
-        
+
         if (isValid) {
             formData.contactInfo = {
                 firstName,
                 lastName,
                 email,
                 phone,
+                streetAddress,
+                city,
+                province,
                 postalCode
             };
         }
@@ -1208,42 +1223,64 @@ let uploadedDocuments = {
 window.handleDocumentUpload = function(type, input) {
     const file = input.files[0];
     if (!file) return;
-    
+
     // Validate file size (10MB max)
     if (file.size > 10 * 1024 * 1024) {
         alert('File size must be less than 10MB');
         input.value = '';
         return;
     }
-    
+
     // Store the file
     uploadedDocuments[type] = file;
-    
+
     // Update UI
     const uploadArea = document.getElementById(`${type}UploadArea`);
     const placeholder = uploadArea.querySelector('.upload-placeholder');
     const preview = uploadArea.querySelector('.upload-preview');
     const fileName = preview.querySelector('.file-name');
-    
+    const thumbnail = preview.querySelector('.preview-thumbnail');
+
     // Show preview
     placeholder.style.display = 'none';
     preview.style.display = 'flex';
     fileName.textContent = file.name;
+
+    // Show image thumbnail if it's an image file
+    if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            thumbnail.src = e.target.result;
+            thumbnail.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        // For PDFs, show a PDF icon
+        thumbnail.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23151f21"><path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M10.5,11C11.33,11 12,11.67 12,12.5V13.5C12,14.33 11.33,15 10.5,15H9.5V17H8V11H10.5M10.5,13.5V12.5H9.5V13.5H10.5M14.5,11C15.33,11 16,11.67 16,12.5V15.5C16,16.33 15.33,17 14.5,17H12.5V11H14.5M14.5,15.5V12.5H14V15.5H14.5M20,11V12H18V13H19.5V14H18V17H16.5V11H20Z"/></svg>';
+        thumbnail.style.display = 'block';
+    }
 }
 
 window.removeDocumentFile = function(type) {
     // Clear the file
     uploadedDocuments[type] = null;
-    
+
     // Reset input
     const input = document.getElementById(`${type}File`);
     input.value = '';
-    
+
     // Update UI
     const uploadArea = document.getElementById(`${type}UploadArea`);
     const placeholder = uploadArea.querySelector('.upload-placeholder');
     const preview = uploadArea.querySelector('.upload-preview');
-    
+    const thumbnail = preview.querySelector('.preview-thumbnail');
+
+    // Reset thumbnail
+    if (thumbnail) {
+        thumbnail.src = '';
+        thumbnail.style.display = 'none';
+    }
+
     // Show placeholder
     placeholder.style.display = 'block';
     preview.style.display = 'none';
