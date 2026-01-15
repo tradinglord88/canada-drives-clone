@@ -18,6 +18,10 @@
     --secondary-color: #243538;
     --secondary-gradient: linear-gradient(135deg, #1a2a2d 0%, #151f21 100%);
 
+    /* Professional Banking Colors */
+    --gold-accent: #c9a962;
+    --navy-dark: #1a2332;
+
     /* Dark pine green header - matches logo background */
     --header-gradient: #151f21;
     --header-shadow: rgba(21, 31, 33, 0.3);
@@ -47,9 +51,114 @@
     --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
     --animation-duration: 0.3s;
 
-    /* Spacing */
-    --section-padding: clamp(4rem, 10vw, 8rem);
-    --card-padding: clamp(1.5rem, 3vw, 2.5rem);
+    /* Compact Spacing */
+    --section-padding: clamp(2rem, 5vw, 3rem);
+    --card-padding: clamp(1rem, 2vw, 1.5rem);
+}
+
+/* ========================================
+   PROFESSIONAL TOP BAR
+======================================== */
+.top-bar {
+    background: var(--navy-dark);
+    color: white;
+    padding: 8px 0;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.top-bar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-bar-left,
+.top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.top-bar-left span,
+.top-bar-right span {
+    opacity: 0.9;
+}
+
+.top-bar-left i,
+.top-bar-right i {
+    color: var(--gold-accent);
+    margin-right: 6px;
+}
+
+.top-bar-cta {
+    background: var(--gold-accent);
+    color: var(--navy-dark);
+    padding: 6px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 12px;
+    transition: var(--transition);
+}
+
+.top-bar-cta:hover {
+    background: #dbb872;
+    transform: translateY(-1px);
+}
+
+.top-bar-cta i {
+    color: var(--navy-dark);
+    margin-left: 6px;
+    margin-right: 0;
+}
+
+/* ========================================
+   STATISTICS BAR
+======================================== */
+.stats-bar {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--navy-dark) 100%);
+    padding: 20px 0;
+    border-bottom: 3px solid var(--gold-accent);
+}
+
+.stats-bar-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+}
+
+.stat-item {
+    text-align: center;
+    color: white;
+}
+
+.stat-number {
+    display: block;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--gold-accent);
+}
+
+.stat-number i {
+    font-size: 18px;
+    margin-left: 2px;
+}
+
+.stat-label {
+    display: block;
+    font-size: 12px;
+    opacity: 0.8;
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-divider {
+    width: 1px;
+    height: 40px;
+    background: rgba(255,255,255,0.2);
 }
 
 /* ====== ANIMATION KEYFRAMES ====== */
@@ -675,13 +784,14 @@ body::before {
 /* Hero Confidence Section - White Theme */
 .hero-confidence-section {
     background: #ffffff;
-    padding: clamp(3rem, 6vw, 5rem) 0;
-    margin-top: 100px;
+    padding: clamp(2rem, 4vw, 3rem) 0;
+    margin-top: 0;
     position: relative;
     z-index: 10;
-    border-radius: 30px 30px 0 0;
-    box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.1);
+    border-radius: 0;
+    box-shadow: none;
     border: none;
+    border-top: 1px solid #e0e0e0;
 }
 
 .hero-confidence-section .content-text {
@@ -775,24 +885,24 @@ body::before {
 
 /* Any Credit Approved Section */
 .credit-approved-section {
-    padding: 80px 0;
+    padding: 40px 0;
     background: #f8f9fa;
     text-align: center;
 }
 
 .credit-approved-section .section-title {
-    font-size: 2.5rem;
+    font-size: 1.8rem;
     font-weight: 700;
     color: #151f21;
-    margin-bottom: 40px;
+    margin-bottom: 25px;
     font-style: italic;
 }
 
 .credit-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 30px 40px;
-    max-width: 900px;
+    gap: 15px 25px;
+    max-width: 800px;
     margin: 0 auto;
 }
 
@@ -820,16 +930,16 @@ body::before {
 .lender-logos {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 20px;
-    max-width: 1000px;
+    gap: 12px;
+    max-width: 900px;
     margin: 0 auto;
 }
 
 .lender-logo {
     background: white;
     border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    padding: 15px;
+    border-radius: 8px;
+    padding: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2275,7 +2385,7 @@ label:has(input[required])::after {
 
 /* Content Sections */
 .content-section {
-    padding: clamp(4rem, 10vw, 8rem) 0;
+    padding: clamp(2rem, 5vw, 3rem) 0;
     position: relative;
 }
 
@@ -2557,14 +2667,14 @@ label:has(input[required])::after {
 .footer {
     background-color: #151f21;
     color: var(--white);
-    padding: clamp(3rem, 6vw, 5rem) 0 clamp(1rem, 2vw, 1.5rem);
+    padding: clamp(2rem, 4vw, 3rem) 0 clamp(0.5rem, 1vw, 1rem);
 }
 
 .footer-top {
     display: flex;
     align-items: flex-start;
-    gap: 60px;
-    margin-bottom: 40px;
+    gap: 40px;
+    margin-bottom: 25px;
 }
 
 .footer-logo-container {
@@ -2572,7 +2682,7 @@ label:has(input[required])::after {
 }
 
 .footer-logo {
-    max-width: 180px;
+    max-width: 120px;
     height: auto;
 }
 
@@ -2591,13 +2701,13 @@ label:has(input[required])::after {
 .footer-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 40px;
+    gap: 25px;
     flex: 1;
 }
 
 .footer-column h4 {
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
 }
 
 .footer-column ul {
@@ -2636,6 +2746,22 @@ label:has(input[required])::after {
 
 .social-links a:hover {
     background-color: var(--primary-color);
+}
+
+.footer-disclaimer {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding: 20px 0;
+    margin-bottom: 20px;
+}
+
+.footer-disclaimer p {
+    font-size: 11px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.5);
+}
+
+.footer-disclaimer strong {
+    color: rgba(255,255,255,0.7);
 }
 
 .footer-bottom {
@@ -3318,15 +3444,15 @@ textarea {
 
 /* Our Story Section Styles */
 .our-story {
-    padding: 100px 0;
+    padding: 50px 0;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
 .our-story .section-title {
-    font-size: 3rem;
+    font-size: 2rem;
     color: var(--text-dark);
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
     font-weight: 700;
 }
 
