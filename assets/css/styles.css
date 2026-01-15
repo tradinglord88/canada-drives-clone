@@ -4434,10 +4434,7 @@ textarea {
 .footer-column h4 {
     margin-bottom: 1.5rem;
     font-size: 1.2rem;
-    background: linear-gradient(135deg, #151f21, #243538);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #ffffff;
     font-weight: 700;
 }
 
