@@ -84,8 +84,8 @@ app.use(cors({
     credentials: true
 }));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.static('.'));
 app.use('/uploads', express.static(uploadsDir));
 
@@ -398,7 +398,12 @@ async function handleApplicationSubmission(req, res) {
         } = applicationData;
 
         console.log('Received application:', { firstName, lastName, email, phone, vehicleType });
-        console.log('Documents received:', { hasPaystub: !!paystubBase64, hasLicense: !!driversLicenseBase64 });
+        console.log('Documents received:', {
+            hasPaystub: !!paystubBase64,
+            paystubLength: paystubBase64 ? paystubBase64.length : 0,
+            hasLicense: !!driversLicenseBase64,
+            licenseLength: driversLicenseBase64 ? driversLicenseBase64.length : 0
+        });
 
         if (!vehicleType || !budget || !tradeIn || !creditScore || !employment || !firstName || !lastName || !email || !phone) {
             return res.status(400).json({ success: false, error: 'Missing required fields' });
