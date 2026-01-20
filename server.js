@@ -377,6 +377,13 @@ app.post('/api/applications', (req, res) => {
     applicationUpload(req, res, function(err) {
         if (err) {
             console.error('Multer error:', err);
+            if (err.code === 'LIMIT_FIELD_VALUE') {
+                return res.status(413).json({ success: false, error: 'Document too large. Please upload a smaller file.' });
+            }
+            if (err.code === 'LIMIT_FILE_SIZE') {
+                return res.status(413).json({ success: false, error: 'File too large. Maximum size is 10MB.' });
+            }
+            return res.status(400).json({ success: false, error: 'Error processing upload: ' + err.message });
         }
         handleApplicationSubmission(req, res);
     });
@@ -386,10 +393,16 @@ async function handleApplicationSubmission(req, res) {
     try {
         let applicationData;
         try {
+            if (!req.body.applicationData) {
+                console.error('Missing applicationData field in request body');
+                return res.status(400).json({ success: false, error: 'Missing application data' });
+            }
             applicationData = JSON.parse(req.body.applicationData);
         } catch (parseError) {
             console.error('JSON Parse Error:', parseError);
-            return res.status(400).json({ success: false, error: 'Invalid application data format' });
+            console.error('applicationData length:', req.body.applicationData?.length || 0);
+            console.error('applicationData preview:', req.body.applicationData?.substring(0, 200) + '...');
+            return res.status(400).json({ success: false, error: 'Invalid application data format. Please try again or contact support.' });
         }
 
         const {
