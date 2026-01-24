@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy Leads - Green Light Automotive</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #151f21 0%, #1a2a2d 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: white;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.7);
+            font-size: 18px;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .pricing-card.featured {
+            border: 3px solid #4CAF50;
+            position: relative;
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4CAF50;
+            color: white;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .pricing-card h3 {
+            color: #151f21;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .pricing-card .price {
+            font-size: 42px;
+            font-weight: 700;
+            color: #151f21;
+            margin-bottom: 5px;
+        }
+
+        .pricing-card .price span {
+            font-size: 16px;
+            font-weight: 400;
+            color: #666;
+        }
+
+        .pricing-card .per-lead {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .pricing-card ul {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+
+        .pricing-card li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+
+        .pricing-card li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-card li i {
+            color: #4CAF50;
+            font-size: 14px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: #151f21;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(21, 31, 33, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #151f21;
+            color: #151f21;
+        }
+
+        .btn-outline:hover {
+            background: #151f21;
+            color: white;
+        }
+
+        .contact-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .contact-card h2 {
+            color: #151f21;
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .contact-card .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #151f21;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .benefit-box {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            color: white;
+        }
+
+        .benefit-box i {
+            font-size: 32px;
+            margin-bottom: 15px;
+            color: #4CAF50;
+        }
+
+        .benefit-box h4 {
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+
+        .benefit-box p {
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+        }
+
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            display: none;
+        }
+
+        .success-message i {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .success-message h3 {
+            margin-bottom: 10px;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+
+        <div class="header">
+            <h1>Buy Quality Auto Leads</h1>
+            <p>Connect with pre-qualified car buyers ready to purchase</p>
+        </div>
+
+        <div class="benefits-grid">
+            <div class="benefit-box">
+                <i class="fas fa-user-check"></i>
+                <h4>Pre-Qualified</h4>
+                <p>All leads have completed our application process</p>
+            </div>
+            <div class="benefit-box">
+                <i class="fas fa-bolt"></i>
+                <h4>Real-Time</h4>
+                <p>Receive leads instantly as they come in</p>
+            </div>
+            <div class="benefit-box">
+                <i class="fas fa-map-marker-alt"></i>
+                <h4>Local Buyers</h4>
+                <p>Geo-targeted leads in your service area</p>
+            </div>
+            <div class="benefit-box">
+                <i class="fas fa-shield-alt"></i>
+                <h4>Exclusive</h4>
+                <p>Each lead sold to limited dealers only</p>
+            </div>
+        </div>
+
+        <div class="cards-container">
+            <div class="pricing-card">
+                <h3>Starter</h3>
+                <div class="price">$49 <span>/lead</span></div>
+                <div class="per-lead">Pay as you go</div>
+                <ul>
+                    <li><i class="fas fa-check"></i> Pre-qualified buyers</li>
+                    <li><i class="fas fa-check"></i> Contact info included</li>
+                    <li><i class="fas fa-check"></i> Credit score range</li>
+                    <li><i class="fas fa-check"></i> Vehicle preferences</li>
+                    <li><i class="fas fa-check"></i> Email support</li>
+                </ul>
+                <button class="btn btn-outline" onclick="scrollToForm()">Get Started</button>
+            </div>
+
+            <div class="pricing-card featured">
+                <div class="featured-badge">Most Popular</div>
+                <h3>Professional</h3>
+                <div class="price">$39 <span>/lead</span></div>
+                <div class="per-lead">50 leads/month minimum</div>
+                <ul>
+                    <li><i class="fas fa-check"></i> Everything in Starter</li>
+                    <li><i class="fas fa-check"></i> Priority delivery</li>
+                    <li><i class="fas fa-check"></i> Income verification data</li>
+                    <li><i class="fas fa-check"></i> Dedicated account manager</li>
+                    <li><i class="fas fa-check"></i> Phone support</li>
+                </ul>
+                <button class="btn" onclick="scrollToForm()">Get Started</button>
+            </div>
+
+            <div class="pricing-card">
+                <h3>Enterprise</h3>
+                <div class="price">Custom</div>
+                <div class="per-lead">High volume pricing</div>
+                <ul>
+                    <li><i class="fas fa-check"></i> Everything in Professional</li>
+                    <li><i class="fas fa-check"></i> Exclusive leads available</li>
+                    <li><i class="fas fa-check"></i> API integration</li>
+                    <li><i class="fas fa-check"></i> Custom filtering</li>
+                    <li><i class="fas fa-check"></i> White-glove onboarding</li>
+                </ul>
+                <button class="btn btn-outline" onclick="scrollToForm()">Contact Us</button>
+            </div>
+        </div>
+
+        <div class="contact-card" id="contactForm">
+            <h2>Start Receiving Leads</h2>
+            <p class="subtitle">Fill out the form below and we'll get back to you within 24 hours</p>
+
+            <div id="errorMessage" class="error-message"></div>
+
+            <div id="successMessage" class="success-message">
+                <i class="fas fa-check-circle"></i>
+                <h3>Thank You!</h3>
+                <p>We've received your request. A member of our team will contact you within 24 hours to discuss your lead needs.</p>
+            </div>
+
+            <form id="leadForm" onsubmit="handleSubmit(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dealershipName">Dealership / Company Name *</label>
+                        <input type="text" id="dealershipName" name="dealershipName" required placeholder="ABC Auto Sales">
+                    </div>
+                    <div class="form-group">
+                        <label for="contactName">Contact Name *</label>
+                        <input type="text" id="contactName" name="contactName" required placeholder="John Smith">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required placeholder="john@dealership.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="(555) 123-4567">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="location">Location / Service Area *</label>
+                        <input type="text" id="location" name="location" required placeholder="Toronto, ON">
+                    </div>
+                    <div class="form-group">
+                        <label for="package">Interested Package</label>
+                        <select id="package" name="package">
+                            <option value="starter">Starter - Pay As You Go</option>
+                            <option value="professional" selected>Professional - 50 leads/month</option>
+                            <option value="enterprise">Enterprise - Custom Volume</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="monthlyVolume">Estimated Monthly Lead Volume</label>
+                    <select id="monthlyVolume" name="monthlyVolume">
+                        <option value="1-25">1-25 leads/month</option>
+                        <option value="26-50">26-50 leads/month</option>
+                        <option value="51-100" selected>51-100 leads/month</option>
+                        <option value="100+">100+ leads/month</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Additional Information</label>
+                    <textarea id="message" name="message" placeholder="Tell us about your dealership and any specific requirements..."></textarea>
+                </div>
+
+                <button type="submit" class="btn" id="submitBtn">Submit Inquiry</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function scrollToForm() {
+            document.getElementById('contactForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            const form = document.getElementById('leadForm');
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            errorMessage.style.display = 'none';
+
+            const formData = {
+                dealershipName: document.getElementById('dealershipName').value,
+                contactName: document.getElementById('contactName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                location: document.getElementById('location').value,
+                package: document.getElementById('package').value,
+                monthlyVolume: document.getElementById('monthlyVolume').value,
+                message: document.getElementById('message').value
+            };
+
+            try {
+                const response = await fetch('/api/lead-inquiry', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    form.style.display = 'none';
+                    successMessage.style.display = 'block';
+                } else {
+                    throw new Error(result.error || 'Failed to submit inquiry');
+                }
+            } catch (error) {
+                errorMessage.textContent = error.message || 'An error occurred. Please try again.';
+                errorMessage.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Inquiry';
+            }
+        }
+    </script>
+</body>
+</html>

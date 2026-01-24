@@ -227,6 +227,22 @@ async function initDatabase() {
                 )
             `;
 
+            await sql`
+                CREATE TABLE IF NOT EXISTS lead_inquiries (
+                    id SERIAL PRIMARY KEY,
+                    dealership_name TEXT NOT NULL,
+                    contact_name TEXT NOT NULL,
+                    email TEXT NOT NULL,
+                    phone TEXT NOT NULL,
+                    location TEXT NOT NULL,
+                    package TEXT DEFAULT 'professional',
+                    monthly_volume TEXT DEFAULT '51-100',
+                    message TEXT,
+                    status TEXT DEFAULT 'new',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            `;
+
             // Add referral columns to applications if they don't exist
             try {
                 await sql`ALTER TABLE applications ADD COLUMN IF NOT EXISTS referrer_code TEXT`;
@@ -335,6 +351,21 @@ async function initDatabase() {
                 password TEXT NOT NULL,
                 commission_rate REAL DEFAULT 500.00,
                 total_earnings REAL DEFAULT 0,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )`);
+
+            // Lead Inquiries Table (Buy Leads page)
+            db.run(`CREATE TABLE IF NOT EXISTS lead_inquiries (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                dealership_name TEXT NOT NULL,
+                contact_name TEXT NOT NULL,
+                email TEXT NOT NULL,
+                phone TEXT NOT NULL,
+                location TEXT NOT NULL,
+                package TEXT DEFAULT 'professional',
+                monthly_volume TEXT DEFAULT '51-100',
+                message TEXT,
+                status TEXT DEFAULT 'new',
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP
             )`);
 
@@ -1228,6 +1259,37 @@ app.get('/api/referral/leads', async (req, res) => {
         }
     } catch (error) {
         res.status(401).json({ error: 'Invalid token' });
+    }
+});
+
+// Lead inquiry from Buy Leads page
+app.post('/api/lead-inquiry', async (req, res) => {
+    try {
+        const { dealershipName, contactName, email, phone, location, package: leadPackage, monthlyVolume, message } = req.body;
+
+        if (!dealershipName || !contactName || !email || !phone || !location) {
+            return res.status(400).json({ success: false, error: 'Missing required fields' });
+        }
+
+        console.log('Lead inquiry received:', { dealershipName, contactName, email, phone, location, leadPackage, monthlyVolume });
+
+        if (isVercel) {
+            await sql`
+                INSERT INTO lead_inquiries (dealership_name, contact_name, email, phone, location, package, monthly_volume, message)
+                VALUES (${dealershipName}, ${contactName}, ${email}, ${phone}, ${location}, ${leadPackage || 'professional'}, ${monthlyVolume || '51-100'}, ${message || ''})
+            `;
+        } else {
+            db.run(
+                `INSERT INTO lead_inquiries (dealership_name, contact_name, email, phone, location, package, monthly_volume, message)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                [dealershipName, contactName, email, phone, location, leadPackage || 'professional', monthlyVolume || '51-100', message || '']
+            );
+        }
+
+        res.json({ success: true, message: 'Inquiry submitted successfully' });
+    } catch (error) {
+        console.error('Lead inquiry error:', error);
+        res.status(500).json({ success: false, error: 'Failed to submit inquiry' });
     }
 });
 
