@@ -1293,6 +1293,60 @@ app.post('/api/lead-inquiry', async (req, res) => {
     }
 });
 
+// Admin: Get all lead inquiries
+app.get('/api/lead-inquiries', authenticateToken, async (req, res) => {
+    try {
+        if (isVercel) {
+            const result = await sql`SELECT * FROM lead_inquiries ORDER BY created_at DESC`;
+            res.json(result.rows);
+        } else {
+            db.all('SELECT * FROM lead_inquiries ORDER BY created_at DESC', [], (err, rows) => {
+                if (err) return res.status(500).json({ error: err.message });
+                res.json(rows || []);
+            });
+        }
+    } catch (error) {
+        console.error('Error fetching lead inquiries:', error);
+        res.status(500).json({ error: 'Failed to fetch lead inquiries' });
+    }
+});
+
+// Admin: Delete a lead inquiry
+app.delete('/api/lead-inquiries/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (isVercel) {
+            await sql`DELETE FROM lead_inquiries WHERE id = ${id}`;
+        } else {
+            db.run('DELETE FROM lead_inquiries WHERE id = ?', [id]);
+        }
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error deleting lead inquiry:', error);
+        res.status(500).json({ error: 'Failed to delete lead inquiry' });
+    }
+});
+
+// Admin: Update lead inquiry status
+app.put('/api/lead-inquiries/:id/status', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        if (!['new', 'contacted', 'closed'].includes(status)) {
+            return res.status(400).json({ error: 'Invalid status' });
+        }
+        if (isVercel) {
+            await sql`UPDATE lead_inquiries SET status = ${status} WHERE id = ${id}`;
+        } else {
+            db.run('UPDATE lead_inquiries SET status = ? WHERE id = ?', [status, id]);
+        }
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error updating lead inquiry status:', error);
+        res.status(500).json({ error: 'Failed to update status' });
+    }
+});
+
 // Admin: Update application status (triggers commission on approved)
 app.put('/api/applications/:id/status', async (req, res) => {
     try {

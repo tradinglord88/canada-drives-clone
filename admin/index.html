@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lead Management - Greenlight Automotive CRM</title>
+    <title>CRM Dashboard - Greenlight Automotive</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/admin-styles.css">
@@ -17,8 +17,8 @@
         <div class="login-container">
             <div class="login-header">
                 <img src="../assets/images/logo.png" alt="Greenlight Automotive" class="login-logo">
-                <h1 class="domain-header" style="color: #000000;">www.greenlightautomotive.ca</h1>
-                <p>Sales Lead Management System</p>
+                <h1 class="domain-header">greenlightautomotive.ca</h1>
+                <p>Sales CRM Dashboard</p>
             </div>
             <form id="loginForm" class="login-form">
                 <div class="form-group">
@@ -33,9 +33,7 @@
                     </label>
                     <input type="password" id="password" name="password" required autocomplete="current-password">
                 </div>
-                <button type="submit" class="btn-login">
-                    <i class="fas fa-sign-in-alt"></i> Sign In
-                </button>
+                <button type="submit" class="btn-login">Sign In</button>
                 <div id="loginError" class="error-message" style="display: none;"></div>
             </form>
         </div>
@@ -43,140 +41,145 @@
 
     <!-- Dashboard -->
     <div id="dashboardScreen" class="dashboard-screen" style="display: none;">
-        <!-- Header -->
-        <header class="admin-header">
-            <div class="header-content">
-                <div class="header-left">
-                    <h1>www.greenlightautomotive.ca</h1>
-                </div>
-                <div class="header-right">
-                    <span class="user-info">
-                        <i class="fas fa-user-circle"></i>
-                        <span id="currentUser"></span>
-                    </span>
-                    <button id="logoutBtn" class="btn-logout">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </button>
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <img src="../assets/images/logo.png" alt="Logo" class="sidebar-logo">
+                <div class="sidebar-brand">
+                    <h2>Greenlight Auto</h2>
+                    <span>CRM Dashboard</span>
                 </div>
             </div>
-        </header>
-
-        <!-- Stats Dashboard -->
-        <div class="stats-container">
-            <div class="stat-card">
-                <div class="stat-icon" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">
+            <nav class="sidebar-nav">
+                <div class="sidebar-section-label">Lead Management</div>
+                <div class="sidebar-item active" data-tab="applications" onclick="switchTab('applications', this)">
                     <i class="fas fa-file-alt"></i>
+                    <span>Pre-Approvals</span>
+                    <span class="badge-count" id="sidebarAppCount">0</span>
                 </div>
-                <div class="stat-content">
-                    <h3 id="totalLeads">0</h3>
-                    <p>Total Leads</p>
+                <div class="sidebar-item" data-tab="sell" onclick="switchTab('sell', this)">
+                    <i class="fas fa-car"></i>
+                    <span>Sell Requests</span>
+                    <span class="badge-count" id="sidebarSellCount">0</span>
                 </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
-                    <i class="fas fa-calendar-day"></i>
+                <div class="sidebar-item" data-tab="leadInquiries" onclick="switchTab('leadInquiries', this)">
+                    <i class="fas fa-handshake"></i>
+                    <span>Dealer Inquiries</span>
+                    <span class="badge-count" id="sidebarInquiryCount">0</span>
                 </div>
-                <div class="stat-content">
-                    <h3 id="todayLeads">0</h3>
-                    <p>Today's Leads</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-                    <i class="fas fa-clock"></i>
-                </div>
-                <div class="stat-content">
-                    <h3 id="weekLeads">0</h3>
-                    <p>This Week</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon" style="background: linear-gradient(135deg, #ec4899, #db2777);">
-                    <i class="fas fa-chart-bar"></i>
-                </div>
-                <div class="stat-content">
-                    <h3 id="monthLeads">0</h3>
-                    <p>This Month</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Controls -->
-            <div class="controls-bar">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="searchInput" placeholder="Search by name, email, or phone...">
-                </div>
-                <div class="filter-controls">
-                    <select id="vehicleFilter" class="filter-select">
-                        <option value="">All Vehicles</option>
-                        <option value="Sedan">Sedan</option>
-                        <option value="SUV">SUV</option>
-                        <option value="Truck">Truck</option>
-                        <option value="Coupe">Coupe</option>
-                        <option value="Hatchback">Hatchback</option>
-                        <option value="Van">Van</option>
-                    </select>
-                    <select id="creditFilter" class="filter-select">
-                        <option value="">All Credit Scores</option>
-                        <option value="Excellent">Excellent (750+)</option>
-                        <option value="Good">Good (700-749)</option>
-                        <option value="Fair">Fair (650-699)</option>
-                        <option value="Building">Building Credit</option>
-                    </select>
-                    <button id="exportBtn" class="btn-export">
-                        <i class="fas fa-file-export"></i> Export CSV
-                    </button>
-                    <button id="refreshBtn" class="btn-refresh">
-                        <i class="fas fa-sync-alt"></i> Refresh
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="sidebar-user-info">
+                        <div class="name" id="currentUser">Admin</div>
+                        <div class="role">Administrator</div>
+                    </div>
+                    <button id="logoutBtn" class="btn-logout-sidebar" title="Sign Out">
+                        <i class="fas fa-sign-out-alt"></i>
                     </button>
                 </div>
             </div>
+        </aside>
 
-            <!-- Leads Table -->
-            <div class="table-container">
-                <table class="leads-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Date</th>
-                            <th>Customer Name</th>
-                            <th>Contact</th>
-                            <th>Vehicle Type</th>
-                            <th>Budget</th>
-                            <th>Credit Score</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="leadsTableBody">
-                        <tr class="loading-row">
-                            <td colspan="8">
-                                <i class="fas fa-spinner fa-spin"></i> Loading leads...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        <!-- Main Wrapper -->
+        <div class="main-wrapper">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="page-title-area">
+                    <div>
+                        <h1 id="pageTitle">Pre-Approval Applications</h1>
+                        <div class="page-subtitle" id="pageSubtitle">Manage incoming finance applications</div>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-icon" onclick="loadCurrentTab()" title="Refresh">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Stats -->
+            <div class="stats-container" id="statsContainer">
+                <!-- Stats will be populated by JS -->
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Controls -->
+                <div class="controls-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search by name, email, or phone...">
+                    </div>
+                    <div class="filter-controls" id="filterControls">
+                        <select id="vehicleFilter" class="filter-select">
+                            <option value="">All Vehicles</option>
+                            <option value="sedan">Sedan</option>
+                            <option value="suv">SUV</option>
+                            <option value="truck">Truck</option>
+                            <option value="coupe">Coupe</option>
+                            <option value="hatchback">Hatchback</option>
+                            <option value="van">Van</option>
+                        </select>
+                        <select id="creditFilter" class="filter-select">
+                            <option value="">All Credit Scores</option>
+                            <option value="Excellent">Excellent (750+)</option>
+                            <option value="Good">Good (700-749)</option>
+                            <option value="Fair">Fair (650-699)</option>
+                            <option value="Building">Building Credit</option>
+                        </select>
+                        <button id="exportBtn" class="btn-export">
+                            <i class="fas fa-file-export"></i> Export CSV
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Table Container -->
+                <div class="table-container">
+                    <table class="leads-table">
+                        <thead id="tableHead">
+                            <tr>
+                                <th>ID</th>
+                                <th>Date</th>
+                                <th>Customer Name</th>
+                                <th>Contact</th>
+                                <th>Vehicle Type</th>
+                                <th>Budget</th>
+                                <th>Credit Score</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <tr class="loading-row">
+                                <td colspan="8">
+                                    <i class="fas fa-spinner fa-spin"></i> Loading...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Lead Detail Modal -->
     <div id="leadModal" class="modal">
-        <div class="modal-content lead-detail-modal">
+        <div class="modal-content">
             <div class="modal-header">
-                <h2><i class="fas fa-user-tie"></i> Lead Details</h2>
+                <h2 id="modalTitle"><i class="fas fa-user-tie"></i> Lead Details</h2>
                 <button class="close-modal" onclick="closeLeadModal()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div id="leadDetailContent" class="modal-body">
-                <!-- Lead details will be inserted here -->
+                <!-- Content loaded by JS -->
             </div>
             <div class="modal-footer">
                 <button onclick="printLead()" class="btn-print">
-                    <i class="fas fa-print"></i> Print Lead Sheet
+                    <i class="fas fa-print"></i> Print
                 </button>
                 <button onclick="closeLeadModal()" class="btn-secondary">
                     Close
