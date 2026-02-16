@@ -6,29 +6,586 @@
     <title>Our Story - Green Light Automotive</title>
     <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
-    <link rel="stylesheet" href="assets/css/styles.css?v=13">
-    <link rel="stylesheet" href="assets/css/mobile.css?v=7">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
-    <!-- Professional Top Bar -->
-    <div class="top-bar">
-        <div class="container">
-            <div class="top-bar-content">
-                <div class="top-bar-left">
-                    <span><i class="fas fa-envelope"></i> info@greenlightauto.ca</span>
-                </div>
-                <div class="top-bar-right">
-                    <span><i class="fas fa-clock"></i> Mon-Fri: 9AM-8PM | Sat: 10AM-6PM</span>
-                    <span><i class="fas fa-phone-alt"></i> 250-618-4995</span>
-                    <a href="index.html#formWizard" class="top-bar-cta">Apply Now <i class="fas fa-arrow-right"></i></a>
-                </div>
-            </div>
-        </div>
-    </div>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        /* ── Page Base ── */
+        .os-page { background: #0b1a14; min-height: 100vh; }
+        .os-container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
 
-    <!-- Navigation Header -->
+        /* ── Hero ── */
+        .os-hero {
+            padding: 4rem 0 3rem;
+            text-align: center;
+            position: relative;
+        }
+        .os-hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 700px; height: 500px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .os-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            padding: 0.375rem 1rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            margin-bottom: 1.25rem;
+            text-transform: uppercase;
+        }
+        .os-hero h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 0.75rem;
+        }
+        .os-hero p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1.0625rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* ── Achievements Strip ── */
+        .os-achievements {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            padding: 0 0 3.5rem;
+        }
+        .os-achievement {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            transition: all 0.25s ease;
+        }
+        .os-achievement:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(16, 185, 129, 0.15);
+            transform: translateY(-2px);
+        }
+        .os-achievement-icon {
+            width: 44px; height: 44px;
+            margin: 0 auto 0.75rem;
+            border-radius: 10px;
+            background: rgba(16, 185, 129, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #34d399;
+            font-size: 1.125rem;
+        }
+        .os-achievement h4 {
+            color: #fff;
+            font-size: 1.75rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.125rem;
+        }
+        .os-achievement p {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        /* ── Story Card ── */
+        .os-story-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 3rem;
+        }
+        .os-story-header {
+            background: linear-gradient(135deg, #0f4336, #0a2e24);
+            padding: 2rem 2.5rem;
+        }
+        .os-story-header h2 {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.25rem;
+        }
+        .os-story-header p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.875rem;
+        }
+        .os-story-body {
+            padding: 2.5rem;
+        }
+        .os-story-text {
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 1rem;
+            line-height: 1.75;
+            margin-bottom: 2rem;
+        }
+
+        /* ── Founder Section ── */
+        .os-founder {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            background: rgba(16, 185, 129, 0.04);
+            border: 1px solid rgba(16, 185, 129, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 0;
+        }
+        .os-founder-img {
+            width: 140px;
+            height: 140px;
+            border-radius: 16px;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 2px solid rgba(16, 185, 129, 0.2);
+        }
+        .os-founder-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .os-founder-info h4 {
+            color: #fff;
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 0.125rem;
+        }
+        .os-founder-info .os-title {
+            color: #34d399;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.75rem;
+        }
+        .os-founder-info blockquote {
+            color: rgba(255, 255, 255, 0.55);
+            font-size: 0.9375rem;
+            line-height: 1.65;
+            font-style: italic;
+            margin: 0;
+            padding-left: 1rem;
+            border-left: 2px solid rgba(16, 185, 129, 0.3);
+        }
+
+        /* ── Locations Grid ── */
+        .os-locations {
+            padding-bottom: 3.5rem;
+        }
+        .os-section-label {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .os-section-label h2 {
+            color: #fff;
+            font-size: 1.75rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.375rem;
+        }
+        .os-section-label p {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.9375rem;
+        }
+        .os-location-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+        }
+        .os-location-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 1.75rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .os-location-card:hover {
+            border-color: rgba(16, 185, 129, 0.2);
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-2px);
+        }
+        .os-location-icon {
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            background: rgba(16, 185, 129, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #34d399;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        .os-location-card h4 {
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .os-location-card p {
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 0.8125rem;
+            line-height: 1.55;
+        }
+
+        /* ── CTA Split Sections ── */
+        .os-cta-section {
+            padding-bottom: 3.5rem;
+        }
+        .os-cta-card {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: border-color 0.3s ease;
+        }
+        .os-cta-card:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+        .os-cta-card.featured {
+            background: rgba(16, 185, 129, 0.04);
+            border-color: rgba(16, 185, 129, 0.15);
+        }
+        .os-cta-card.featured:hover {
+            border-color: rgba(16, 185, 129, 0.25);
+        }
+        .os-cta-image {
+            position: relative;
+            min-height: 320px;
+            overflow: hidden;
+        }
+        .os-cta-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0; left: 0;
+        }
+        .os-cta-content {
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .os-cta-content h3 {
+            color: #fff;
+            font-size: 1.375rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.75rem;
+        }
+        .os-cta-content > p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+        }
+        .os-benefits {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+        .os-benefits li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+        }
+        .os-benefits li i {
+            color: #34d399;
+            font-size: 0.6875rem;
+            flex-shrink: 0;
+        }
+        .os-cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            border: none;
+            width: fit-content;
+        }
+        .os-cta-btn-primary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+        }
+        .os-cta-btn-primary:hover {
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+            transform: translateY(-1px);
+            color: #fff;
+        }
+        .os-cta-btn-outline {
+            background: transparent;
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .os-cta-btn-outline:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* ── Vehicle Types ── */
+        .os-vehicles {
+            padding-bottom: 3.5rem;
+        }
+        .os-vehicle-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 1rem;
+        }
+        .os-vehicle-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            transition: all 0.25s ease;
+            cursor: default;
+        }
+        .os-vehicle-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(16, 185, 129, 0.15);
+            transform: translateY(-2px);
+        }
+        .os-vehicle-card i {
+            font-size: 1.75rem;
+            color: #34d399;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .os-vehicle-card h4 {
+            color: #fff;
+            font-size: 0.8125rem;
+            font-weight: 600;
+        }
+
+        /* ── Testimonials ── */
+        .os-testimonials {
+            padding-bottom: 3.5rem;
+        }
+        .os-testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+        }
+        .os-testimonial {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 1.75rem;
+            transition: all 0.3s ease;
+        }
+        .os-testimonial:hover {
+            border-color: rgba(16, 185, 129, 0.15);
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .os-testimonial-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .os-testimonial-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(16, 185, 129, 0.2);
+        }
+        .os-testimonial-name {
+            color: #fff;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        .os-testimonial-loc {
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 0.75rem;
+        }
+        .os-stars {
+            display: flex;
+            gap: 0.125rem;
+            margin-bottom: 0.75rem;
+        }
+        .os-stars i {
+            color: #fbbf24;
+            font-size: 0.6875rem;
+        }
+        .os-testimonial p {
+            color: rgba(255, 255, 255, 0.55);
+            font-size: 0.875rem;
+            line-height: 1.6;
+            font-style: italic;
+        }
+        .os-verified {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            margin-top: 0.75rem;
+            color: #34d399;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .os-verified i { font-size: 0.625rem; }
+
+        /* ── Footer ── */
+        .os-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 3rem 0;
+        }
+        .os-footer-grid {
+            display: grid;
+            grid-template-columns: 1.5fr repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .os-footer-brand img {
+            height: 36px;
+            margin-bottom: 0.75rem;
+            opacity: 0.8;
+        }
+        .os-footer-brand p {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.8125rem;
+            line-height: 1.55;
+            max-width: 260px;
+        }
+        .os-footer-col h4 {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.75rem;
+        }
+        .os-footer-col ul { list-style: none; }
+        .os-footer-col ul li { margin-bottom: 0.375rem; }
+        .os-footer-col ul li a {
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 0.8125rem;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .os-footer-col ul li a:hover { color: #34d399; }
+        .os-social-links {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .os-social-links a {
+            width: 34px; height: 34px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.8125rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .os-social-links a:hover {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+        .os-disclaimer {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .os-disclaimer p {
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 0.6875rem;
+            line-height: 1.6;
+        }
+        .os-footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .os-footer-bottom p {
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 0.75rem;
+        }
+        .os-footer-bottom a {
+            color: rgba(255, 255, 255, 0.25);
+            font-size: 0.75rem;
+            text-decoration: none;
+            margin-left: 1.25rem;
+            transition: color 0.2s ease;
+        }
+        .os-footer-bottom a:hover { color: #34d399; }
+
+        /* ── Responsive ── */
+        @media (max-width: 1024px) {
+            .os-location-grid { grid-template-columns: repeat(2, 1fr); }
+            .os-vehicle-grid { grid-template-columns: repeat(3, 1fr); }
+            .os-testimonial-grid { grid-template-columns: repeat(2, 1fr); }
+            .os-footer-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .os-achievements { grid-template-columns: repeat(2, 1fr); }
+            .os-cta-card { grid-template-columns: 1fr; }
+            .os-cta-image { min-height: 220px; }
+            .os-cta-card.reverse .os-cta-image { order: -1; }
+            .os-cta-content { padding: 2rem 1.5rem; }
+            .os-location-grid { grid-template-columns: 1fr; }
+            .os-vehicle-grid { grid-template-columns: repeat(3, 1fr); }
+            .os-testimonial-grid { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; }
+            .os-founder { flex-direction: column; text-align: center; }
+            .os-founder-info blockquote { padding-left: 0; border-left: none; padding-top: 0.75rem; border-top: 2px solid rgba(16, 185, 129, 0.3); }
+            .os-story-header { padding: 1.5rem; }
+            .os-story-body { padding: 1.5rem; }
+            .os-hero { padding: 2.5rem 0 2rem; }
+            .os-footer-grid { grid-template-columns: 1fr; }
+            .os-footer-bottom { flex-direction: column; gap: 0.5rem; text-align: center; }
+        }
+
+        @media (max-width: 480px) {
+            .os-achievements { grid-template-columns: 1fr; max-width: 280px; margin-left: auto; margin-right: auto; }
+            .os-vehicle-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body class="os-page">
+    <!-- Site Header -->
     <header class="header">
         <nav class="navbar">
             <div class="container">
@@ -56,326 +613,385 @@
         </nav>
     </header>
 
-    <!-- Main Content -->
-    <main style="padding-top: 100px;">
+    <div class="os-container">
+        <!-- Hero -->
+        <section class="os-hero">
+            <div class="os-hero-badge"><i class="fas fa-leaf"></i> Serving Western Canada Since 2019</div>
+            <h1>Our Story</h1>
+            <p>From a small Vancouver startup to Western Canada's most trusted automotive service, we've helped over 25,000 families get on the road.</p>
+        </section>
 
-        <!-- Our Story Section -->
-        <section class="our-story" id="why-us">
-            <div class="container">
-                <h2 class="section-title">Our Story</h2>
-                <div class="story-content">
-                    <div class="story-grid">
-                        <div class="story-text">
-                            <h3>Serving Western Canada with Pride</h3>
-                            <p>Founded in 2019, Green Light Automotive began with a simple mission: to revolutionize the car buying and selling experience across Western Canada. What started as a small operation in Vancouver has grown into Western Canada's most trusted automotive service, with dedicated teams serving British Columbia, Alberta, and Saskatchewan.</p>
+        <!-- Achievements -->
+        <div class="os-achievements" id="achievements-section">
+            <div class="os-achievement">
+                <div class="os-achievement-icon"><i class="fas fa-users"></i></div>
+                <h4 data-target="25000" data-suffix="+">0</h4>
+                <p>Happy Customers</p>
+            </div>
+            <div class="os-achievement">
+                <div class="os-achievement-icon"><i class="fas fa-city"></i></div>
+                <h4 data-target="6" data-suffix="">0</h4>
+                <p>Major Cities</p>
+            </div>
+            <div class="os-achievement">
+                <div class="os-achievement-icon"><i class="fas fa-check-circle"></i></div>
+                <h4 data-target="98" data-suffix="%">0</h4>
+                <p>Approval Rate</p>
+            </div>
+            <div class="os-achievement">
+                <div class="os-achievement-icon"><i class="fas fa-map-marked-alt"></i></div>
+                <h4 data-target="3" data-suffix="">0</h4>
+                <p>Provinces Served</p>
+            </div>
+        </div>
 
-                            <div class="location-highlights">
-                                <div class="location-item">
-                                    <h4><i class="fas fa-map-marker-alt"></i> Vancouver</h4>
-                                    <p>Our flagship Vancouver location serves the entire Lower Mainland, from Richmond to North Vancouver. With the largest inventory in BC, we guarantee to find your dream car.</p>
-                                </div>
-                                <div class="location-item">
-                                    <h4><i class="fas fa-map-marker-alt"></i> Victoria</h4>
-                                    <p>Our Victoria team serves the capital region with same-day approvals and island-wide delivery. From James Bay to Oak Bay, we've helped over 5,000 families find their perfect vehicle.</p>
-                                </div>
-                                <div class="location-item">
-                                    <h4><i class="fas fa-map-marker-alt"></i> Kelowna</h4>
-                                    <p>In the heart of the Okanagan, our Kelowna branch specializes in vehicles perfect for both city driving and mountain adventures. We understand the unique needs of interior BC drivers.</p>
-                                </div>
-                                <div class="location-item">
-                                    <h4><i class="fas fa-map-marker-alt"></i> Edmonton</h4>
-                                    <p>Serving Alberta's capital and northern region, our Edmonton team knows trucks and SUVs. From Fort McMurray workers to downtown professionals, we have financing solutions for everyone.</p>
-                                </div>
-                                <div class="location-item">
-                                    <h4><i class="fas fa-map-marker-alt"></i> Regina</h4>
-                                    <p>Our Regina location serves all of southern Saskatchewan with prairie-friendly vehicles. We specialize in reliable winter-ready cars and work trucks for Saskatchewan's hardworking families.</p>
-                                </div>
-                                <div class="location-item">
-                                    <h4><i class="fas fa-map-marker-alt"></i> Saskatoon</h4>
-                                    <p>From the University of Saskatchewan to the industrial areas, our Saskatoon team provides fast approvals and competitive rates. We're proud to serve the Bridge City and surrounding communities.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="founder-section">
-                            <div class="founder-image">
-                                <img src="assets/images/tom-reid.jpg" alt="Tom Reid - Founder & CEO" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
-                            </div>
-                            <div class="founder-info">
-                                <h4>Tom Reid</h4>
-                                <p class="founder-title">Founder & CEO</p>
-                                <p class="founder-quote">"Growing up in Vancouver and studying in Victoria, I saw firsthand how challenging car ownership could be. That's why we created Green Light - to make it easier for every Western Canadian to get behind the wheel, from the Pacific Coast to the Prairies."</p>
-                            </div>
-                        </div>
+        <!-- Our Story Card -->
+        <div class="os-story-card">
+            <div class="os-story-header">
+                <h2>Serving Western Canada with Pride</h2>
+                <p>From the Pacific Coast to the Prairies</p>
+            </div>
+            <div class="os-story-body">
+                <div class="os-story-text">
+                    Founded in 2019, Green Light Automotive began with a simple mission: to revolutionize the car buying and selling experience across Western Canada. What started as a small operation in Vancouver has grown into Western Canada's most trusted automotive service, with dedicated teams serving British Columbia, Alberta, and Saskatchewan.
+                </div>
+                <div class="os-founder">
+                    <div class="os-founder-img">
+                        <img src="assets/images/tom-reid.jpg" alt="Tom Reid - Founder & CEO">
                     </div>
-
-                    <div class="achievements" id="achievements-section">
-                        <div class="achievement-item">
-                            <i class="fas fa-users achievement-icon"></i>
-                            <div class="achievement-number" data-target="25000" data-suffix="+">0</div>
-                            <div class="achievement-label">Happy Customers</div>
-                        </div>
-                        <div class="achievement-item">
-                            <i class="fas fa-city achievement-icon"></i>
-                            <div class="achievement-number" data-target="6" data-suffix="">0</div>
-                            <div class="achievement-label">Major Cities</div>
-                        </div>
-                        <div class="achievement-item">
-                            <i class="fas fa-check-circle achievement-icon"></i>
-                            <div class="achievement-number" data-target="98" data-suffix="%">0</div>
-                            <div class="achievement-label">Approval Rate</div>
-                        </div>
-                        <div class="achievement-item">
-                            <i class="fas fa-map-marked-alt achievement-icon"></i>
-                            <div class="achievement-number" data-target="3" data-suffix="">0</div>
-                            <div class="achievement-label">Provinces Served</div>
-                        </div>
+                    <div class="os-founder-info">
+                        <h4>Tom Reid</h4>
+                        <div class="os-title">Founder & CEO</div>
+                        <blockquote>"Growing up in Vancouver and studying in Victoria, I saw firsthand how challenging car ownership could be. That's why we created Green Light &mdash; to make it easier for every Western Canadian to get behind the wheel, from the Pacific Coast to the Prairies."</blockquote>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Locations -->
+        <section class="os-locations">
+            <div class="os-section-label">
+                <h2>Our Locations</h2>
+                <p>Serving 6 cities across 3 provinces</p>
+            </div>
+            <div class="os-location-grid">
+                <div class="os-location-card">
+                    <div class="os-location-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <h4>Vancouver</h4>
+                    <p>Our flagship location serves the entire Lower Mainland, from Richmond to North Vancouver. With the largest inventory in BC, we guarantee to find your dream car.</p>
+                </div>
+                <div class="os-location-card">
+                    <div class="os-location-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <h4>Victoria</h4>
+                    <p>Our Victoria team serves the capital region with same-day approvals and island-wide delivery. We've helped over 5,000 families find their perfect vehicle.</p>
+                </div>
+                <div class="os-location-card">
+                    <div class="os-location-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <h4>Kelowna</h4>
+                    <p>In the heart of the Okanagan, our Kelowna branch specializes in vehicles perfect for both city driving and mountain adventures.</p>
+                </div>
+                <div class="os-location-card">
+                    <div class="os-location-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <h4>Edmonton</h4>
+                    <p>Serving Alberta's capital and northern region. From Fort McMurray workers to downtown professionals, we have financing solutions for everyone.</p>
+                </div>
+                <div class="os-location-card">
+                    <div class="os-location-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <h4>Regina</h4>
+                    <p>Serving all of southern Saskatchewan with prairie-friendly vehicles. We specialize in reliable winter-ready cars and work trucks.</p>
+                </div>
+                <div class="os-location-card">
+                    <div class="os-location-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <h4>Saskatoon</h4>
+                    <p>From the University to the industrial areas, our Saskatoon team provides fast approvals and competitive rates for the Bridge City.</p>
                 </div>
             </div>
         </section>
 
-        <!-- Shop for a Car Section -->
-        <section class="hero-confidence-section" id="get-approved">
-            <div class="container">
-                <div class="content-grid">
-                    <div class="content-text">
-                        <img src="assets/images/car-3d-icon.png" alt="" style="width: 80px; height: 80px; display: block; margin: 0 auto 10px auto;">
-                        <h3>Shop For a Car With Confidence</h3>
-                        <p>Getting pre-approved for car financing has never been easier. Our simple online application takes just minutes to complete, and you'll get an instant decision.</p>
-                        <ul class="benefits-list">
-                            <li><i class="fas fa-check"></i> No impact on your credit score</li>
-                            <li><i class="fas fa-check"></i> Know your budget before you shop</li>
-                            <li><i class="fas fa-check"></i> Access to thousands of vehicles</li>
-                            <li><i class="fas fa-check"></i> Competitive interest rates</li>
-                        </ul>
-                        <a href="index.html#formWizard" class="btn btn-primary">Get Started</a>
-                    </div>
-                    <div class="content-image">
-                        <div class="image-placeholder">
-                            <img src="assets/images/family-car-keys.jpg" alt="Happy family with their new car keys" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
-                        </div>
-                    </div>
+        <!-- Shop for a Car CTA -->
+        <section class="os-cta-section">
+            <div class="os-cta-card featured">
+                <div class="os-cta-image">
+                    <img src="assets/images/family-car-keys.jpg" alt="Happy family with their new car keys">
+                </div>
+                <div class="os-cta-content">
+                    <h3>Shop For a Car With Confidence</h3>
+                    <p>Getting pre-approved for car financing has never been easier. Our simple online application takes just minutes to complete.</p>
+                    <ul class="os-benefits">
+                        <li><i class="fas fa-check"></i> No impact on your credit score</li>
+                        <li><i class="fas fa-check"></i> Know your budget before you shop</li>
+                        <li><i class="fas fa-check"></i> Access to thousands of vehicles</li>
+                        <li><i class="fas fa-check"></i> Competitive interest rates</li>
+                    </ul>
+                    <a href="index.html#formWizard" class="os-cta-btn os-cta-btn-primary">Get Started <i class="fas fa-arrow-right"></i></a>
                 </div>
             </div>
         </section>
 
-        <!-- Sell Your Car Section -->
-        <section class="content-section bg-gray" id="sell-car">
-            <div class="container">
-                <div class="content-grid reverse">
-                    <div class="content-text">
-                        <h3>Sell Your Car Directly to Green Light Automotive</h3>
-                        <p>Skip the hassle of private sales. Get an instant online offer for your vehicle and sell it directly to us. It's fast, safe, and convenient.</p>
-                        <ul class="benefits-list">
-                            <li><i class="fas fa-check"></i> Instant online valuation</li>
-                            <li><i class="fas fa-check"></i> Free vehicle pickup</li>
-                            <li><i class="fas fa-check"></i> Payment on the spot</li>
-                            <li><i class="fas fa-check"></i> No haggling or negotiations</li>
-                        </ul>
-                        <a href="sell-car-wizard.html" class="btn btn-secondary">Get My Offer</a>
-                    </div>
-                    <div class="content-image">
-                        <div class="image-placeholder">
-                            <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=600&h=400&fit=crop&auto=format" alt="Car keys handover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
-                        </div>
-                    </div>
+        <!-- Sell Your Car CTA -->
+        <section class="os-cta-section">
+            <div class="os-cta-card reverse">
+                <div class="os-cta-content">
+                    <h3>Sell Your Car Directly to Us</h3>
+                    <p>Skip the hassle of private sales. Get an instant online offer for your vehicle and sell it directly to us.</p>
+                    <ul class="os-benefits">
+                        <li><i class="fas fa-check"></i> Instant online valuation</li>
+                        <li><i class="fas fa-check"></i> Free vehicle pickup</li>
+                        <li><i class="fas fa-check"></i> Payment on the spot</li>
+                        <li><i class="fas fa-check"></i> No haggling or negotiations</li>
+                    </ul>
+                    <a href="sell-car-wizard.html" class="os-cta-btn os-cta-btn-outline">Get My Offer <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="os-cta-image">
+                    <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=600&h=400&fit=crop&auto=format" alt="Car keys handover">
                 </div>
             </div>
         </section>
 
-        <!-- Vehicle Types Section -->
-        <section class="vehicle-types">
-            <div class="container">
-                <h3 class="section-title">Browse by Vehicle Type</h3>
-                <div class="vehicle-grid">
-                    <div class="vehicle-card">
-                        <i class="fas fa-car-side"></i>
-                        <h4>Coupes</h4>
-                    </div>
-                    <div class="vehicle-card">
-                        <i class="fas fa-car"></i>
-                        <h4>Hatchbacks</h4>
-                    </div>
-                    <div class="vehicle-card">
-                        <i class="fas fa-car-alt"></i>
-                        <h4>Sedans</h4>
-                    </div>
-                    <div class="vehicle-card">
-                        <i class="fas fa-van-shuttle"></i>
-                        <h4>Minivans</h4>
-                    </div>
-                    <div class="vehicle-card">
-                        <i class="fas fa-truck"></i>
-                        <h4>SUVs</h4>
-                    </div>
-                    <div class="vehicle-card">
-                        <i class="fas fa-truck-pickup"></i>
-                        <h4>Trucks</h4>
-                    </div>
+        <!-- Vehicle Types -->
+        <section class="os-vehicles">
+            <div class="os-section-label">
+                <h2>Browse by Vehicle Type</h2>
+                <p>Find the perfect fit for your lifestyle</p>
+            </div>
+            <div class="os-vehicle-grid">
+                <div class="os-vehicle-card">
+                    <i class="fas fa-car-side"></i>
+                    <h4>Coupes</h4>
+                </div>
+                <div class="os-vehicle-card">
+                    <i class="fas fa-car"></i>
+                    <h4>Hatchbacks</h4>
+                </div>
+                <div class="os-vehicle-card">
+                    <i class="fas fa-car-alt"></i>
+                    <h4>Sedans</h4>
+                </div>
+                <div class="os-vehicle-card">
+                    <i class="fas fa-van-shuttle"></i>
+                    <h4>Minivans</h4>
+                </div>
+                <div class="os-vehicle-card">
+                    <i class="fas fa-truck"></i>
+                    <h4>SUVs</h4>
+                </div>
+                <div class="os-vehicle-card">
+                    <i class="fas fa-truck-pickup"></i>
+                    <h4>Trucks</h4>
                 </div>
             </div>
         </section>
 
-        <!-- Testimonials Section -->
-        <section class="testimonials">
-            <div class="container">
-                <h3 class="section-title">What Our Customers Say</h3>
-                <div class="testimonial-carousel">
-                    <div class="testimonial">
-                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sarah M." class="testimonial-avatar">
-                        <div class="stars">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
+        <!-- Testimonials -->
+        <section class="os-testimonials">
+            <div class="os-section-label">
+                <h2>What Our Customers Say</h2>
+                <p>Real stories from real customers</p>
+            </div>
+            <div class="os-testimonial-grid">
+                <div class="os-testimonial">
+                    <div class="os-testimonial-header">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sarah M." class="os-testimonial-avatar">
+                        <div>
+                            <div class="os-testimonial-name">Sarah M.</div>
+                            <div class="os-testimonial-loc">Vancouver, BC</div>
                         </div>
-                        <p>"The process was incredibly easy and straightforward. I got pre-approved in minutes and found my dream car!"</p>
-                        <cite>- Sarah M., Vancouver</cite>
-                        <span class="verified-badge"><i class="fas fa-check"></i> Verified Customer</span>
                     </div>
-                    <div class="testimonial">
-                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Michael R." class="testimonial-avatar">
-                        <div class="stars">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
+                    <div class="os-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p>"The process was incredibly easy and straightforward. I got pre-approved in minutes and found my dream car!"</p>
+                    <div class="os-verified"><i class="fas fa-check-circle"></i> Verified Customer</div>
+                </div>
+
+                <div class="os-testimonial">
+                    <div class="os-testimonial-header">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Michael R." class="os-testimonial-avatar">
+                        <div>
+                            <div class="os-testimonial-name">Michael R.</div>
+                            <div class="os-testimonial-loc">Vancouver, BC</div>
                         </div>
-                        <p>"After being turned down by my bank, Green Light Automotive helped me get approved with a great rate. Couldn't be happier with my new SUV!"</p>
-                        <cite>- Michael R., Vancouver</cite>
-                        <span class="verified-badge"><i class="fas fa-check"></i> Verified Customer</span>
                     </div>
-                    <div class="testimonial">
-                        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Jennifer L." class="testimonial-avatar">
-                        <div class="stars">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
+                    <div class="os-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p>"After being turned down by my bank, Green Light Automotive helped me get approved with a great rate. Couldn't be happier!"</p>
+                    <div class="os-verified"><i class="fas fa-check-circle"></i> Verified Customer</div>
+                </div>
+
+                <div class="os-testimonial">
+                    <div class="os-testimonial-header">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Jennifer L." class="os-testimonial-avatar">
+                        <div>
+                            <div class="os-testimonial-name">Jennifer L.</div>
+                            <div class="os-testimonial-loc">Calgary, AB</div>
                         </div>
-                        <p>"As a first-time buyer, I was nervous about financing. The team walked me through every step and got me an amazing deal!"</p>
-                        <cite>- Jennifer L., Calgary</cite>
-                        <span class="verified-badge"><i class="fas fa-check"></i> Verified Customer</span>
                     </div>
-                    <div class="testimonial">
-                        <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="David K." class="testimonial-avatar">
-                        <div class="stars">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
+                    <div class="os-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p>"As a first-time buyer, I was nervous about financing. The team walked me through every step and got me an amazing deal!"</p>
+                    <div class="os-verified"><i class="fas fa-check-circle"></i> Verified Customer</div>
+                </div>
+
+                <div class="os-testimonial">
+                    <div class="os-testimonial-header">
+                        <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="David K." class="os-testimonial-avatar">
+                        <div>
+                            <div class="os-testimonial-name">David K.</div>
+                            <div class="os-testimonial-loc">Kelowna, BC</div>
                         </div>
-                        <p>"I was approved within 2 hours and picked up my car the next day. The entire experience was seamless and professional."</p>
-                        <cite>- David K., Kelowna</cite>
-                        <span class="verified-badge"><i class="fas fa-check"></i> Verified Customer</span>
                     </div>
-                    <div class="testimonial">
-                        <img src="https://randomuser.me/api/portraits/women/90.jpg" alt="Amanda T." class="testimonial-avatar">
-                        <div class="stars">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
+                    <div class="os-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p>"I was approved within 2 hours and picked up my car the next day. The entire experience was seamless and professional."</p>
+                    <div class="os-verified"><i class="fas fa-check-circle"></i> Verified Customer</div>
+                </div>
+
+                <div class="os-testimonial">
+                    <div class="os-testimonial-header">
+                        <img src="https://randomuser.me/api/portraits/women/90.jpg" alt="Amanda T." class="os-testimonial-avatar">
+                        <div>
+                            <div class="os-testimonial-name">Amanda T.</div>
+                            <div class="os-testimonial-loc">Victoria, BC</div>
                         </div>
-                        <p>"Even with less-than-perfect credit, they found me financing options I never thought possible. Highly recommend!"</p>
-                        <cite>- Amanda T., Victoria</cite>
-                        <span class="verified-badge"><i class="fas fa-check"></i> Verified Customer</span>
                     </div>
-                    <div class="testimonial">
-                        <img src="https://randomuser.me/api/portraits/men/52.jpg" alt="James P." class="testimonial-avatar">
-                        <div class="stars">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
+                    <div class="os-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p>"Even with less-than-perfect credit, they found me financing options I never thought possible. Highly recommend!"</p>
+                    <div class="os-verified"><i class="fas fa-check-circle"></i> Verified Customer</div>
+                </div>
+
+                <div class="os-testimonial">
+                    <div class="os-testimonial-header">
+                        <img src="https://randomuser.me/api/portraits/men/52.jpg" alt="James P." class="os-testimonial-avatar">
+                        <div>
+                            <div class="os-testimonial-name">James P.</div>
+                            <div class="os-testimonial-loc">Edmonton, AB</div>
                         </div>
-                        <p>"The trade-in value for my old car was fair, and the upgrade process was painless. Best car buying experience I've had!"</p>
-                        <cite>- James P., Edmonton</cite>
-                        <span class="verified-badge"><i class="fas fa-check"></i> Verified Customer</span>
                     </div>
-                    <div class="testimonial">
-                        <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="Lisa W." class="testimonial-avatar">
-                        <div class="stars">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <p>"No pressure, transparent pricing, and they found exactly what I was looking for. This is how car buying should be!"</p>
-                        <cite>- Lisa W., Regina</cite>
-                        <span class="verified-badge"><i class="fas fa-check"></i> Verified Customer</span>
+                    <div class="os-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                     </div>
+                    <p>"The trade-in value for my old car was fair, and the upgrade process was painless. Best car buying experience I've had!"</p>
+                    <div class="os-verified"><i class="fas fa-check-circle"></i> Verified Customer</div>
                 </div>
             </div>
         </section>
-    </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-top">
-                <div class="footer-logo-container">
-                    <img src="assets/images/favicon.png" alt="Greenlight Automotive" class="footer-logo">
+        <!-- Footer -->
+        <footer class="os-footer">
+            <div class="os-footer-grid">
+                <div class="os-footer-brand">
+                    <img src="assets/images/favicon.png" alt="Greenlight Automotive">
+                    <p>Western Canada's most trusted automotive financing service. Helping families get on the road since 2019.</p>
+                    <div class="os-social-links">
+                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitter"></i></a>
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
                 </div>
-                <div class="footer-grid">
-                    <div class="footer-column">
-                        <h4>Company</h4>
-                        <ul>
-                            <li><a href="our-story.html">About Us</a></li>
-                            <li><a href="our-story.html">Careers</a></li>
-                            <li><a href="our-story.html">Press</a></li>
-                            <li><a href="index.html#formWizard">Contact</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-column">
-                        <h4>Services</h4>
-                        <ul>
-                            <li><a href="index.html#formWizard">Car Financing</a></li>
-                            <li><a href="sell-car-wizard.html">Sell Your Car</a></li>
-                            <li><a href="#sell-car">Trade-In</a></li>
-                            <li><a href="index.html#formWizard">Car Loans</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-column">
-                        <h4>Resources</h4>
-                        <ul>
-                            <li><a href="our-story.html">Blog</a></li>
-                            <li><a href="index.html#formWizard">FAQs</a></li>
-                            <li><a href="#sell-car">Car Reviews</a></li>
-                            <li><a href="index.html#formWizard">Financing Guide</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-column">
-                        <h4>Connect With Us</h4>
-                        <div class="social-links">
-                            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
-                            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitter"></i></a>
-                            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
-                            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
-                        </div>
-                    </div>
+                <div class="os-footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="our-story.html">About Us</a></li>
+                        <li><a href="our-story.html">Careers</a></li>
+                        <li><a href="our-story.html">Press</a></li>
+                        <li><a href="index.html#formWizard">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="os-footer-col">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="index.html#formWizard">Car Financing</a></li>
+                        <li><a href="sell-car-wizard.html">Sell Your Car</a></li>
+                        <li><a href="index.html#formWizard">Trade-In</a></li>
+                        <li><a href="index.html#formWizard">Car Loans</a></li>
+                    </ul>
+                </div>
+                <div class="os-footer-col">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="our-story.html">Blog</a></li>
+                        <li><a href="index.html#formWizard">FAQs</a></li>
+                        <li><a href="our-story.html">Car Reviews</a></li>
+                        <li><a href="index.html#formWizard">Financing Guide</a></li>
+                    </ul>
                 </div>
             </div>
-            <div class="footer-disclaimer">
+            <div class="os-disclaimer">
                 <p><strong>Disclaimer</strong> – Green Light Automotive is not a lending institution, but helps you obtain financing from their network of Canadian lenders. Associated fees, APR percentages, transaction fees and interest rates are dependent on which lender is used, and what programs are currently being offered. Costs of borrowing are determined by term, rate and programs currently offered by the lenders. Lending rates can vary between 0% to 40% depending on applicants and available programs. Cash-back eligibility is determined by current lender programs and credit history of applicant. Trademarks that appear on this site are property of their respective owners. Green Light Automotive may not be endorsed by or affiliated with the trademark owners. We abide by all privacy laws in Canada and you are under no obligation to use our site. By using our site you understand all terms and conditions, and that payment, interest rates and loan terms will be determined at a later date when formal paperwork is signed. This website is not a part of Facebook or Facebook Inc. Additionally, this site is not endorsed by Facebook in any way. Facebook is a trademark of Facebook Inc.</p>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 Green Light Automotive. All rights reserved.</p>
-                <div class="footer-links">
+            <div class="os-footer-bottom">
+                <p>&copy; 2026 Green Light Automotive. All rights reserved.</p>
+                <div>
                     <a href="#">Privacy Policy</a>
                     <a href="#">Terms of Service</a>
                 </div>
             </div>
-        </div>
-    </footer>
+        </footer>
+    </div>
 
-    <script src="assets/js/main.js?v=2"></script>
+    <script>
+        // Mobile menu toggle
+        const mobileToggle = document.getElementById('mobileMenuToggle');
+        const navMenu = document.getElementById('navMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+        if (mobileToggle) {
+            mobileToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                menuOverlay.classList.toggle('active');
+                mobileToggle.classList.toggle('active');
+            });
+        }
+        if (menuOverlay) {
+            menuOverlay.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                menuOverlay.classList.remove('active');
+                mobileToggle.classList.remove('active');
+            });
+        }
+
+        // Animated counters
+        function animateCounters() {
+            const counters = document.querySelectorAll('[data-target]');
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const suffix = counter.getAttribute('data-suffix') || '';
+                const duration = 2000;
+                const step = target / (duration / 16);
+                let current = 0;
+
+                const update = () => {
+                    current += step;
+                    if (current >= target) {
+                        counter.textContent = target.toLocaleString() + suffix;
+                        return;
+                    }
+                    counter.textContent = Math.floor(current).toLocaleString() + suffix;
+                    requestAnimationFrame(update);
+                };
+                update();
+            });
+        }
+
+        // Trigger counters when visible
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    observer.disconnect();
+                }
+            });
+        }, { threshold: 0.3 });
+
+        const achievementsSection = document.getElementById('achievements-section');
+        if (achievementsSection) {
+            observer.observe(achievementsSection);
+        }
+    </script>
 </body>
 </html>
