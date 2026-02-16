@@ -4,23 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sell My Car - Green Light Automotive</title>
-    <link rel="stylesheet" href="assets/css/styles.css">
-    <link rel="stylesheet" href="assets/css/mobile.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
     <style>
-        body {
-            background: url('https://images.unsplash.com/photo-1448375240586-882707db888b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+        body.sc-page {
+            background: #0b1a14 !important;
             min-height: 100vh;
+        }
+        body.sc-page::before {
+            display: none !important;
         }
 
         .sell-wizard-container {
             max-width: 900px;
-            margin: 100px auto 50px;
-            padding: 0 20px;
+            margin: 0 auto;
+            padding: 3rem 20px 50px;
         }
 
         .sell-form-step {
@@ -28,17 +27,11 @@
             opacity: 0;
             transform: translateY(30px);
             animation: slideInUp 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px) saturate(180%);
-            border-radius: 24px;
+            background: #fff;
+            border-radius: 20px;
             padding: 3rem;
-            box-shadow: 0 20px 60px rgba(99, 102, 241, 0.12);
-            border: 2px solid transparent;
-            background-image:
-                linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)),
-                linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(139, 92, 246, 0.3));
-            background-origin: border-box;
-            background-clip: padding-box, border-box;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+            border: none;
         }
 
         .sell-form-step.active {
@@ -60,23 +53,22 @@
         .progress-step-text {
             font-weight: 700;
             font-size: 1.1rem;
-            color: var(--text-dark);
+            color: #0f172a;
         }
 
         .progress-time-estimate {
             font-size: 0.95rem;
-            color: var(--text-light);
+            color: #64748b;
             font-weight: 600;
         }
 
         .sell-progress-bar {
-            height: 12px;
-            background: rgba(99, 102, 241, 0.1);
+            height: 10px;
+            background: #e2e8f0;
             border-radius: 24px;
             overflow: hidden;
             margin-bottom: 1.5rem;
             position: relative;
-            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .progress-steps-labels {
@@ -99,13 +91,13 @@
 
         .step-label i {
             font-size: 1.25rem;
-            color: var(--primary-color);
+            color: #94a3b8;
         }
 
         .step-label small {
             font-size: 0.7rem;
             font-weight: 600;
-            color: var(--text-dark);
+            color: #94a3b8;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -114,6 +106,11 @@
 
         .step-label.active {
             opacity: 1;
+        }
+
+        .step-label.active i,
+        .step-label.active small {
+            color: #10b981;
         }
 
         .step-label.completed {
@@ -141,7 +138,7 @@
 
         .sell-progress-fill {
             height: 100%;
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #10b981, #059669);
             width: 12.5%;
             transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 24px;
@@ -176,144 +173,88 @@
         }
 
         .year-option {
-            background: white;
-            border: 2px solid transparent;
-            border-radius: 16px;
-            padding: 1.25rem;
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem;
             text-align: center;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.25s ease;
             font-weight: 700;
-            font-size: 1.1rem;
-            position: relative;
-            background-image:
-                linear-gradient(white, white),
-                linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
-            background-origin: border-box;
-            background-clip: padding-box, border-box;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.08);
-        }
-
-        .year-option::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            border-radius: 16px;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            z-index: -1;
+            font-size: 1rem;
+            color: #334155;
         }
 
         .year-option:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 12px 32px rgba(99, 102, 241, 0.2);
-        }
-
-        .year-option:hover::before {
-            opacity: 0.3;
+            border-color: #10b981;
+            background: #ecfdf5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
         }
 
         .year-option.selected {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
-            border-color: transparent;
-            color: #6366f1;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-color: #10b981;
+            color: #fff;
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.25);
-        }
-
-        .year-option.selected::before {
-            opacity: 1;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
         }
         
         .popular-makes {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
         }
 
         .make-option {
-            background: white;
-            border: 2px solid transparent;
-            border-radius: 20px;
-            padding: 1.75rem 1.25rem;
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 0.875rem 0.75rem;
             text-align: center;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.25s ease;
             position: relative;
-            background-image:
-                linear-gradient(white, white),
-                linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
-            background-origin: border-box;
-            background-clip: padding-box, border-box;
-            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.08);
-        }
-
-        .make-option::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            border-radius: 20px;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            z-index: -1;
         }
 
         .make-option img {
-            width: 60px;
-            height: 60px;
+            width: 36px;
+            height: 36px;
             object-fit: contain;
-            margin-bottom: 10px;
-            filter: grayscale(100%);
-            transition: all 0.4s ease;
-            opacity: 0.6;
+            margin-bottom: 6px;
+            transition: all 0.3s ease;
+            opacity: 0.7;
         }
 
         .make-option:hover {
-            transform: translateY(-6px) scale(1.03);
-            box-shadow: 0 16px 40px rgba(99, 102, 241, 0.2);
-        }
-
-        .make-option:hover::before {
-            opacity: 0.3;
+            border-color: #10b981;
+            background: #ecfdf5;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
         }
 
         .make-option:hover img {
-            filter: grayscale(0%);
             opacity: 1;
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
 
         .make-option.selected {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
-            border-color: transparent;
-            color: #6366f1;
-            transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(99, 102, 241, 0.25);
-        }
-
-        .make-option.selected::before {
-            opacity: 1;
+            background: #ecfdf5;
+            border-color: #10b981;
+            color: #065f46;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.25);
         }
 
         .make-option.selected img {
-            filter: grayscale(0%);
             opacity: 1;
-            transform: scale(1.15);
         }
 
         .make-option span {
             display: block;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.8125rem;
             letter-spacing: 0.01em;
         }
         
@@ -322,37 +263,28 @@
         }
         
         .make-text-option {
-            padding: 0.875rem 1.25rem;
+            padding: 0.5rem 0.75rem;
             background: white;
-            border: 2px solid transparent;
-            border-radius: 12px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            font-size: 0.8125rem;
             font-weight: 600;
             text-align: center;
-            position: relative;
-            background-image:
-                linear-gradient(white, white),
-                linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
-            background-origin: border-box;
-            background-clip: padding-box, border-box;
-            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.05);
+            color: #334155;
         }
 
         .make-text-option:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.15);
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05));
+            border-color: #10b981;
+            background: #ecfdf5;
         }
 
         .make-text-option.selected {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
-            border-color: #6366f1;
-            color: #6366f1;
+            background: #ecfdf5;
+            border-color: #10b981;
+            color: #065f46;
             font-weight: 700;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.2);
         }
         
         .all-makes-grid::-webkit-scrollbar {
@@ -385,42 +317,20 @@
             display: flex;
             align-items: center;
             padding: 1.25rem 1.75rem;
-            background: white;
-            border: 2px solid transparent;
-            border-radius: 16px;
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.25s ease;
             position: relative;
             min-width: 160px;
-            background-image:
-                linear-gradient(white, white),
-                linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
-            background-origin: border-box;
-            background-clip: padding-box, border-box;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.08);
-        }
-
-        .option-item::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            border-radius: 16px;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            z-index: -1;
         }
 
         .option-item:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 12px 32px rgba(99, 102, 241, 0.2);
-        }
-
-        .option-item:hover::before {
-            opacity: 0.2;
+            border-color: #10b981;
+            background: #ecfdf5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
         }
 
         .option-item input[type="radio"] {
@@ -449,19 +359,19 @@
             content: '';
             width: 12px;
             height: 12px;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            background: linear-gradient(135deg, #10b981, #059669);
             border-radius: 50%;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0);
             transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
         }
 
         .option-item input[type="radio"]:checked ~ .radio-dot {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+            border-color: #10b981;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
         }
 
         .option-item input[type="radio"]:checked ~ .radio-dot::after {
@@ -469,7 +379,7 @@
         }
 
         .option-item input[type="radio"]:checked ~ .option-content {
-            color: #6366f1;
+            color: #10b981;
             font-weight: 700;
         }
 
@@ -485,28 +395,21 @@
 
         /* Selected option styling */
         .option-item:has(input[type="radio"]:checked) {
-            border-color: transparent;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border-color: #10b981;
+            background: #ecfdf5;
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.25);
-        }
-
-        .option-item:has(input[type="radio"]:checked)::before {
-            opacity: 1;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.2);
         }
 
         /* Fallback for browsers that don't support :has */
         .option-item input[type="radio"]:checked + .radio-dot + .option-content {
-            color: #6366f1;
+            color: #10b981;
         }
 
         .step-title {
             font-size: clamp(1.75rem, 4vw, 2.25rem);
             font-weight: 800;
-            background: linear-gradient(135deg, #1a202c 0%, #4a5568 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #0f172a;
             margin-bottom: 0.75rem;
             letter-spacing: -0.02em;
         }
@@ -527,27 +430,17 @@
         }
 
         .upload-section {
-            background: white;
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
+            background: #f8fafc;
+            border-radius: 14px;
             padding: 1.5rem;
-            border: 2px solid transparent;
-            background-image:
-                linear-gradient(white, white),
-                linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
-            background-origin: border-box;
-            background-clip: padding-box, border-box;
-            box-shadow:
-                0 8px 24px rgba(99, 102, 241, 0.08),
-                0 2px 8px rgba(0, 0, 0, 0.04);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1.5px solid #e2e8f0;
+            transition: all 0.25s ease;
         }
 
         .upload-section:hover {
-            transform: translateY(-4px);
-            box-shadow:
-                0 16px 40px rgba(99, 102, 241, 0.15),
-                0 4px 12px rgba(0, 0, 0, 0.06);
+            border-color: rgba(16, 185, 129, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
         }
 
         .upload-section h4 {
@@ -570,15 +463,15 @@
         }
 
         .upload-area:hover {
-            border-color: #6366f1;
-            background: linear-gradient(145deg, #eef2ff 0%, #faf5ff 100%);
-            box-shadow: inset 0 4px 12px rgba(99, 102, 241, 0.08);
+            border-color: #10b981;
+            background: linear-gradient(145deg, #ecfdf5 0%, #f0fdf4 100%);
+            box-shadow: inset 0 4px 12px rgba(16, 185, 129, 0.08);
         }
 
         .upload-area.has-image {
             border-style: solid;
-            border-color: #6366f1;
-            background: linear-gradient(145deg, #818cf8 0%, #a78bfa 100%);
+            border-color: #10b981;
+            background: linear-gradient(145deg, #34d399 0%, #10b981 100%);
         }
 
         .upload-area input[type="file"] {
@@ -602,7 +495,7 @@
 
         .upload-label i {
             font-size: 2.5rem;
-            color: #6366f1;
+            color: #10b981;
             margin-bottom: 1rem;
             opacity: 0.7;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -611,7 +504,7 @@
         .upload-area:hover .upload-label i {
             opacity: 1;
             transform: scale(1.15) translateY(-4px);
-            color: #8b5cf6;
+            color: #059669;
         }
 
         .upload-label span {
@@ -684,22 +577,17 @@
         }
 
         .upload-box {
-            background: white;
-            border-radius: 20px;
+            background: #f8fafc;
+            border-radius: 14px;
             padding: 2rem;
-            border: 2px solid transparent;
-            background-image:
-                linear-gradient(white, white),
-                linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(139, 92, 246, 0.12));
-            background-origin: border-box;
-            background-clip: padding-box, border-box;
-            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.08);
-            transition: all 0.4s ease;
+            border: 1.5px solid #e2e8f0;
+            transition: all 0.25s ease;
         }
 
         .upload-box:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 40px rgba(99, 102, 241, 0.15);
+            border-color: rgba(16, 185, 129, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
         }
 
         .upload-box h3 {
@@ -713,7 +601,7 @@
         }
 
         .upload-box h3 i {
-            color: #6366f1;
+            color: #10b981;
             font-size: 1.5rem;
         }
 
@@ -734,13 +622,13 @@
         }
 
         .upload-placeholder:hover {
-            border-color: #6366f1;
-            background: linear-gradient(145deg, #eef2ff 0%, #faf5ff 100%);
+            border-color: #10b981;
+            background: linear-gradient(145deg, #ecfdf5 0%, #f0fdf4 100%);
         }
 
         .upload-placeholder i {
             font-size: 3rem;
-            color: #6366f1;
+            color: #10b981;
             margin-bottom: 1rem;
             opacity: 0.7;
             transition: all 0.3s ease;
@@ -769,14 +657,14 @@
             align-items: center;
             gap: 1rem;
             padding: 1rem 1.5rem;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.08));
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(5, 150, 105, 0.08));
             border-radius: 12px;
-            border: 2px solid rgba(99, 102, 241, 0.2);
+            border: 2px solid rgba(16, 185, 129, 0.2);
         }
 
         .upload-preview i {
             font-size: 2rem;
-            color: #6366f1;
+            color: #10b981;
         }
 
         .file-name {
@@ -807,8 +695,8 @@
         }
 
         .optional-notice {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05));
-            border-left: 4px solid #6366f1;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(5, 150, 105, 0.05));
+            border-left: 4px solid #10b981;
             padding: 1rem 1.5rem;
             border-radius: 12px;
             display: flex;
@@ -819,7 +707,7 @@
 
         .optional-notice i {
             font-size: 1.5rem;
-            color: #6366f1;
+            color: #10b981;
         }
 
         .optional-notice p {
@@ -832,9 +720,9 @@
         .consent-checkbox {
             margin-top: 1.5rem;
             padding: 1rem;
-            background: rgba(99, 102, 241, 0.05);
+            background: rgba(16, 185, 129, 0.05);
             border-radius: 12px;
-            border: 1px solid rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.1);
         }
 
         .consent-checkbox label {
@@ -852,7 +740,7 @@
             margin: 0;
             cursor: pointer;
             flex-shrink: 0;
-            border: 2px solid #6366f1;
+            border: 2px solid #10b981;
             border-radius: 6px;
             background: white;
             position: relative;
@@ -860,8 +748,8 @@
         }
 
         .consent-checkbox input[type="checkbox"]:checked {
-            background: #6366f1;
-            border-color: #6366f1;
+            background: #10b981;
+            border-color: #10b981;
         }
 
         .consent-checkbox input[type="checkbox"]:checked::after {
@@ -876,8 +764,8 @@
         }
 
         .consent-checkbox input[type="checkbox"]:hover {
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
         }
 
         .consent-checkbox span {
@@ -886,13 +774,13 @@
         }
     </style>
 </head>
-<body>
-    <!-- Navigation Header -->
+<body class="sc-page">
+    <!-- Site Header -->
     <header class="header">
         <nav class="navbar">
             <div class="container">
                 <div class="nav-wrapper">
-                    <a href="index.html" class="logo">
+                    <a href="/" class="logo">
                         <img src="assets/images/logo.png" alt="Greenlight Automotive" class="logo-img">
                     </a>
                     <button class="mobile-menu-toggle" id="mobileMenuToggle">
@@ -900,12 +788,14 @@
                         <span></span>
                         <span></span>
                     </button>
+                    <div class="menu-overlay" id="menuOverlay"></div>
                     <ul class="nav-menu" id="navMenu">
-                        <li><a href="index.html#get-approved">Get Pre-Approved</a></li>
+                        <li><a href="index.html#formWizard">Get Pre-Approved</a></li>
                         <li><a href="sell-car-wizard.html" class="active">Sell My Car</a></li>
-                        <li><a href="track-delivery.html">Track Delivery</a></li>
-                        <li><a href="index.html#why-us">Our Story</a></li>
-                        <li><a href="index.html#resources">Resources</a></li>
+                        <li><a href="delivery-jobs.html">Delivery Jobs</a></li>
+                        <li><a href="driver-portal.html">Driver Portal</a></li>
+                        <li><a href="our-story.html">Our Story</a></li>
+                        <li><a href="referral.html">Referral</a></li>
                         <li><a href="/admin" class="admin-link"><i class="fas fa-lock"></i> Admin</a></li>
                     </ul>
                 </div>
@@ -1004,7 +894,7 @@
                 <!-- Mobile Dropdown (shown only on mobile) -->
                 <div class="mobile-make-dropdown" style="display: none;">
                     <label for="mobile-make-select" style="font-weight: 600; display: block; margin-bottom: 0.75rem; color: var(--text-dark);">Select Make</label>
-                    <select id="mobile-make-select" class="form-control" style="font-size: 1.1rem; padding: 1rem; border-radius: 12px; border: 2px solid rgba(99, 102, 241, 0.2); background: white; width: 100%; cursor: pointer;">
+                    <select id="mobile-make-select" class="form-control" style="font-size: 1.1rem; padding: 1rem; border-radius: 12px; border: 2px solid rgba(16, 185, 129, 0.2); background: white; width: 100%; cursor: pointer;">
                         <option value="">-- Choose a make --</option>
                         <optgroup label="Popular Makes">
                             <option value="Toyota">Toyota</option>
@@ -1066,45 +956,45 @@
                 <!-- Desktop Grid (hidden on mobile) -->
                 <div class="desktop-make-grid">
                     <!-- Popular Makes Section -->
-                    <h3 style="font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--text-dark);">Popular Makes</h3>
+                    <h3 style="font-size: 0.75rem; margin-bottom: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;">Popular Makes</h3>
                     <div class="popular-makes">
                     <div class="make-option" data-make="Toyota">
-                        <i class="fas fa-car" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 10px;"></i>
+                        <img src="https://cdn.simpleicons.org/toyota/334155" alt="Toyota" style="width: 36px; height: 36px; object-fit: contain; margin-bottom: 6px;">
                         <span>Toyota</span>
                     </div>
                     <div class="make-option" data-make="Honda">
-                        <i class="fas fa-car" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 10px;"></i>
+                        <img src="https://cdn.simpleicons.org/honda/334155" alt="Honda" style="width: 36px; height: 36px; object-fit: contain; margin-bottom: 6px;">
                         <span>Honda</span>
                     </div>
                     <div class="make-option" data-make="Ford">
-                        <i class="fas fa-car" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 10px;"></i>
+                        <img src="https://cdn.simpleicons.org/ford/334155" alt="Ford" style="width: 36px; height: 36px; object-fit: contain; margin-bottom: 6px;">
                         <span>Ford</span>
                     </div>
                     <div class="make-option" data-make="Chevrolet">
-                        <i class="fas fa-car" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 10px;"></i>
+                        <img src="https://cdn.simpleicons.org/chevrolet/334155" alt="Chevrolet" style="width: 36px; height: 36px; object-fit: contain; margin-bottom: 6px;">
                         <span>Chevrolet</span>
                     </div>
                     <div class="make-option" data-make="Nissan">
-                        <i class="fas fa-car" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 10px;"></i>
+                        <img src="https://cdn.simpleicons.org/nissan/334155" alt="Nissan" style="width: 36px; height: 36px; object-fit: contain; margin-bottom: 6px;">
                         <span>Nissan</span>
                     </div>
                     <div class="make-option" data-make="Mazda">
-                        <i class="fas fa-car" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 10px;"></i>
+                        <img src="https://cdn.simpleicons.org/mazda/334155" alt="Mazda" style="width: 36px; height: 36px; object-fit: contain; margin-bottom: 6px;">
                         <span>Mazda</span>
                     </div>
                     <div class="make-option" data-make="Hyundai">
-                        <i class="fas fa-car" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 10px;"></i>
+                        <img src="https://cdn.simpleicons.org/hyundai/334155" alt="Hyundai" style="width: 36px; height: 36px; object-fit: contain; margin-bottom: 6px;">
                         <span>Hyundai</span>
                     </div>
                     <div class="make-option" data-make="Kia">
-                        <i class="fas fa-car" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 10px;"></i>
+                        <img src="https://cdn.simpleicons.org/kia/334155" alt="Kia" style="width: 36px; height: 36px; object-fit: contain; margin-bottom: 6px;">
                         <span>Kia</span>
                     </div>
                 </div>
                 
                 <!-- All Makes Section -->
-                <h3 style="font-size: 1.2rem; margin: 2rem 0 1.5rem; color: var(--text-dark);">All Makes</h3>
-                <div class="all-makes-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; max-height: 300px; overflow-y: auto; padding: 10px; border: 1px solid #e8eaed; border-radius: 12px; background: #f8f9fa;">
+                <h3 style="font-size: 0.75rem; margin: 1.25rem 0 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;">All Makes</h3>
+                <div class="all-makes-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 6px; max-height: 220px; overflow-y: auto; padding: 8px; border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc;">
                     <div class="make-text-option" data-make="Acura">Acura</div>
                     <div class="make-text-option" data-make="Alfa Romeo">Alfa Romeo</div>
                     <div class="make-text-option" data-make="Aston Martin">Aston Martin</div>
@@ -1458,25 +1348,41 @@
             <!-- Success Message -->
             <div class="sell-form-step" id="sellSuccess">
                 <div class="submission-success" style="text-align: center;">
-                    <i class="fas fa-check-circle" style="font-size: 5rem; color: var(--green-primary); margin-bottom: 2rem;"></i>
-                    <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Thank You!</h2>
-                    <p style="font-size: 1.25rem; margin-bottom: 1rem;">We've received your vehicle information.</p>
-                    <p style="font-size: 1.25rem; margin-bottom: 3rem;">You'll receive your instant offer via email within the next few minutes.</p>
-                    <a href="index.html" class="btn btn-primary">Return to Home</a>
+                    <i class="fas fa-check-circle" style="font-size: 5rem; color: #10b981; margin-bottom: 2rem;"></i>
+                    <h2 style="font-size: 2.5rem; margin-bottom: 1rem; color: #0f172a;">Thank You!</h2>
+                    <p style="font-size: 1.25rem; margin-bottom: 1rem; color: #475569;">We've received your vehicle information.</p>
+                    <p style="font-size: 1.25rem; margin-bottom: 3rem; color: #475569;">You'll receive your instant offer via email within the next few minutes.</p>
+                    <a href="index.html" class="btn btn-primary" style="background: linear-gradient(135deg, #0f4336, #0a2e24); color: #fff; padding: 0.875rem 2rem; border-radius: 10px; text-decoration: none; font-weight: 700;">Return to Home</a>
                 </div>
             </div>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-bottom">
-                <p>&copy; 2024 Green Light Automotive. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+    <div style="text-align: center; padding: 2rem 0 3rem; border-top: 1px solid #e2e8f0; max-width: 900px; margin: 0 auto;">
+        <p style="color: #94a3b8; font-size: 0.75rem;">&copy; 2026 Green Light Automotive. All rights reserved.</p>
+    </div>
 
+    <script>
+        // Mobile menu toggle
+        const mobileToggle = document.getElementById('mobileMenuToggle');
+        const navMenu = document.getElementById('navMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+        if (mobileToggle) {
+            mobileToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                menuOverlay.classList.toggle('active');
+                mobileToggle.classList.toggle('active');
+            });
+        }
+        if (menuOverlay) {
+            menuOverlay.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                menuOverlay.classList.remove('active');
+                mobileToggle.classList.remove('active');
+            });
+        }
+    </script>
     <script src="assets/js/sell-form.js"></script>
     <script>
         let currentSellStep = 1;

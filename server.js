@@ -691,12 +691,32 @@ app.get('/api/delivery-jobs', async (req, res) => {
         const { status, location, date } = req.query;
 
         if (isVercel) {
-            // Vercel Postgres - simplified query without complex joins for now
             let result;
             if (status) {
-                result = await sql`SELECT * FROM delivery_jobs WHERE status = ${status} ORDER BY created_at DESC`;
+                result = await sql`
+                    SELECT j.*,
+                           COUNT(DISTINCT b.id)::int as bid_count,
+                           d.name as winning_driver,
+                           wb.bid_amount as winning_bid_amount
+                    FROM delivery_jobs j
+                    LEFT JOIN driver_bids b ON j.id = b.job_id
+                    LEFT JOIN driver_bids wb ON j.winning_bid_id = wb.id
+                    LEFT JOIN drivers d ON wb.driver_id = d.id
+                    WHERE j.status = ${status}
+                    GROUP BY j.id, d.name, wb.bid_amount
+                    ORDER BY j.created_at DESC`;
             } else {
-                result = await sql`SELECT * FROM delivery_jobs ORDER BY created_at DESC`;
+                result = await sql`
+                    SELECT j.*,
+                           COUNT(DISTINCT b.id)::int as bid_count,
+                           d.name as winning_driver,
+                           wb.bid_amount as winning_bid_amount
+                    FROM delivery_jobs j
+                    LEFT JOIN driver_bids b ON j.id = b.job_id
+                    LEFT JOIN driver_bids wb ON j.winning_bid_id = wb.id
+                    LEFT JOIN drivers d ON wb.driver_id = d.id
+                    GROUP BY j.id, d.name, wb.bid_amount
+                    ORDER BY j.created_at DESC`;
             }
             res.json(result.rows);
         } else {
@@ -705,10 +725,12 @@ app.get('/api/delivery-jobs', async (req, res) => {
                 SELECT j.*,
                        COUNT(DISTINCT b.id) as bid_count,
                        AVG(b.bid_amount) as average_bid,
-                       d.name as winning_driver
+                       d.name as winning_driver,
+                       wb.bid_amount as winning_bid_amount
                 FROM delivery_jobs j
                 LEFT JOIN driver_bids b ON j.id = b.job_id
-                LEFT JOIN drivers d ON j.winning_bid_id = b.id AND b.driver_id = d.id
+                LEFT JOIN driver_bids wb ON j.winning_bid_id = wb.id
+                LEFT JOIN drivers d ON wb.driver_id = d.id
                 WHERE 1=1
             `;
             const params = [];

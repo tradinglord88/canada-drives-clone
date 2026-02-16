@@ -4,44 +4,355 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delivery Jobs - Green Light Automotive</title>
-    <link rel="stylesheet" href="assets/css/styles.css">
-    <link rel="stylesheet" href="assets/css/mobile.css">
-    <link rel="stylesheet" href="assets/css/delivery-bidding.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
+    <link rel="stylesheet" href="assets/css/styles.css?v=13">
+    <link rel="stylesheet" href="assets/css/mobile.css?v=7">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* ── Page Base ── */
+        .dj-page { background: #0b1a14; min-height: 100vh; }
+        .dj-container { max-width: 1140px; margin: 0 auto; padding: 0 1.5rem; }
+
+        /* ── Hero Section ── */
+        .dj-hero {
+            padding: 3rem 0 2rem;
+            text-align: center;
+            position: relative;
+        }
+        .dj-hero::before {
+            content: '';
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 700px; height: 500px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .dj-hero-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #34d399; padding: 0.375rem 1rem; border-radius: 100px;
+            font-size: 0.75rem; font-weight: 600; letter-spacing: 0.03em;
+            margin-bottom: 1.25rem; text-transform: uppercase;
+        }
+        .dj-hero h1 {
+            font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 800;
+            color: #fff; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 0.75rem;
+        }
+        .dj-hero p {
+            color: rgba(255,255,255,0.5); font-size: 1.0625rem;
+            max-width: 580px; margin: 0 auto; line-height: 1.6;
+        }
+
+        /* ── Stats Strip ── */
+        .dj-stats {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 1rem; padding: 2rem 0 2.5rem;
+        }
+        .dj-stat {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px; padding: 1.25rem 1rem; text-align: center;
+            transition: all 0.25s ease;
+        }
+        .dj-stat:hover {
+            background: rgba(255,255,255,0.05); border-color: rgba(16, 185, 129, 0.15);
+        }
+        .dj-stat-value {
+            font-size: 1.5rem; font-weight: 800; color: #10b981;
+            display: block; margin-bottom: 0.25rem;
+        }
+        .dj-stat-label { font-size: 0.75rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.04em; }
+
+        /* ── Section Label ── */
+        .dj-section-label {
+            font-size: 0.75rem; font-weight: 600; color: rgba(255,255,255,0.35);
+            text-transform: uppercase; letter-spacing: 0.06em;
+            margin-bottom: 1rem;
+        }
+
+        /* ── Filter Bar ── */
+        .dj-filters {
+            display: flex; gap: 0.75rem; align-items: end;
+            margin-bottom: 2rem; flex-wrap: wrap;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px; padding: 1.25rem;
+        }
+        .dj-filter-group { display: flex; flex-direction: column; gap: 0.35rem; flex: 1; min-width: 140px; }
+        .dj-filter-group label {
+            font-size: 0.6875rem; font-weight: 600; color: rgba(255,255,255,0.35);
+            text-transform: uppercase; letter-spacing: 0.04em;
+        }
+        .dj-filter-group select,
+        .dj-filter-group input {
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; padding: 0.6rem 0.75rem; color: #fff;
+            font-size: 0.8125rem; font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s;
+        }
+        .dj-filter-group select:focus,
+        .dj-filter-group input:focus {
+            outline: none; border-color: rgba(16, 185, 129, 0.4);
+        }
+        .dj-filter-group select option { background: #0f2a1f; color: #fff; }
+        .dj-filter-btn {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 8px; padding: 0.6rem 1.1rem; font-size: 0.8125rem; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; white-space: nowrap;
+        }
+        .dj-filter-btn:hover { background: rgba(16, 185, 129, 0.25); }
+
+        /* ── Jobs Grid ── */
+        .dj-jobs-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.25rem; margin-bottom: 3rem;
+        }
+
+        /* ── Job Card ── */
+        .dj-job-card {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px; padding: 1.5rem; position: relative;
+            transition: all 0.25s ease;
+        }
+        .dj-job-card:hover {
+            background: rgba(255,255,255,0.05); border-color: rgba(16, 185, 129, 0.15);
+            transform: translateY(-2px);
+        }
+        .dj-job-badge {
+            position: absolute; top: 1.25rem; right: 1.25rem;
+            padding: 0.25rem 0.7rem; border-radius: 100px;
+            font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+        }
+        .dj-job-badge.open { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .dj-job-badge.assigned { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .dj-job-badge.in_progress { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+        .dj-job-badge.completed { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
+        .dj-job-card h3 {
+            font-size: 1.05rem; font-weight: 700; color: #fff;
+            margin-bottom: 1rem; padding-right: 5rem;
+        }
+        .dj-job-detail {
+            display: flex; align-items: flex-start; gap: 0.6rem;
+            margin-bottom: 0.6rem; font-size: 0.8125rem; color: rgba(255,255,255,0.45);
+        }
+        .dj-job-detail i { color: #10b981; width: 16px; text-align: center; margin-top: 2px; font-size: 0.75rem; }
+        .dj-special {
+            background: rgba(255,255,255,0.04); border-radius: 8px; padding: 0.65rem 0.75rem;
+            margin: 0.85rem 0; font-size: 0.8rem; color: rgba(255,255,255,0.4);
+            display: flex; align-items: flex-start; gap: 0.5rem;
+        }
+        .dj-special i { color: #fbbf24; margin-top: 2px; }
+        .dj-job-footer { margin-top: 1.25rem; display: flex; gap: 0.75rem; }
+        .dj-apply-btn {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: #10b981; color: #fff;
+            border: none; border-radius: 8px;
+            padding: 0.6rem 1.25rem; font-size: 0.8rem; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .dj-apply-btn:hover { background: #059669; transform: translateY(-1px); }
+        .dj-assigned-tag {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: rgba(59, 130, 246, 0.1); color: #60a5fa;
+            border-radius: 8px; padding: 0.55rem 1rem;
+            font-size: 0.8rem; font-weight: 500;
+        }
+        .dj-inprogress-tag {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: rgba(251, 191, 36, 0.1); color: #fbbf24;
+            border-radius: 8px; padding: 0.55rem 1rem;
+            font-size: 0.8rem; font-weight: 500;
+        }
+        .dj-completed-tag {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: rgba(139, 92, 246, 0.1); color: #a78bfa;
+            border-radius: 8px; padding: 0.55rem 1rem;
+            font-size: 0.8rem; font-weight: 500;
+        }
+        .dj-payout {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.15);
+            border-radius: 8px; padding: 0.45rem 0.85rem;
+            font-size: 0.8rem; font-weight: 700; color: #10b981;
+        }
+        .dj-payout i { font-size: 0.7rem; }
+
+        /* ── No Jobs ── */
+        .dj-no-jobs {
+            text-align: center; padding: 4rem 2rem;
+            color: rgba(255,255,255,0.35); font-size: 0.95rem;
+            grid-column: 1 / -1;
+        }
+        .dj-no-jobs i { display: block; font-size: 2.5rem; margin-bottom: 1rem; color: rgba(16,185,129,0.25); }
+
+        /* ── Modal ── */
+        .dj-modal-overlay {
+            display: none; position: fixed; inset: 0; z-index: 200;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
+            align-items: center; justify-content: center;
+        }
+        .dj-modal-overlay.dj-visible { display: flex; }
+        .dj-modal {
+            background: #111f19; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px; max-width: 520px; width: 92%; max-height: 90vh; overflow-y: auto;
+        }
+        .dj-modal-head {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .dj-modal-head h2 { font-size: 1.1rem; font-weight: 700; color: #fff; margin: 0; }
+        .dj-modal-close {
+            background: rgba(255,255,255,0.06); border: none; color: rgba(255,255,255,0.5);
+            width: 32px; height: 32px; border-radius: 8px; font-size: 1.15rem;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .dj-modal-close:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .dj-modal-body { padding: 1.5rem; }
+
+        /* ── Apply/Bid Form ── */
+        .dj-apply-summary {
+            background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.1);
+            border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.25rem;
+        }
+        .dj-apply-summary h3 { font-size: 1rem; font-weight: 700; color: #10b981; margin-bottom: 0.35rem; }
+        .dj-apply-summary p { font-size: 0.8125rem; color: rgba(255,255,255,0.45); margin: 0.2rem 0; }
+        .dj-form-group { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; }
+        .dj-form-group label {
+            font-size: 0.75rem; font-weight: 600; color: rgba(255,255,255,0.45);
+            display: flex; align-items: center; gap: 0.4rem;
+        }
+        .dj-form-group label i { color: #10b981; font-size: 0.7rem; }
+        .dj-form-group input,
+        .dj-form-group select,
+        .dj-form-group textarea {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; padding: 0.65rem 0.85rem; color: #fff;
+            font-size: 0.875rem; font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s;
+        }
+        .dj-form-group input:focus,
+        .dj-form-group select:focus,
+        .dj-form-group textarea:focus { outline: none; border-color: rgba(16, 185, 129, 0.4); }
+        .dj-form-group textarea { resize: vertical; min-height: 70px; }
+        .dj-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .dj-modal-footer {
+            display: flex; justify-content: flex-end; gap: 0.75rem;
+            padding: 1.25rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .dj-btn-cancel {
+            background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.6); border: none;
+            border-radius: 8px; padding: 0.6rem 1.25rem; font-size: 0.8125rem; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .dj-btn-cancel:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .dj-btn-submit {
+            background: #10b981; color: #fff; border: none; border-radius: 8px;
+            padding: 0.6rem 1.5rem; font-size: 0.8125rem; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .dj-btn-submit:hover { background: #059669; }
+        .dj-hint { font-size: 0.7rem; color: rgba(255,255,255,0.3); margin-top: 0.2rem; }
+
+        /* ── Footer ── */
+        .dj-footer {
+            text-align: center; padding: 2.5rem 0;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.25); font-size: 0.75rem;
+        }
+
+        /* ── Override styles.css body background ── */
+        body.dj-page { background: #0b1a14 !important; }
+        body.dj-page::before { display: none !important; }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .dj-stats { grid-template-columns: 1fr; }
+            .dj-filters { flex-direction: column; }
+            .dj-filter-group { min-width: 100%; }
+            .dj-jobs-grid { grid-template-columns: 1fr; }
+            .dj-form-row { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
-<body>
+<body class="dj-page">
+
+    <!-- Professional Top Bar (same as main page) -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-content">
+                <div class="top-bar-left">
+                    <span><i class="fas fa-envelope"></i> info@greenlightauto.ca</span>
+                </div>
+                <div class="top-bar-right">
+                    <span><i class="fas fa-clock"></i> Mon-Fri: 9AM-8PM | Sat: 10AM-6PM</span>
+                    <span><i class="fas fa-phone-alt"></i> 250-618-4995</span>
+                    <a href="index.html#formWizard" class="top-bar-cta">Apply Now <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Header (same as main page) -->
     <header class="header">
         <nav class="navbar">
             <div class="container">
                 <div class="nav-wrapper">
-                    <a href="index.html" class="logo">
+                    <a href="/" class="logo">
                         <img src="assets/images/logo.png" alt="Greenlight Automotive" class="logo-img">
                     </a>
-                    <ul class="nav-menu">
-                        <li><a href="index.html">Home</a></li>
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <div class="menu-overlay" id="menuOverlay"></div>
+                    <ul class="nav-menu" id="navMenu">
+                        <li><a href="index.html#get-approved">Get Pre-Approved</a></li>
+                        <li><a href="sell-car-wizard.html">Sell My Car</a></li>
                         <li><a href="delivery-jobs.html" class="active">Delivery Jobs</a></li>
                         <li><a href="driver-portal.html">Driver Portal</a></li>
-                        <li><a href="/admin">Admin</a></li>
+                        <li><a href="our-story.html">Our Story</a></li>
+                        <li><a href="referral.html">Referral</a></li>
+                        <li><a href="buy-leads.html">Buy Leads</a></li>
+                        <li><a href="/admin" class="admin-link"><i class="fas fa-lock"></i> Admin</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
 
-    <main class="delivery-jobs-main">
-        <div class="container">
-            <div class="page-header">
-                <h1><i class="fas fa-truck"></i> Available Delivery Jobs</h1>
-                <button class="btn btn-primary" onclick="showPostJobModal()">
-                    <i class="fas fa-plus"></i> Post New Job
-                </button>
-            </div>
+    <main>
+        <div class="dj-container">
 
-            <!-- Filter Section -->
-            <div class="filters-section">
-                <div class="filter-group">
-                    <label>Location:</label>
+            <!-- Hero -->
+            <section class="dj-hero">
+                <div class="dj-hero-badge"><i class="fas fa-truck-fast"></i> Driver Marketplace</div>
+                <h1>Earn Money Delivering Vehicles</h1>
+                <p>Browse open delivery jobs across British Columbia, place your bid, and get paid. Flexible schedule — you pick the jobs that work for you.</p>
+            </section>
+
+            <!-- Stats Strip -->
+            <section class="dj-stats">
+                <div class="dj-stat">
+                    <span class="dj-stat-value" id="openJobsCount">—</span>
+                    <span class="dj-stat-label">Open Jobs</span>
+                </div>
+                <div class="dj-stat">
+                    <span class="dj-stat-value">$600,000+</span>
+                    <span class="dj-stat-label">Paid to Drivers</span>
+                </div>
+                <div class="dj-stat">
+                    <span class="dj-stat-value">1,479</span>
+                    <span class="dj-stat-label">Deliveries Completed</span>
+                </div>
+            </section>
+
+            <!-- Filters -->
+            <div class="dj-section-label">Find Jobs Near You</div>
+            <div class="dj-filters">
+                <div class="dj-filter-group">
+                    <label>Location</label>
                     <select id="locationFilter">
                         <option value="">All Locations</option>
                         <option value="Vancouver">Vancouver</option>
@@ -50,12 +361,12 @@
                         <option value="Richmond">Richmond</option>
                     </select>
                 </div>
-                <div class="filter-group">
-                    <label>Date:</label>
+                <div class="dj-filter-group">
+                    <label>Date</label>
                     <input type="date" id="dateFilter">
                 </div>
-                <div class="filter-group">
-                    <label>Status:</label>
+                <div class="dj-filter-group">
+                    <label>Status</label>
                     <select id="statusFilter">
                         <option value="">All Status</option>
                         <option value="open">Open for Bids</option>
@@ -64,97 +375,107 @@
                         <option value="completed">Completed</option>
                     </select>
                 </div>
-                <button class="btn btn-secondary" onclick="applyFilters()">
-                    <i class="fas fa-filter"></i> Apply Filters
+                <button class="dj-filter-btn" onclick="applyFilters()">
+                    <i class="fas fa-filter"></i> Apply
                 </button>
             </div>
 
             <!-- Jobs Grid -->
-            <div class="jobs-grid" id="jobsGrid">
-                <!-- Jobs will be loaded here dynamically -->
+            <div class="dj-jobs-grid" id="jobsGrid">
+                <!-- Jobs loaded dynamically -->
             </div>
+
         </div>
     </main>
 
-    <!-- Post Job Modal -->
-    <div class="modal" id="postJobModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Post New Delivery Job</h2>
-                <button class="close-btn" onclick="closePostJobModal()">&times;</button>
+    <!-- Footer -->
+    <footer class="dj-footer">
+        <div class="dj-container">
+            &copy; 2025 Green Light Automotive. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Place Bid / Apply Modal -->
+    <div class="dj-modal-overlay" id="applyModal">
+        <div class="dj-modal">
+            <div class="dj-modal-head">
+                <h2><i class="fas fa-hand-holding-dollar" style="color:#10b981;margin-right:0.5rem;"></i>Place Your Bid</h2>
+                <button class="dj-modal-close" onclick="closeApplyModal()">&times;</button>
             </div>
-            <form id="postJobForm">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label><i class="fas fa-user"></i> Customer Name</label>
-                        <input type="text" name="customer_name" required>
+            <form id="applyForm">
+                <div class="dj-modal-body">
+                    <div id="applyJobSummary"></div>
+                    <div class="dj-form-row">
+                        <div class="dj-form-group">
+                            <label><i class="fas fa-user"></i> Your Name</label>
+                            <input type="text" name="driver_name" required placeholder="Full name">
+                        </div>
+                        <div class="dj-form-group">
+                            <label><i class="fas fa-phone"></i> Phone Number</label>
+                            <input type="tel" name="driver_phone" required placeholder="250-XXX-XXXX">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-car"></i> Vehicle Info</label>
-                        <input type="text" name="vehicle_info" placeholder="Year Make Model - Color" required>
+                    <div class="dj-form-row">
+                        <div class="dj-form-group">
+                            <label><i class="fas fa-dollar-sign"></i> Your Bid Amount ($)</label>
+                            <input type="number" name="bid_amount" required placeholder="e.g. 75" min="1" step="1">
+                            <span class="dj-hint">How much you'd charge for this delivery</span>
+                        </div>
+                        <div class="dj-form-group">
+                            <label><i class="fas fa-clock"></i> Est. Completion (min)</label>
+                            <input type="number" name="estimated_completion_time" required placeholder="e.g. 60" min="1">
+                            <span class="dj-hint">Estimated delivery time in minutes</span>
+                        </div>
                     </div>
-                    <div class="form-group full-width">
-                        <label><i class="fas fa-map-marker-alt"></i> Pickup Address</label>
-                        <input type="text" name="pickup_address" required>
+                    <div class="dj-form-group">
+                        <label><i class="fas fa-comment"></i> Message (optional)</label>
+                        <textarea name="message" placeholder="Tell the dealer why you're a great fit for this job..." rows="3"></textarea>
                     </div>
-                    <div class="form-group full-width">
-                        <label><i class="fas fa-map-marker-alt"></i> Delivery Address</label>
-                        <input type="text" name="delivery_address" required>
-                    </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-calendar"></i> Delivery Date</label>
-                        <input type="date" name="delivery_date" required>
-                    </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-clock"></i> Time Window</label>
-                        <select name="delivery_window" required>
-                            <option value="9:00 AM - 12:00 PM">Morning (9:00 AM - 12:00 PM)</option>
-                            <option value="12:00 PM - 3:00 PM">Midday (12:00 PM - 3:00 PM)</option>
-                            <option value="3:00 PM - 6:00 PM">Afternoon (3:00 PM - 6:00 PM)</option>
-                            <option value="6:00 PM - 9:00 PM">Evening (6:00 PM - 9:00 PM)</option>
-                        </select>
-                    </div>
-                    <div class="form-group full-width">
-                        <label><i class="fas fa-info-circle"></i> Special Instructions</label>
-                        <textarea name="special_instructions" rows="3"></textarea>
-                    </div>
+                    <input type="hidden" name="job_id" id="applyJobId">
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closePostJobModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Post Job</button>
+                <div class="dj-modal-footer">
+                    <button type="button" class="dj-btn-cancel" onclick="closeApplyModal()">Cancel</button>
+                    <button type="submit" class="dj-btn-submit"><i class="fas fa-paper-plane" style="margin-right:0.35rem;"></i>Submit Bid</button>
                 </div>
             </form>
-        </div>
-    </div>
-
-    <!-- View Bids Modal -->
-    <div class="modal" id="viewBidsModal">
-        <div class="modal-content large">
-            <div class="modal-header">
-                <h2>Bids for Delivery Job</h2>
-                <button class="close-btn" onclick="closeViewBidsModal()">&times;</button>
-            </div>
-            <div class="job-details" id="jobDetailsInModal">
-                <!-- Job details will be shown here -->
-            </div>
-            <div class="bids-list" id="bidsList">
-                <!-- Bids will be loaded here -->
-            </div>
         </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
-        
-        // Load jobs on page load
-        document.addEventListener('DOMContentLoaded', loadJobs);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadJobs();
+            // Mobile menu toggle (same as main page)
+            const toggle = document.getElementById('mobileMenuToggle');
+            const menu = document.getElementById('navMenu');
+            const overlay = document.getElementById('menuOverlay');
+            if (toggle) {
+                toggle.addEventListener('click', () => {
+                    toggle.classList.toggle('active');
+                    menu.classList.toggle('active');
+                    overlay.classList.toggle('active');
+                });
+            }
+            if (overlay) {
+                overlay.addEventListener('click', () => {
+                    toggle.classList.remove('active');
+                    menu.classList.remove('active');
+                    overlay.classList.remove('active');
+                });
+            }
+        });
 
         async function loadJobs() {
             try {
                 const response = await fetch('/api/delivery-jobs');
                 const jobs = await response.json();
                 displayJobs(jobs);
+
+                // Update open jobs count
+                const openCount = jobs.filter(j => j.status === 'open').length;
+                document.getElementById('openJobsCount').textContent = openCount;
             } catch (error) {
                 console.error('Error loading jobs:', error);
             }
@@ -162,165 +483,102 @@
 
         function displayJobs(jobs) {
             const jobsGrid = document.getElementById('jobsGrid');
-            
+
             if (jobs.length === 0) {
-                jobsGrid.innerHTML = '<div class="no-jobs">No delivery jobs available at the moment.</div>';
+                jobsGrid.innerHTML = '<div class="dj-no-jobs"><i class="fas fa-inbox"></i>No delivery jobs available right now. Check back soon!</div>';
                 return;
             }
 
             jobsGrid.innerHTML = jobs.map(job => `
-                <div class="job-card ${job.status}">
-                    <div class="job-status-badge ${job.status}">
+                <div class="dj-job-card">
+                    <div class="dj-job-badge ${job.status}">
                         ${job.status.replace('_', ' ').toUpperCase()}
                     </div>
                     <h3>${job.vehicle_info}</h3>
-                    <div class="job-info">
-                        <p><i class="fas fa-user"></i> ${job.customer_name}</p>
-                        <p><i class="fas fa-map-marker-alt"></i> From: ${job.pickup_address}</p>
-                        <p><i class="fas fa-map-marker-alt"></i> To: ${job.delivery_address}</p>
-                        <p><i class="fas fa-calendar"></i> ${new Date(job.delivery_date).toLocaleDateString()}</p>
-                        <p><i class="fas fa-clock"></i> ${job.delivery_window}</p>
-                        ${job.distance ? `<p><i class="fas fa-route"></i> ${job.distance} km</p>` : ''}
-                    </div>
+                    <div class="dj-job-detail"><i class="fas fa-arrow-up-from-bracket"></i> <span>Pickup: ${job.pickup_address}</span></div>
+                    <div class="dj-job-detail"><i class="fas fa-location-dot"></i> <span>Drop-off: ${job.delivery_address}</span></div>
+                    <div class="dj-job-detail"><i class="fas fa-calendar"></i> <span>${new Date(job.delivery_date).toLocaleDateString()}</span></div>
+                    <div class="dj-job-detail"><i class="fas fa-clock"></i> <span>${job.delivery_window}</span></div>
+                    ${job.distance ? `<div class="dj-job-detail"><i class="fas fa-route"></i> <span>${job.distance} km</span></div>` : ''}
                     ${job.special_instructions ? `
-                        <div class="special-instructions">
-                            <i class="fas fa-info-circle"></i> ${job.special_instructions}
-                        </div>
+                        <div class="dj-special"><i class="fas fa-info-circle"></i> <span>${job.special_instructions}</span></div>
                     ` : ''}
-                    <div class="job-actions">
+                    <div class="dj-job-footer">
                         ${job.status === 'open' ? `
-                            <button class="btn btn-primary" onclick="viewBids(${job.id})">
-                                <i class="fas fa-gavel"></i> View Bids (${job.bid_count || 0})
+                            <button class="dj-apply-btn" onclick="openApplyModal(${job.id}, '${job.vehicle_info.replace(/'/g, "\\'")}', '${job.pickup_address.replace(/'/g, "\\'")}', '${job.delivery_address.replace(/'/g, "\\'")}')">
+                                <i class="fas fa-hand-holding-dollar"></i> Place Bid
                             </button>
+                            ${job.bid_count ? `<span style="color:rgba(255,255,255,0.3);font-size:0.75rem;display:flex;align-items:center;gap:0.3rem;"><i class="fas fa-users"></i> ${job.bid_count} bid${job.bid_count > 1 ? 's' : ''}</span>` : ''}
                         ` : ''}
-                        ${job.status === 'assigned' && job.winning_driver ? `
-                            <div class="assigned-driver">
-                                <i class="fas fa-user-check"></i> Assigned to ${job.winning_driver}
-                            </div>
+                        ${job.status === 'assigned' ? `
+                            <div class="dj-assigned-tag"><i class="fas fa-user-check"></i> Assigned</div>
+                            ${job.winning_bid_amount ? `<div class="dj-payout"><i class="fas fa-dollar-sign"></i> $${Number(job.winning_bid_amount).toFixed(0)} Paid</div>` : ''}
+                        ` : ''}
+                        ${job.status === 'in_progress' ? `
+                            <div class="dj-inprogress-tag"><i class="fas fa-truck"></i> In Transit</div>
+                            ${job.winning_bid_amount ? `<div class="dj-payout"><i class="fas fa-dollar-sign"></i> $${Number(job.winning_bid_amount).toFixed(0)} Agreed</div>` : ''}
+                        ` : ''}
+                        ${job.status === 'completed' ? `
+                            <div class="dj-completed-tag"><i class="fas fa-circle-check"></i> Completed</div>
+                            ${job.winning_bid_amount ? `<div class="dj-payout"><i class="fas fa-dollar-sign"></i> $${Number(job.winning_bid_amount).toFixed(0)} Earned</div>` : ''}
                         ` : ''}
                     </div>
                 </div>
             `).join('');
         }
 
-        function showPostJobModal() {
-            document.getElementById('postJobModal').style.display = 'flex';
+        // Apply / Place Bid Modal
+        function openApplyModal(jobId, vehicle, pickup, delivery) {
+            document.getElementById('applyJobId').value = jobId;
+            document.getElementById('applyJobSummary').innerHTML = `
+                <div class="dj-apply-summary">
+                    <h3>${vehicle}</h3>
+                    <p><i class="fas fa-arrow-up-from-bracket" style="margin-right:0.35rem;color:#10b981;"></i>${pickup}</p>
+                    <p><i class="fas fa-location-dot" style="margin-right:0.35rem;color:#10b981;"></i>${delivery}</p>
+                </div>
+            `;
+            document.getElementById('applyModal').classList.add('dj-visible');
         }
 
-        function closePostJobModal() {
-            document.getElementById('postJobModal').style.display = 'none';
-            document.getElementById('postJobForm').reset();
+        function closeApplyModal() {
+            document.getElementById('applyModal').classList.remove('dj-visible');
+            document.getElementById('applyForm').reset();
         }
 
-        async function viewBids(jobId) {
-            try {
-                const response = await fetch(`/api/delivery-jobs/${jobId}/bids`);
-                const data = await response.json();
-                
-                // Display job details
-                document.getElementById('jobDetailsInModal').innerHTML = `
-                    <h3>${data.job.vehicle_info}</h3>
-                    <p>${data.job.pickup_address} → ${data.job.delivery_address}</p>
-                    <p>${new Date(data.job.delivery_date).toLocaleDateString()} | ${data.job.delivery_window}</p>
-                `;
-                
-                // Display bids
-                if (data.bids.length === 0) {
-                    document.getElementById('bidsList').innerHTML = '<p class="no-bids">No bids yet for this job.</p>';
-                } else {
-                    document.getElementById('bidsList').innerHTML = `
-                        <h3>Received Bids</h3>
-                        <div class="bids-table">
-                            ${data.bids.map(bid => `
-                                <div class="bid-item ${bid.status}">
-                                    <div class="bid-driver">
-                                        <strong>${bid.driver_name}</strong>
-                                        <div class="driver-rating">
-                                            <i class="fas fa-star"></i> ${bid.driver_rating}
-                                            <span>(${bid.completed_deliveries} deliveries)</span>
-                                        </div>
-                                    </div>
-                                    <div class="bid-amount">
-                                        <strong>$${bid.bid_amount}</strong>
-                                        <small>${bid.estimated_completion_time} min</small>
-                                    </div>
-                                    ${bid.message ? `<div class="bid-message">${bid.message}</div>` : ''}
-                                    ${data.job.status === 'open' ? `
-                                        <button class="btn btn-success" onclick="acceptBid(${jobId}, ${bid.id})">
-                                            Accept Bid
-                                        </button>
-                                    ` : ''}
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                }
-                
-                document.getElementById('viewBidsModal').style.display = 'flex';
-            } catch (error) {
-                console.error('Error loading bids:', error);
-                alert('Error loading bids');
-            }
-        }
-
-        function closeViewBidsModal() {
-            document.getElementById('viewBidsModal').style.display = 'none';
-        }
-
-        async function acceptBid(jobId, bidId) {
-            if (!confirm('Are you sure you want to accept this bid?')) return;
-            
-            try {
-                const response = await fetch(`/api/delivery-jobs/${jobId}/accept-bid`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ bidId })
-                });
-                
-                if (response.ok) {
-                    alert('Bid accepted successfully!');
-                    closeViewBidsModal();
-                    loadJobs();
-                } else {
-                    alert('Error accepting bid');
-                }
-            } catch (error) {
-                console.error('Error accepting bid:', error);
-                alert('Error accepting bid');
-            }
-        }
-
-        // Handle job posting
-        document.getElementById('postJobForm').addEventListener('submit', async (e) => {
+        // Submit bid
+        document.getElementById('applyForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const formData = new FormData(e.target);
-            const jobData = Object.fromEntries(formData);
-            
+            const bidData = Object.fromEntries(formData);
+            const jobId = bidData.job_id;
+            delete bidData.job_id;
+
             try {
-                const response = await fetch('/api/delivery-jobs', {
+                const response = await fetch(`/api/delivery-jobs/${jobId}/bids`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(jobData)
+                    body: JSON.stringify(bidData)
                 });
-                
+
                 if (response.ok) {
-                    alert('Job posted successfully!');
-                    closePostJobModal();
+                    alert('Your bid has been submitted! You\'ll be notified if it\'s accepted.');
+                    closeApplyModal();
                     loadJobs();
                 } else {
-                    alert('Error posting job');
+                    const err = await response.json().catch(() => ({}));
+                    alert(err.error || 'Error submitting bid. Please try again.');
                 }
             } catch (error) {
-                console.error('Error posting job:', error);
-                alert('Error posting job');
+                console.error('Error submitting bid:', error);
+                alert('Error submitting bid. Please try again.');
             }
         });
 
         // Socket.io for real-time updates
         socket.on('newBid', (data) => {
             console.log('New bid received:', data);
-            loadJobs(); // Reload jobs to update bid counts
+            loadJobs();
         });
 
         socket.on('jobStatusUpdate', (data) => {
@@ -333,10 +591,7 @@
             const location = document.getElementById('locationFilter').value;
             const date = document.getElementById('dateFilter').value;
             const status = document.getElementById('statusFilter').value;
-            
-            // Add filter logic here
             console.log('Applying filters:', { location, date, status });
-            // You would typically send these to the backend and reload filtered results
         }
     </script>
 </body>
