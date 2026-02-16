@@ -933,6 +933,60 @@ body::before {
     flex-shrink: 0;
 }
 
+/* Brand Marquee Banner */
+.brand-marquee {
+    width: 100%;
+    height: 60px;
+    overflow: hidden;
+    background: #1a1a2e;
+    display: flex;
+    align-items: center;
+}
+
+.brand-marquee:hover .brand-track {
+    animation-play-state: paused;
+}
+
+.brand-track {
+    display: flex;
+    gap: 3rem;
+    white-space: nowrap;
+    animation: marquee 28s linear infinite;
+}
+
+.brand-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.55);
+    flex-shrink: 0;
+    transition: color 0.3s ease;
+}
+
+.brand-logo:hover {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.brand-logo img {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
 .lender-logos {
     display: grid;
     grid-template-columns: repeat(6, 1fr);

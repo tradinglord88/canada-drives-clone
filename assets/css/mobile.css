@@ -57,6 +57,27 @@
         display: none;
     }
 
+    /* Brand Marquee Mobile */
+    .brand-marquee {
+        height: 48px;
+    }
+
+    .brand-track {
+        gap: 2rem;
+        animation-duration: 20s;
+    }
+
+    .brand-logo {
+        font-size: 0.65rem;
+        letter-spacing: 0.08em;
+        gap: 0.35rem;
+    }
+
+    .brand-logo img {
+        width: 22px;
+        height: 22px;
+    }
+
     /* Global Adjustments */
     body {
         font-size: 15px;
