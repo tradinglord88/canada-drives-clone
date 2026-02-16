@@ -1,8 +1,8 @@
-tr# Canada Drives CRM - Admin Lead Management Guide
+# Greenlight Automotive CRM - Admin Dashboard Guide
 
 ## Overview
 
-The Canada Drives CRM system provides a comprehensive admin dashboard for sales teams to manage, view, and export customer leads collected from the website's pre-approval form.
+The Greenlight Automotive CRM provides a comprehensive admin dashboard with five tabs for managing all aspects of the business: pre-approval applications, sell requests, dealership inquiries, delivery bids, and referral partners.
 
 ## Accessing the Admin Dashboard
 
@@ -12,189 +12,167 @@ The Canada Drives CRM system provides a comprehensive admin dashboard for sales 
 - **Username:** `admin`
 - **Password:** `admin123`
 
-⚠️ **IMPORTANT:** Change the default password immediately after first login!
+These can be changed via environment variables `ADMIN_USERNAME` and `ADMIN_DEFAULT_PASSWORD` in your `.env` file.
 
-## Features
+## Dashboard Tabs
 
-### 1. Dashboard Statistics
-When you log in, you'll see real-time statistics:
-- **Total Leads:** All leads in the system
-- **Today's Leads:** Leads submitted today
-- **This Week:** Leads from the past 7 days
-- **This Month:** Leads submitted this month
+### 1. Pre-Approvals
 
-### 2. Lead Management Table
-The main table displays all leads with:
-- **Lead ID:** Unique identifier for each lead
-- **Submission Date:** When the customer filled out the form
-- **Customer Name:** First and last name
-- **Contact Info:** Email and phone number
-- **Vehicle Type:** Type of vehicle they're interested in
-- **Budget:** Their budget range
-- **Credit Score Category:** Excellent, Good, Fair, or Building Credit
+Manages finance applications submitted through the website's pre-approval form.
 
-### 3. Search & Filter
-- **Search Box:** Search by customer name, email, or phone number
-- **Vehicle Filter:** Filter by vehicle type (Sedan, SUV, Truck, etc.)
-- **Credit Filter:** Filter by credit score category
+**Stats:** Total Applications, Today's Leads, This Week, Pending Review
 
-### 4. View Lead Details
-Click the **"View"** button on any lead to see a detailed breakdown:
-- Complete customer information
-- Vehicle preferences
-- Financial information
-- Lead submission details
+**Table columns:** ID, Date, Customer, Contact, Vehicle, Budget, Credit, Status, Actions
 
-### 5. Print Lead Sheet
-From the lead detail modal, click **"Print Lead Sheet"** to generate a professional, printable document containing all lead information.
+**Features:**
+- **Search** by customer name, email, or phone
+- **Filter** by vehicle type and credit score
+- **View details** including customer info, vehicle preferences, financials, employment, and uploaded documents (license, paystub)
+- **Update deal status** (Pending, Contacted, Approved, Declined) — approving a referred lead automatically credits the referrer's commission
+- **Download/view documents** directly from the detail modal
+- **Export to CSV**
+- **Delete** individual applications
 
-**Perfect for:**
-- Sales follow-up calls
-- Physical filing
-- CRM import reference
+### 2. Sell Requests
 
-### 6. Export to CSV
-Click the **"Export CSV"** button to download all leads in a spreadsheet format.
+Manages vehicle sell submissions from the Sell My Car page.
 
-**The CSV includes:**
-- All customer contact information
-- Vehicle preferences
-- Financial details
-- Submission timestamps
+**Stats:** Total Requests, Today's Requests, This Week, Total Vehicles
 
-**Use cases:**
-- Import into other CRM systems (Salesforce, HubSpot, etc.)
-- Bulk email campaigns
-- Performance reporting
-- Data backup
+**Table columns:** ID, Date, Customer, Contact, Vehicle (make/model), Year, Mileage, Condition, Actions
 
-### 7. Delete Leads
-Click the **trash icon** to permanently delete a lead from the system.
+**Features:**
+- **Search** by customer name, email, phone, make, or model
+- **View details** including customer info, vehicle details, and uploaded photos (front, back, driver side, passenger, VIN, odometer)
+- **Export to CSV**
+- **Delete** individual submissions
 
-⚠️ This action cannot be undone!
+### 3. Dealer Inquiries
 
-## How Customer Data Flows
+Manages dealership partnership requests from the Buy Leads page.
+
+**Stats:** Total Inquiries, New/Unread, Contacted, Closed
+
+**Table columns:** ID, Date, Dealership, Contact, Location, Package, Volume, Status, Actions
+
+**Features:**
+- **Search** by dealership name, contact, email, phone, or location
+- **Filter** by status (New, Contacted, Closed)
+- **Update inquiry status** from the detail modal
+- **View details** including dealership info, package preference, monthly volume, and additional notes
+- **Export to CSV**
+- **Delete** individual inquiries
+
+### 4. Delivery Bids
+
+Manages driver bids on vehicle delivery jobs. Receives real-time updates via Socket.IO.
+
+**Stats:** Total Bids, Pending Bids, Accepted Bids, Pending Value
+
+**Table columns:** ID, Date, Driver, Vehicle, Route, Bid Amount, Bid Status, Job Status, Actions
+
+**Features:**
+- **Search** by driver name, email, vehicle info, or addresses
+- **Filter** by bid status (Pending, Accepted, Rejected) and job status (Open, Assigned, Completed)
+- **View details** including driver info (rating, completed deliveries), job details (route, distance, date), and bid info (amount, message)
+- **Accept bids** — assigns the driver and auto-rejects other bids on the same job
+- **Real-time updates** — new bids and accepted bids appear automatically via Socket.IO
+- **Export to CSV**
+
+### 5. Referral Partners
+
+Manages registered referral partners and their performance. Partners sign up at `/referral.html` and receive a unique referral code/link.
+
+**Stats:** Total Partners, Total Earnings Paid, Active Partners (1+ referral), Avg Conversion Rate
+
+**Table columns:** ID, Joined, Partner, Contact, Referral Code (with copy button), Referrals, Approved, Earnings, Actions
+
+**Features:**
+- **Search** by partner name, email, phone, or referral code
+- **View details** including partner info, referral link, commission rate, and performance metrics (total referrals, approved leads, conversion rate, total earnings)
+- **Copy referral link** to clipboard with one click
+- **Export to CSV**
+
+## Common Features Across All Tabs
+
+- **Search bar** — global search that filters the current tab's data
+- **Export CSV** — download current tab's data as a spreadsheet
+- **Stats cards** — key metrics update automatically when data loads
+- **Detail modals** — click "View" on any row for full details
+- **Sidebar badges** — show counts (pending bids, partner count, etc.)
+- **Refresh button** — reloads all data from the server
+
+## How Data Flows
 
 ```
-1. Customer fills out form on website
-        ↓
-2. Data saved to SQLite database
-        ↓
-3. Sales team views in Admin Dashboard
-        ↓
-4. Print lead sheet or export to CSV
-        ↓
-5. Follow up with customer
+Website Forms (/apply, /sell-my-car, /buy-leads, /referral.html)
+        |
+        v
+Server API endpoints (POST)
+        |
+        v
+Database (PostgreSQL on Vercel / SQLite locally)
+        |
+        v
+CRM Dashboard (/admin) — fetches via GET API endpoints
+        |
+        v
+Sales team: view, filter, export, update status, accept bids
 ```
 
-## CRM Integration Options
+## API Endpoints
 
-### Option 1: Manual Import (Current Setup)
-1. Export leads to CSV
-2. Import CSV into your CRM system (most support CSV import)
+All endpoints require JWT authentication via `Authorization: Bearer <token>` header.
 
-### Option 2: API Integration (Future Enhancement)
-The backend provides REST API endpoints at:
-- `GET /api/applications` - Fetch all leads
-- `GET /api/applications/:id` - Fetch single lead
-- `DELETE /api/applications/:id` - Delete a lead
-
-These can be integrated with:
-- Salesforce API
-- HubSpot API
-- Zoho CRM
-- Pipedrive
-- Custom CRM systems
-
-**Authentication:** JWT token required (Bearer auth)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/login` | Login, returns JWT token |
+| GET | `/api/applications` | All pre-approval applications |
+| GET | `/api/applications/:id` | Single application details |
+| GET | `/api/applications/:id/document/:type` | Download document (type: `paystub` or `license`) |
+| PUT | `/api/applications/:id/status` | Update deal status |
+| DELETE | `/api/applications/:id` | Delete application |
+| GET | `/api/sell-submissions` | All sell car submissions |
+| GET | `/api/sell-submissions/:id` | Single sell submission |
+| DELETE | `/api/sell-submissions/:id` | Delete sell submission |
+| GET | `/api/lead-inquiries` | All dealer inquiries |
+| PUT | `/api/lead-inquiries/:id/status` | Update inquiry status |
+| DELETE | `/api/lead-inquiries/:id` | Delete inquiry |
+| GET | `/api/admin/delivery-bids` | All delivery bids with driver/job info |
+| GET | `/api/admin/referrers` | All referral partners with lead stats |
 
 ## Security Features
 
-1. **JWT Authentication:** All admin routes protected with JSON Web Tokens
-2. **Bcrypt Password Hashing:** Passwords stored securely
-3. **Environment Variables:** Sensitive data in `.env` file
-4. **Session Management:** Auto-logout on token expiration
+1. **JWT Authentication** — all admin routes protected with JSON Web Tokens
+2. **Bcrypt Password Hashing** — passwords stored securely
+3. **Environment Variables** — sensitive data in `.env` file
+4. **Session Management** — auto-logout on token expiration
 
 ## Changing the Admin Password
 
-### Method 1: Through Code
 1. Edit `.env` file
-2. Change `ADMIN_DEFAULT_PASSWORD=admin123` to your new password
-3. Delete `database.db`
-4. Restart server (password will be re-hashed on startup)
-
-### Method 2: Direct Database Update (Advanced)
-```bash
-# Use bcrypt to hash your new password
-# Then update the users table directly
-```
-
-## Best Practices
-
-### For Sales Teams:
-1. **Check leads daily** - Set up a routine to review new submissions
-2. **Follow up within 24 hours** - Fastest response = highest conversion
-3. **Print lead sheets** - Have physical copies for phone calls
-4. **Update your CRM** - Export weekly to keep your main CRM in sync
-5. **Delete spam/test leads** - Keep the database clean
-
-### For Managers:
-1. **Monitor statistics** - Track lead volume trends
-2. **Export weekly reports** - Analyze lead quality and sources
-3. **Review credit score distribution** - Understand your customer base
-4. **Backup data** - Export CSV backups monthly
-
-## Technical Details
-
-### Database Schema
-```sql
-CREATE TABLE applications (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    vehicle_type TEXT NOT NULL,
-    budget TEXT NOT NULL,
-    trade_in TEXT NOT NULL,
-    credit_score TEXT NOT NULL,
-    employment TEXT NOT NULL,
-    first_name TEXT NOT NULL,
-    last_name TEXT NOT NULL,
-    email TEXT NOT NULL,
-    phone TEXT NOT NULL,
-    postal_code TEXT NOT NULL,
-    submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP
-)
-```
-
-### Data Retention
-- Leads are stored indefinitely until manually deleted
-- Recommended: Archive leads older than 6 months
-- Database location: `/database.db`
+2. Set `ADMIN_DEFAULT_PASSWORD=your_new_password`
+3. Optionally set `ADMIN_USERNAME=your_username`
+4. Restart the server (password re-hashes on startup)
 
 ## Troubleshooting
 
-### Can't log in?
-- Check credentials (case-sensitive)
-- Ensure server is running
-- Check browser console for errors
+| Problem | Solution |
+|---------|----------|
+| Can't log in | Check credentials are case-sensitive, ensure server is running |
+| No data showing | Click the refresh button in the top header, check server logs |
+| Export not working | Check browser pop-up blocker, ensure data exists to export |
+| Document download fails | Check server logs for errors, ensure the application has uploaded documents |
+| Real-time bids not updating | Check that Socket.IO is connected (browser console) |
+| Referral partners empty | Partners must register at `/referral.html` first |
 
-### No leads showing?
-- Click "Refresh" button
-- Check if database.db file exists
-- Verify server is running on correct port
+## Files
 
-### Export not working?
-- Check browser pop-up blocker
-- Ensure you have leads to export
-- Try different browser
-
-### Print not working?
-- Ensure pop-ups allowed
-- Check printer settings
-- Try Print Preview first
-
-## Support
-
-For technical issues or feature requests, contact your development team.
+- **Dashboard HTML:** `admin/index.html`
+- **Dashboard JS:** `assets/js/admin-dashboard.js`
+- **Dashboard CSS:** `assets/css/admin-styles.css`
+- **Server:** `server.js`
 
 ## Version
-**Current Version:** 1.0
-**Last Updated:** 2024
+**Current Version:** 2.0
+**Last Updated:** February 2026

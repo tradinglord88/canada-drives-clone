@@ -8,6 +8,7 @@ let applicationsData = [];
 let sellData = [];
 let leadInquiriesData = [];
 let deliveryBidsData = [];
+let referralPartnersData = [];
 
 // =====================================================
 // INITIALIZATION
@@ -83,7 +84,7 @@ function showDashboard() {
 // DATA LOADING
 // =====================================================
 async function loadAllData() {
-    await Promise.all([loadApplications(), loadSellSubmissions(), loadLeadInquiries(), loadDeliveryBids()]);
+    await Promise.all([loadApplications(), loadSellSubmissions(), loadLeadInquiries(), loadDeliveryBids(), loadReferralPartners()]);
     renderCurrentTab();
 }
 
@@ -145,6 +146,19 @@ async function loadDeliveryBids() {
     }
 }
 
+async function loadReferralPartners() {
+    try {
+        const response = await fetch('/api/admin/referrers', {
+            headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        if (response.ok) {
+            referralPartnersData = await response.json();
+        }
+    } catch (error) {
+        console.error('Error loading referral partners:', error);
+    }
+}
+
 // =====================================================
 // TAB SWITCHING
 // =====================================================
@@ -172,6 +186,8 @@ function renderCurrentTab() {
         renderLeadInquiriesTab();
     } else if (currentTab === 'deliveryBids') {
         renderDeliveryBidsTab();
+    } else if (currentTab === 'referralPartners') {
+        renderReferralPartnersTab();
     }
 }
 
@@ -187,6 +203,11 @@ function updateSidebarCounts() {
         const pendingCount = deliveryBidsData.filter(b => b.status === 'pending').length;
         bidsCount.textContent = pendingCount;
         bidsCount.style.display = pendingCount > 0 ? '' : 'none';
+    }
+    const partnersCount = document.getElementById('sidebarPartnersCount');
+    if (partnersCount) {
+        partnersCount.textContent = referralPartnersData.length;
+        partnersCount.style.display = referralPartnersData.length > 0 ? '' : 'none';
     }
 }
 
@@ -585,6 +606,165 @@ async function acceptDeliveryBid(jobId, bidId) {
     }
 }
 
+// =====================================================
+// REFERRAL PARTNERS TAB
+// =====================================================
+function renderReferralPartnersTab() {
+    document.getElementById('pageTitle').textContent = 'Referral Partners';
+    document.getElementById('pageSubtitle').textContent = 'Manage registered referral partners and their performance';
+
+    const totalPartners = referralPartnersData.length;
+    const totalEarnings = referralPartnersData.reduce((sum, p) => sum + parseFloat(p.total_earnings || 0), 0);
+    const activePartners = referralPartnersData.filter(p => parseInt(p.total_leads || 0) > 0).length;
+    const totalLeads = referralPartnersData.reduce((sum, p) => sum + parseInt(p.total_leads || 0), 0);
+    const totalConverted = referralPartnersData.reduce((sum, p) => sum + parseInt(p.converted_leads || 0), 0);
+    const avgConversion = totalLeads > 0 ? Math.round((totalConverted / totalLeads) * 100) : 0;
+
+    renderStats([
+        { label: 'Total Partners', value: totalPartners, icon: 'fas fa-user-friends', gradient: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' },
+        { label: 'Total Earnings Paid', value: '$' + totalEarnings.toLocaleString(), icon: 'fas fa-dollar-sign', gradient: 'linear-gradient(135deg, #10b981, #059669)' },
+        { label: 'Active Partners', value: activePartners, icon: 'fas fa-chart-line', gradient: 'linear-gradient(135deg, #f59e0b, #d97706)' },
+        { label: 'Avg Conversion', value: avgConversion + '%', icon: 'fas fa-percentage', gradient: 'linear-gradient(135deg, #ec4899, #db2777)' }
+    ]);
+
+    document.getElementById('filterControls').innerHTML = `
+        <button class="btn-export" onclick="exportPartnersCSV()"><i class="fas fa-file-export"></i> Export</button>
+    `;
+
+    document.getElementById('tableHead').innerHTML = `
+        <tr>
+            <th>ID</th>
+            <th>Joined</th>
+            <th>Partner</th>
+            <th>Contact</th>
+            <th>Referral Code</th>
+            <th>Referrals</th>
+            <th>Approved</th>
+            <th>Earnings</th>
+            <th>Actions</th>
+        </tr>
+    `;
+
+    displayReferralPartners(referralPartnersData);
+}
+
+function displayReferralPartners(data) {
+    const tbody = document.getElementById('tableBody');
+    if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="empty-state"><i class="fas fa-user-friends"></i><p>No referral partners found</p></td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = data.map(partner => {
+        const totalLeads = parseInt(partner.total_leads || 0);
+        const converted = parseInt(partner.converted_leads || 0);
+        const earnings = parseFloat(partner.total_earnings || 0);
+
+        return `
+        <tr>
+            <td><strong>#${partner.id}</strong></td>
+            <td>${formatDate(partner.created_at)}</td>
+            <td><div class="lead-name">${partner.name}</div></td>
+            <td>
+                <div class="lead-email">${partner.email}</div>
+                <div class="lead-phone">${partner.phone || '-'}</div>
+            </td>
+            <td>
+                <span style="font-family: monospace; background: #f1f5f9; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8125rem;">${partner.referral_code}</span>
+                <button onclick="copyReferralLink('${partner.referral_code}')" style="margin-left: 4px; background: none; border: none; cursor: pointer; color: #6366f1; font-size: 0.8125rem;" title="Copy referral link">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </td>
+            <td><strong>${totalLeads}</strong></td>
+            <td><span class="badge ${converted > 0 ? 'badge-approved' : 'badge-fair'}">${converted}</span></td>
+            <td><strong style="color: #10b981;">$${earnings.toLocaleString()}</strong></td>
+            <td>
+                <div class="action-buttons">
+                    <button class="btn-action btn-view" onclick="viewReferralPartner(${partner.id})"><i class="fas fa-eye"></i> View</button>
+                    <button class="btn-action btn-delete" onclick="deleteReferralPartner(${partner.id})"><i class="fas fa-trash"></i></button>
+                </div>
+            </td>
+        </tr>
+        `;
+    }).join('');
+}
+
+function viewReferralPartner(id) {
+    const partner = referralPartnersData.find(p => p.id === id);
+    if (!partner) return;
+
+    const totalLeads = parseInt(partner.total_leads || 0);
+    const converted = parseInt(partner.converted_leads || 0);
+    const earnings = parseFloat(partner.total_earnings || 0);
+    const commission = parseFloat(partner.commission_rate || 500);
+    const conversionRate = totalLeads > 0 ? Math.round((converted / totalLeads) * 100) : 0;
+    const referralLink = window.location.origin + '/?ref=' + partner.referral_code;
+
+    document.getElementById('modalTitle').innerHTML = '<i class="fas fa-user-friends"></i> Referral Partner Details';
+    const content = document.getElementById('leadDetailContent');
+
+    content.innerHTML = `
+        <div class="lead-detail-grid">
+            <div class="detail-section">
+                <h3><i class="fas fa-user"></i> Partner Info</h3>
+                <div class="detail-row"><div class="detail-label">Name</div><div class="detail-value">${partner.name}</div></div>
+                <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value"><a href="mailto:${partner.email}" style="color: #2563eb; text-decoration: none;">${partner.email}</a></div></div>
+                <div class="detail-row"><div class="detail-label">Phone</div><div class="detail-value">${partner.phone || '-'}</div></div>
+                <div class="detail-row"><div class="detail-label">Joined</div><div class="detail-value">${formatDateFull(partner.created_at)}</div></div>
+            </div>
+            <div class="detail-section">
+                <h3><i class="fas fa-link"></i> Referral Info</h3>
+                <div class="detail-row"><div class="detail-label">Referral Code</div><div class="detail-value"><span style="font-family: monospace; background: #f1f5f9; padding: 0.25rem 0.5rem; border-radius: 4px;">${partner.referral_code}</span></div></div>
+                <div class="detail-row"><div class="detail-label">Referral Link</div><div class="detail-value" style="word-break: break-all;"><a href="${referralLink}" target="_blank" style="color: #2563eb; text-decoration: none; font-size: 0.8125rem;">${referralLink}</a></div></div>
+                <div class="detail-row"><div class="detail-label">Commission Rate</div><div class="detail-value">$${commission.toLocaleString()} per approved lead</div></div>
+            </div>
+            <div class="detail-section">
+                <h3><i class="fas fa-chart-bar"></i> Performance</h3>
+                <div class="detail-row"><div class="detail-label">Total Referrals</div><div class="detail-value" style="font-size: 1.25rem; font-weight: 700;">${totalLeads}</div></div>
+                <div class="detail-row"><div class="detail-label">Approved Leads</div><div class="detail-value" style="font-size: 1.25rem; font-weight: 700; color: #10b981;">${converted}</div></div>
+                <div class="detail-row"><div class="detail-label">Conversion Rate</div><div class="detail-value"><span class="badge ${conversionRate >= 50 ? 'badge-approved' : conversionRate >= 25 ? 'badge-pending' : 'badge-fair'}">${conversionRate}%</span></div></div>
+                <div class="detail-row"><div class="detail-label">Total Earnings</div><div class="detail-value" style="font-size: 1.25rem; font-weight: 700; color: #10b981;">$${earnings.toLocaleString()}</div></div>
+            </div>
+        </div>`;
+
+    document.getElementById('leadModal').classList.add('active');
+}
+
+function copyReferralLink(code) {
+    const link = window.location.origin + '/?ref=' + code;
+    navigator.clipboard.writeText(link).then(() => {
+        alert('Referral link copied to clipboard!');
+    }).catch(() => {
+        prompt('Copy this referral link:', link);
+    });
+}
+
+async function deleteReferralPartner(id) {
+    if (!confirm('Delete this referral partner permanently?')) return;
+    try {
+        const response = await fetch(`/api/admin/referrers/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        if (response.ok) {
+            referralPartnersData = referralPartnersData.filter(p => p.id !== id);
+            renderCurrentTab();
+        }
+    } catch (error) {
+        console.error('Error deleting referral partner:', error);
+    }
+}
+
+function exportPartnersCSV() {
+    const headers = ['ID','Joined','Name','Email','Phone','Referral Code','Commission Rate','Total Leads','Approved Leads','Total Earnings'];
+    const rows = referralPartnersData.map(p => [
+        p.id, formatDate(p.created_at), p.name, p.email, p.phone || '',
+        p.referral_code, p.commission_rate || 500, p.total_leads || 0,
+        p.converted_leads || 0, p.total_earnings || 0
+    ]);
+    downloadCSV(headers, rows, 'referral-partners');
+}
+
 function exportBidsCSV() {
     const headers = ['ID','Date','Driver','Email','Phone','Rating','Vehicle','Pickup','Delivery','Distance','Bid Amount','Est. Completion','Message','Bid Status','Job Status'];
     const rows = deliveryBidsData.map(b => [
@@ -649,8 +829,14 @@ function showApplicationDetail(lead) {
                             <div class="document-label"><i class="fas fa-file-invoice-dollar"></i> Paystub</div>
                             <div class="document-preview">
                                 ${isImageFile(lead.paystub_file) ?
-                                    `<a href="${lead.paystub_file}" target="_blank" class="document-link"><img src="${lead.paystub_file}" alt="Paystub" class="document-thumbnail"></a>` :
-                                    `<a href="${lead.paystub_file}" download class="document-link"><i class="fas fa-file-pdf"></i> Download</a>`}
+                                    `<img src="${lead.paystub_file}" alt="Paystub" class="document-thumbnail">
+                                     <div class="document-actions">
+                                         <a href="#" class="btn-doc btn-view" onclick="viewDocument(event, ${lead.id}, 'paystub')"><i class="fas fa-eye"></i> View</a>
+                                         <a href="#" class="btn-doc btn-download" onclick="downloadDocument(event, ${lead.id}, 'paystub')"><i class="fas fa-download"></i> Download</a>
+                                     </div>` :
+                                    `<div class="document-actions">
+                                         <a href="#" class="btn-doc btn-download" onclick="downloadDocument(event, ${lead.id}, 'paystub')"><i class="fas fa-file-pdf"></i> Download PDF</a>
+                                     </div>`}
                             </div>
                         </div>` : ''}
                     ${hasLicense ? `
@@ -658,8 +844,14 @@ function showApplicationDetail(lead) {
                             <div class="document-label"><i class="fas fa-id-card"></i> License</div>
                             <div class="document-preview">
                                 ${isImageFile(lead.drivers_license_file) ?
-                                    `<a href="${lead.drivers_license_file}" target="_blank" class="document-link"><img src="${lead.drivers_license_file}" alt="License" class="document-thumbnail"></a>` :
-                                    `<a href="${lead.drivers_license_file}" download class="document-link"><i class="fas fa-file-pdf"></i> Download</a>`}
+                                    `<img src="${lead.drivers_license_file}" alt="License" class="document-thumbnail">
+                                     <div class="document-actions">
+                                         <a href="#" class="btn-doc btn-view" onclick="viewDocument(event, ${lead.id}, 'license')"><i class="fas fa-eye"></i> View</a>
+                                         <a href="#" class="btn-doc btn-download" onclick="downloadDocument(event, ${lead.id}, 'license')"><i class="fas fa-download"></i> Download</a>
+                                     </div>` :
+                                    `<div class="document-actions">
+                                         <a href="#" class="btn-doc btn-download" onclick="downloadDocument(event, ${lead.id}, 'license')"><i class="fas fa-file-pdf"></i> Download PDF</a>
+                                     </div>`}
                             </div>
                         </div>` : ''}
                 </div>
@@ -986,6 +1178,15 @@ function handleSearch() {
             return matchSearch && matchBidStatus && matchJobStatus;
         });
         displayDeliveryBids(filtered);
+    } else if (currentTab === 'referralPartners') {
+        const filtered = referralPartnersData.filter(p => {
+            return !query ||
+                p.name.toLowerCase().includes(query) ||
+                p.email.toLowerCase().includes(query) ||
+                (p.phone || '').includes(query) ||
+                p.referral_code.toLowerCase().includes(query);
+        });
+        displayReferralPartners(filtered);
     }
 }
 
@@ -1061,6 +1262,55 @@ function isImageFile(data) {
     if (data.startsWith('data:image/')) return true;
     const exts = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'];
     return exts.some(ext => data.toLowerCase().endsWith(ext));
+}
+
+function viewDocument(event, appId, docType) {
+    event.preventDefault();
+    const token = localStorage.getItem('adminToken');
+    fetch(`/api/applications/${appId}/document/${docType}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Failed to load document');
+        return response.blob();
+    })
+    .then(blob => {
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+    })
+    .catch(err => {
+        console.error('Document view error:', err);
+        alert('Failed to open document. Please try again.');
+    });
+}
+
+function downloadDocument(event, appId, docType) {
+    event.preventDefault();
+    const token = localStorage.getItem('adminToken');
+    fetch(`/api/applications/${appId}/document/${docType}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Download failed');
+        const disposition = response.headers.get('Content-Disposition');
+        const match = disposition && disposition.match(/filename="(.+)"/);
+        const filename = match ? match[1] : `${docType}-${appId}`;
+        return response.blob().then(blob => ({ blob, filename }));
+    })
+    .then(({ blob, filename }) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    })
+    .catch(err => {
+        console.error('Document download error:', err);
+        alert('Failed to download document. Please try again.');
+    });
 }
 
 function formatDate(dateString) {

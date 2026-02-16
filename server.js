@@ -636,6 +636,68 @@ app.get('/api/applications/:id', authenticateToken, async (req, res) => {
     }
 });
 
+// Download application document (protected)
+app.get('/api/applications/:id/document/:type', authenticateToken, async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const docType = req.params.type;
+
+        if (docType !== 'paystub' && docType !== 'license') {
+            return res.status(400).json({ error: 'Invalid document type. Use "paystub" or "license".' });
+        }
+
+        const column = docType === 'paystub' ? 'paystub_file' : 'drivers_license_file';
+
+        let row;
+        if (isVercel) {
+            let result;
+            if (docType === 'paystub') {
+                result = await sql`SELECT paystub_file FROM applications WHERE id = ${id}`;
+            } else {
+                result = await sql`SELECT drivers_license_file FROM applications WHERE id = ${id}`;
+            }
+            row = result.rows[0];
+        } else {
+            row = await new Promise((resolve, reject) => {
+                db.get(`SELECT ${column} FROM applications WHERE id = ?`, [id], (err, r) => {
+                    if (err) reject(err);
+                    else resolve(r);
+                });
+            });
+        }
+
+        if (!row) {
+            return res.status(404).json({ error: 'Application not found' });
+        }
+
+        const dataUrl = row[column];
+        if (!dataUrl || dataUrl.length < 10) {
+            return res.status(404).json({ error: 'Document not found' });
+        }
+
+        // Parse data URL: data:<mime>;base64,<data>
+        const match = dataUrl.match(/^data:([^;]+);base64,(.+)$/);
+        if (!match) {
+            return res.status(400).json({ error: 'Invalid document format' });
+        }
+
+        const mimeType = match[1];
+        const base64Data = match[2];
+        const buffer = Buffer.from(base64Data, 'base64');
+
+        const ext = mimeType.split('/')[1] || 'bin';
+        const filename = `${docType === 'paystub' ? 'paystub' : 'drivers-license'}-${id}.${ext}`;
+
+        res.setHeader('Content-Type', mimeType);
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        res.setHeader('Content-Length', buffer.length);
+        res.send(buffer);
+    } catch (error) {
+        console.error('Document download error:', error);
+        res.status(500).json({ error: 'Failed to download document' });
+    }
+});
+
 // Delete application (protected)
 app.delete('/api/applications/:id', authenticateToken, async (req, res) => {
     try {
@@ -726,6 +788,69 @@ app.get('/api/admin/delivery-bids', async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+});
+
+// Admin: Get all referral partners with stats
+app.get('/api/admin/referrers', async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) return res.status(401).json({ error: 'No token' });
+        const token = authHeader.split(' ')[1];
+        jwt.verify(token, JWT_SECRET);
+
+        if (isVercel) {
+            const result = await sql`
+                SELECT r.id, r.name, r.email, r.phone, r.referral_code,
+                       r.commission_rate, r.total_earnings, r.created_at,
+                       COUNT(a.id)::int as total_leads,
+                       SUM(CASE WHEN a.deal_status = 'approved' THEN 1 ELSE 0 END)::int as converted_leads
+                FROM referrers r
+                LEFT JOIN applications a ON a.referrer_code = r.referral_code
+                GROUP BY r.id, r.name, r.email, r.phone, r.referral_code,
+                         r.commission_rate, r.total_earnings, r.created_at
+                ORDER BY r.created_at DESC
+            `;
+            res.json(result.rows);
+        } else {
+            db.all(`
+                SELECT r.id, r.name, r.email, r.phone, r.referral_code,
+                       r.commission_rate, r.total_earnings, r.created_at,
+                       COUNT(a.id) as total_leads,
+                       SUM(CASE WHEN a.deal_status = 'approved' THEN 1 ELSE 0 END) as converted_leads
+                FROM referrers r
+                LEFT JOIN applications a ON a.referrer_code = r.referral_code
+                GROUP BY r.id, r.name, r.email, r.phone, r.referral_code,
+                         r.commission_rate, r.total_earnings, r.created_at
+                ORDER BY r.created_at DESC
+            `, (err, rows) => {
+                if (err) return res.status(500).json({ error: err.message });
+                res.json(rows);
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Admin: Delete referral partner
+app.delete('/api/admin/referrers/:id', authenticateToken, async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        if (isVercel) {
+            await sql`DELETE FROM referrers WHERE id = ${id}`;
+            res.json({ success: true, message: 'Referral partner deleted' });
+        } else {
+            db.run('DELETE FROM referrers WHERE id = ?', [id], function(err) {
+                if (err) {
+                    return res.status(500).json({ error: 'Failed to delete referral partner' });
+                }
+                res.json({ success: true, message: 'Referral partner deleted' });
+            });
+        }
+    } catch (error) {
+        console.error('Delete error:', error);
+        res.status(500).json({ error: 'Failed to delete referral partner' });
     }
 });
 
