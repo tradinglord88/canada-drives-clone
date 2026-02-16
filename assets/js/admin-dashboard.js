@@ -7,6 +7,7 @@ let currentTab = 'applications';
 let applicationsData = [];
 let sellData = [];
 let leadInquiriesData = [];
+let deliveryBidsData = [];
 
 // =====================================================
 // INITIALIZATION
@@ -82,7 +83,7 @@ function showDashboard() {
 // DATA LOADING
 // =====================================================
 async function loadAllData() {
-    await Promise.all([loadApplications(), loadSellSubmissions(), loadLeadInquiries()]);
+    await Promise.all([loadApplications(), loadSellSubmissions(), loadLeadInquiries(), loadDeliveryBids()]);
     renderCurrentTab();
 }
 
@@ -131,6 +132,19 @@ async function loadLeadInquiries() {
     }
 }
 
+async function loadDeliveryBids() {
+    try {
+        const response = await fetch('/api/admin/delivery-bids', {
+            headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        if (response.ok) {
+            deliveryBidsData = await response.json();
+        }
+    } catch (error) {
+        console.error('Error loading delivery bids:', error);
+    }
+}
+
 // =====================================================
 // TAB SWITCHING
 // =====================================================
@@ -156,6 +170,8 @@ function renderCurrentTab() {
         renderSellTab();
     } else if (currentTab === 'leadInquiries') {
         renderLeadInquiriesTab();
+    } else if (currentTab === 'deliveryBids') {
+        renderDeliveryBidsTab();
     }
 }
 
@@ -163,9 +179,15 @@ function updateSidebarCounts() {
     const appCount = document.getElementById('sidebarAppCount');
     const sellCount = document.getElementById('sidebarSellCount');
     const inquiryCount = document.getElementById('sidebarInquiryCount');
+    const bidsCount = document.getElementById('sidebarBidsCount');
     if (appCount) appCount.textContent = applicationsData.length;
     if (sellCount) sellCount.textContent = sellData.length;
     if (inquiryCount) inquiryCount.textContent = leadInquiriesData.length;
+    if (bidsCount) {
+        const pendingCount = deliveryBidsData.filter(b => b.status === 'pending').length;
+        bidsCount.textContent = pendingCount;
+        bidsCount.style.display = pendingCount > 0 ? '' : 'none';
+    }
 }
 
 // =====================================================
@@ -403,6 +425,175 @@ function displayLeadInquiries(data) {
         </tr>
         `;
     }).join('');
+}
+
+// =====================================================
+// DELIVERY BIDS TAB
+// =====================================================
+function renderDeliveryBidsTab() {
+    document.getElementById('pageTitle').textContent = 'Delivery Bids';
+    document.getElementById('pageSubtitle').textContent = 'Manage driver bids on delivery jobs';
+
+    const pendingBids = deliveryBidsData.filter(b => b.status === 'pending');
+    const acceptedBids = deliveryBidsData.filter(b => b.status === 'accepted');
+    const totalPendingValue = pendingBids.reduce((sum, b) => sum + parseFloat(b.bid_amount || 0), 0);
+
+    renderStats([
+        { label: 'Total Bids', value: deliveryBidsData.length, icon: 'fas fa-gavel', gradient: 'linear-gradient(135deg, #6366f1, #8b5cf6)' },
+        { label: 'Pending Bids', value: pendingBids.length, icon: 'fas fa-clock', gradient: 'linear-gradient(135deg, #f59e0b, #d97706)' },
+        { label: 'Accepted Bids', value: acceptedBids.length, icon: 'fas fa-check-circle', gradient: 'linear-gradient(135deg, #10b981, #059669)' },
+        { label: 'Pending Value', value: '$' + totalPendingValue.toLocaleString(), icon: 'fas fa-dollar-sign', gradient: 'linear-gradient(135deg, #ec4899, #db2777)' }
+    ]);
+
+    document.getElementById('filterControls').innerHTML = `
+        <select id="bidStatusFilter" class="filter-select" onchange="handleSearch()">
+            <option value="">All Bid Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="accepted">Accepted</option>
+            <option value="rejected">Rejected</option>
+        </select>
+        <select id="jobStatusFilter" class="filter-select" onchange="handleSearch()">
+            <option value="">All Job Statuses</option>
+            <option value="open">Open</option>
+            <option value="assigned">Assigned</option>
+            <option value="completed">Completed</option>
+        </select>
+        <button class="btn-export" onclick="exportBidsCSV()"><i class="fas fa-file-export"></i> Export</button>
+    `;
+
+    document.getElementById('tableHead').innerHTML = `
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Driver</th>
+            <th>Vehicle</th>
+            <th>Route</th>
+            <th>Bid Amount</th>
+            <th>Bid Status</th>
+            <th>Job Status</th>
+            <th>Actions</th>
+        </tr>
+    `;
+
+    displayDeliveryBids(deliveryBidsData);
+}
+
+function displayDeliveryBids(data) {
+    const tbody = document.getElementById('tableBody');
+    if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="empty-state"><i class="fas fa-gavel"></i><p>No delivery bids found</p></td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = data.map(bid => {
+        const pickup = (bid.pickup_address || '').split(',')[0];
+        const delivery = (bid.delivery_address || '').split(',')[0];
+        const bidStatusClass = bid.status === 'pending' ? 'badge-pending' : bid.status === 'accepted' ? 'badge-approved' : 'badge-declined';
+        const jobStatusClass = bid.job_status === 'open' ? 'badge-new' : bid.job_status === 'assigned' ? 'badge-contacted' : 'badge-approved';
+
+        return `
+        <tr>
+            <td><strong>#${bid.id}</strong></td>
+            <td>${formatDate(bid.created_at)}</td>
+            <td>
+                <div class="lead-name">${bid.driver_name}</div>
+                <div class="lead-phone">${bid.driver_email || ''}</div>
+            </td>
+            <td style="max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${bid.vehicle_info || ''}">${bid.vehicle_info || '-'}</td>
+            <td style="max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${bid.pickup_address || ''} → ${bid.delivery_address || ''}">${pickup} → ${delivery}</td>
+            <td><strong>$${parseFloat(bid.bid_amount || 0).toLocaleString()}</strong></td>
+            <td><span class="badge ${bidStatusClass}">${capitalize(bid.status)}</span></td>
+            <td><span class="badge ${jobStatusClass}">${capitalize(bid.job_status)}</span></td>
+            <td>
+                <div class="action-buttons">
+                    <button class="btn-action btn-view" onclick="viewDeliveryBid(${bid.id})"><i class="fas fa-eye"></i> View</button>
+                    ${bid.status === 'pending' && bid.job_status === 'open' ? `<button class="btn-action" style="background:#10b981;color:white;" onclick="acceptDeliveryBid(${bid.job_id}, ${bid.id})"><i class="fas fa-check"></i> Accept</button>` : ''}
+                </div>
+            </td>
+        </tr>
+        `;
+    }).join('');
+}
+
+function viewDeliveryBid(bidId) {
+    const bid = deliveryBidsData.find(b => b.id === bidId);
+    if (!bid) return;
+
+    document.getElementById('modalTitle').innerHTML = '<i class="fas fa-gavel"></i> Delivery Bid Details';
+    const content = document.getElementById('leadDetailContent');
+
+    content.innerHTML = `
+        <div class="lead-detail-grid">
+            <div class="detail-section">
+                <h3><i class="fas fa-user"></i> Driver</h3>
+                <div class="detail-row"><div class="detail-label">Name</div><div class="detail-value">${bid.driver_name}</div></div>
+                <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${bid.driver_email || '-'}</div></div>
+                <div class="detail-row"><div class="detail-label">Phone</div><div class="detail-value">${bid.driver_phone || '-'}</div></div>
+                <div class="detail-row"><div class="detail-label">Rating</div><div class="detail-value">${bid.driver_rating ? parseFloat(bid.driver_rating).toFixed(1) + ' / 5.0' : '-'}</div></div>
+                <div class="detail-row"><div class="detail-label">Completed Deliveries</div><div class="detail-value">${bid.completed_deliveries || 0}</div></div>
+            </div>
+            <div class="detail-section">
+                <h3><i class="fas fa-truck"></i> Job Details</h3>
+                <div class="detail-row"><div class="detail-label">Vehicle</div><div class="detail-value">${bid.vehicle_info || '-'}</div></div>
+                <div class="detail-row"><div class="detail-label">Pickup</div><div class="detail-value">${bid.pickup_address || '-'}</div></div>
+                <div class="detail-row"><div class="detail-label">Delivery</div><div class="detail-value">${bid.delivery_address || '-'}</div></div>
+                <div class="detail-row"><div class="detail-label">Distance</div><div class="detail-value">${bid.distance ? bid.distance + ' km' : '-'}</div></div>
+                <div class="detail-row"><div class="detail-label">Delivery Date</div><div class="detail-value">${bid.delivery_date || '-'}</div></div>
+                <div class="detail-row"><div class="detail-label">Job Status</div><div class="detail-value"><span class="badge ${bid.job_status === 'open' ? 'badge-new' : bid.job_status === 'assigned' ? 'badge-contacted' : 'badge-approved'}">${capitalize(bid.job_status)}</span></div></div>
+            </div>
+            <div class="detail-section">
+                <h3><i class="fas fa-dollar-sign"></i> Bid Info</h3>
+                <div class="detail-row"><div class="detail-label">Bid Amount</div><div class="detail-value" style="font-size: 1.25rem; font-weight: 700; color: #10b981;">$${parseFloat(bid.bid_amount || 0).toLocaleString()}</div></div>
+                <div class="detail-row"><div class="detail-label">Est. Completion</div><div class="detail-value">${bid.estimated_completion_time || '-'}</div></div>
+                <div class="detail-row"><div class="detail-label">Message</div><div class="detail-value">${bid.message || 'No message'}</div></div>
+                <div class="detail-row"><div class="detail-label">Bid Status</div><div class="detail-value"><span class="badge ${bid.status === 'pending' ? 'badge-pending' : bid.status === 'accepted' ? 'badge-approved' : 'badge-declined'}">${capitalize(bid.status)}</span></div></div>
+                <div class="detail-row"><div class="detail-label">Submitted</div><div class="detail-value">${bid.created_at ? formatDateFull(bid.created_at) : '-'}</div></div>
+            </div>
+            ${bid.status === 'pending' && bid.job_status === 'open' ? `
+            <div class="detail-section" style="grid-column: 1 / -1;">
+                <button onclick="acceptDeliveryBid(${bid.job_id}, ${bid.id})" style="width: 100%; padding: 0.875rem; background: #10b981; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer;">
+                    <i class="fas fa-check"></i> Accept This Bid
+                </button>
+            </div>` : ''}
+        </div>`;
+
+    document.getElementById('leadModal').classList.add('active');
+}
+
+async function acceptDeliveryBid(jobId, bidId) {
+    if (!confirm('Accept this bid? Other bids on this job will be automatically rejected.')) return;
+    try {
+        const response = await fetch(`/api/delivery-jobs/${jobId}/accept-bid`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({ bidId })
+        });
+        if (response.ok) {
+            alert('Bid accepted! Driver has been assigned to this delivery.');
+            closeLeadModal();
+            await loadDeliveryBids();
+            renderCurrentTab();
+        } else {
+            alert('Failed to accept bid');
+        }
+    } catch (error) {
+        console.error('Error accepting bid:', error);
+        alert('Error accepting bid');
+    }
+}
+
+function exportBidsCSV() {
+    const headers = ['ID','Date','Driver','Email','Phone','Rating','Vehicle','Pickup','Delivery','Distance','Bid Amount','Est. Completion','Message','Bid Status','Job Status'];
+    const rows = deliveryBidsData.map(b => [
+        b.id, formatDate(b.created_at), b.driver_name, b.driver_email || '', b.driver_phone || '',
+        b.driver_rating || '', b.vehicle_info || '', b.pickup_address || '', b.delivery_address || '',
+        b.distance || '', b.bid_amount || '', b.estimated_completion_time || '', b.message || '',
+        b.status, b.job_status
+    ]);
+    downloadCSV(headers, rows, 'delivery-bids');
 }
 
 // =====================================================
@@ -777,6 +968,24 @@ function handleSearch() {
             return matchSearch && matchStatus;
         });
         displayLeadInquiries(filtered);
+    } else if (currentTab === 'deliveryBids') {
+        const bidStatusFilter = document.getElementById('bidStatusFilter');
+        const jobStatusFilter = document.getElementById('jobStatusFilter');
+        const bs = bidStatusFilter ? bidStatusFilter.value : '';
+        const js = jobStatusFilter ? jobStatusFilter.value : '';
+
+        const filtered = deliveryBidsData.filter(bid => {
+            const matchSearch = !query ||
+                bid.driver_name.toLowerCase().includes(query) ||
+                (bid.driver_email || '').toLowerCase().includes(query) ||
+                (bid.vehicle_info || '').toLowerCase().includes(query) ||
+                (bid.pickup_address || '').toLowerCase().includes(query) ||
+                (bid.delivery_address || '').toLowerCase().includes(query);
+            const matchBidStatus = !bs || bid.status === bs;
+            const matchJobStatus = !js || bid.job_status === js;
+            return matchSearch && matchBidStatus && matchJobStatus;
+        });
+        displayDeliveryBids(filtered);
     }
 }
 
@@ -879,4 +1088,25 @@ function getCreditBadgeClass(score) {
     if (s.includes('poor')) return 'badge-poor';
     if (s.includes('unsure')) return 'badge-unsure';
     return 'badge-fair';
+}
+
+// =====================================================
+// SOCKET.IO - REAL-TIME BID UPDATES
+// =====================================================
+try {
+    const socket = io();
+    socket.on('newBid', function() {
+        loadDeliveryBids().then(() => {
+            updateSidebarCounts();
+            if (currentTab === 'deliveryBids') renderCurrentTab();
+        });
+    });
+    socket.on('bidAccepted', function() {
+        loadDeliveryBids().then(() => {
+            updateSidebarCounts();
+            if (currentTab === 'deliveryBids') renderCurrentTab();
+        });
+    });
+} catch(e) {
+    // Socket.io not available
 }
