@@ -245,10 +245,11 @@ function renderApplicationsTab() {
         </select>
         <select id="creditFilter" class="filter-select" onchange="handleSearch()">
             <option value="">All Credit</option>
-            <option value="Excellent">Excellent</option>
-            <option value="Good">Good</option>
-            <option value="Fair">Fair</option>
-            <option value="Building">Building</option>
+            <option value="excellent">Excellent</option>
+            <option value="good">Good</option>
+            <option value="fair">Fair</option>
+            <option value="poor">Poor</option>
+            <option value="unsure">Unsure</option>
         </select>
         <button class="btn-export" onclick="exportToCSV()"><i class="fas fa-file-export"></i> Export</button>
     `;
@@ -1130,7 +1131,7 @@ function handleSearch() {
                 app.email.toLowerCase().includes(query) ||
                 app.phone.includes(query);
             const matchVehicle = !vf || (app.vehicle_type || '').toLowerCase() === vf;
-            const matchCredit = !cf || app.credit_score === cf;
+            const matchCredit = !cf || (app.credit_score || '').toLowerCase() === cf.toLowerCase();
             return matchSearch && matchVehicle && matchCredit;
         });
         displayApplications(filtered);
