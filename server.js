@@ -685,6 +685,50 @@ io.on('connection', (socket) => {
 // DELIVERY JOBS API ENDPOINTS
 // ========================================
 
+// Admin: Get all bids with job and driver info
+app.get('/api/admin/delivery-bids', async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) return res.status(401).json({ error: 'No token' });
+        const token = authHeader.split(' ')[1];
+        jwt.verify(token, JWT_SECRET);
+
+        if (isVercel) {
+            const result = await sql`
+                SELECT b.*,
+                       d.name as driver_name, d.email as driver_email, d.phone as driver_phone,
+                       d.rating as driver_rating, d.completed_deliveries,
+                       j.vehicle_info, j.pickup_address, j.delivery_address,
+                       j.status as job_status, j.distance, j.delivery_date,
+                       j.delivery_window, j.special_instructions
+                FROM driver_bids b
+                JOIN drivers d ON b.driver_id = d.id
+                JOIN delivery_jobs j ON b.job_id = j.id
+                ORDER BY b.created_at DESC
+            `;
+            res.json(result.rows);
+        } else {
+            db.all(`
+                SELECT b.*,
+                       d.name as driver_name, d.email as driver_email, d.phone as driver_phone,
+                       d.rating as driver_rating, d.completed_deliveries,
+                       j.vehicle_info, j.pickup_address, j.delivery_address,
+                       j.status as job_status, j.distance, j.delivery_date,
+                       j.delivery_window, j.special_instructions
+                FROM driver_bids b
+                JOIN drivers d ON b.driver_id = d.id
+                JOIN delivery_jobs j ON b.job_id = j.id
+                ORDER BY b.created_at DESC
+            `, (err, rows) => {
+                if (err) return res.status(500).json({ error: err.message });
+                res.json(rows);
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Get all delivery jobs
 app.get('/api/delivery-jobs', async (req, res) => {
     try {

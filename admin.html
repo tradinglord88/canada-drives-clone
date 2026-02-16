@@ -113,6 +113,62 @@
             font-size: 14px;
         }
 
+        /* Tab Navigation */
+        .admin-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .admin-tab {
+            flex: 1;
+            padding: 16px 24px;
+            border: none;
+            background: white;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            text-align: center;
+        }
+
+        .admin-tab:hover {
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .admin-tab.active {
+            color: #0066cc;
+            border-bottom-color: #0066cc;
+            background: #f0f7ff;
+        }
+
+        .admin-tab .tab-badge {
+            display: inline-block;
+            background: #dc3545;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+            min-width: 20px;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -191,7 +247,7 @@
             gap: 10px;
         }
 
-        .view-btn, .delete-btn {
+        .view-btn, .delete-btn, .accept-btn {
             padding: 5px 10px;
             border: none;
             border-radius: 3px;
@@ -207,6 +263,55 @@
         .delete-btn {
             background-color: #dc3545;
             color: white;
+        }
+
+        .accept-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        /* Bid status badges */
+        .bid-status {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .bid-status.pending { background: #fff3cd; color: #856404; }
+        .bid-status.accepted { background: #d4edda; color: #155724; }
+        .bid-status.rejected { background: #f8d7da; color: #721c24; }
+
+        .job-status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .job-status-badge.open { background: #cce5ff; color: #004085; }
+        .job-status-badge.assigned { background: #d4edda; color: #155724; }
+        .job-status-badge.completed { background: #e2e3e5; color: #383d41; }
+
+        /* Filter bar for bids */
+        .bids-filter {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .bids-filter select {
+            padding: 8px 14px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            background: white;
         }
 
         /* Modal Styles */
@@ -299,44 +404,118 @@
         </div>
 
         <div class="container">
-            <!-- Statistics -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-number" id="totalApplications">0</div>
-                    <div class="stat-label">Total Applications</div>
+            <!-- Tab Navigation -->
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="switchTab('applications')">Applications</button>
+                <button class="admin-tab" onclick="switchTab('bids')">Delivery Bids <span class="tab-badge" id="pendingBidsBadge" style="display:none;">0</span></button>
+            </div>
+
+            <!-- ========== APPLICATIONS TAB ========== -->
+            <div class="tab-panel active" id="applicationsPanel">
+                <!-- Statistics -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalApplications">0</div>
+                        <div class="stat-label">Total Applications</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="todayApplications">0</div>
+                        <div class="stat-label">Today's Applications</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="pendingReview">0</div>
+                        <div class="stat-label">Pending Review</div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="todayApplications">0</div>
-                    <div class="stat-label">Today's Applications</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="pendingReview">0</div>
-                    <div class="stat-label">Pending Review</div>
+
+                <!-- Applications Table -->
+                <div class="applications-table">
+                    <div class="table-header">
+                        <h2>Recent Applications</h2>
+                        <button class="print-btn" onclick="window.print()">Print All</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Vehicle Type</th>
+                                <th>Budget</th>
+                                <th>Submitted</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="applicationsTableBody">
+                            <!-- Applications will be loaded here -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- Applications Table -->
-            <div class="applications-table">
-                <div class="table-header">
-                    <h2>Recent Applications</h2>
-                    <button class="print-btn" onclick="window.print()">Print All</button>
+            <!-- ========== DELIVERY BIDS TAB ========== -->
+            <div class="tab-panel" id="bidsPanel">
+                <!-- Bids Statistics -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalBids" style="color: #0066cc;">0</div>
+                        <div class="stat-label">Total Bids</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="pendingBids" style="color: #f0ad4e;">0</div>
+                        <div class="stat-label">Pending Bids</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="acceptedBids" style="color: #28a745;">0</div>
+                        <div class="stat-label">Accepted Bids</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalBidValue" style="color: #17a2b8;">$0</div>
+                        <div class="stat-label">Total Bid Value (Pending)</div>
+                    </div>
                 </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Vehicle Type</th>
-                            <th>Budget</th>
-                            <th>Submitted</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="applicationsTableBody">
-                        <!-- Applications will be loaded here -->
-                    </tbody>
-                </table>
+
+                <!-- Bids Filter -->
+                <div class="bids-filter">
+                    <select id="bidStatusFilter" onchange="filterBids()">
+                        <option value="">All Bid Statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="accepted">Accepted</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                    <select id="jobStatusFilter" onchange="filterBids()">
+                        <option value="">All Job Statuses</option>
+                        <option value="open">Open</option>
+                        <option value="assigned">Assigned</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+
+                <!-- Bids Table -->
+                <div class="applications-table">
+                    <div class="table-header">
+                        <h2>Driver Delivery Bids</h2>
+                        <button class="print-btn" onclick="loadDeliveryBids()">Refresh</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Bid ID</th>
+                                <th>Driver</th>
+                                <th>Vehicle</th>
+                                <th>Route</th>
+                                <th>Bid Amount</th>
+                                <th>Job Status</th>
+                                <th>Bid Status</th>
+                                <th>Submitted</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bidsTableBody">
+                            <!-- Bids will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -354,8 +533,23 @@
         </div>
     </div>
 
+    <!-- Bid Details Modal -->
+    <div class="modal" id="bidDetailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Bid Details</h2>
+                <span class="close-btn" onclick="closeBidModal()">&times;</span>
+            </div>
+            <div id="bidDetails" class="application-details">
+                <!-- Bid details loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
     <script>
         let authToken = localStorage.getItem('authToken');
+        let allBids = [];
 
         // Check if already logged in
         if (authToken) {
@@ -401,6 +595,21 @@
             document.getElementById('loginForm').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
             await loadApplications();
+            await loadDeliveryBids();
+        }
+
+        // Tab switching
+        function switchTab(tab) {
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            if (tab === 'applications') {
+                document.querySelectorAll('.admin-tab')[0].classList.add('active');
+                document.getElementById('applicationsPanel').classList.add('active');
+            } else {
+                document.querySelectorAll('.admin-tab')[1].classList.add('active');
+                document.getElementById('bidsPanel').classList.add('active');
+                loadDeliveryBids();
+            }
         }
 
         async function loadApplications() {
@@ -672,12 +881,226 @@
             }
         }
 
-        // Close modal when clicking outside
+        // ========================================
+        // DELIVERY BIDS MANAGEMENT
+        // ========================================
+
+        async function loadDeliveryBids() {
+            try {
+                const response = await fetch('/api/admin/delivery-bids', {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                if (!response.ok) {
+                    if (response.status === 401) handleLogout();
+                    return;
+                }
+                allBids = await response.json();
+                filterBids();
+                updateBidStats();
+            } catch (error) {
+                console.error('Failed to load delivery bids:', error);
+            }
+        }
+
+        function updateBidStats() {
+            const pending = allBids.filter(b => b.status === 'pending');
+            const accepted = allBids.filter(b => b.status === 'accepted');
+            document.getElementById('totalBids').textContent = allBids.length;
+            document.getElementById('pendingBids').textContent = pending.length;
+            document.getElementById('acceptedBids').textContent = accepted.length;
+            const totalVal = pending.reduce((sum, b) => sum + parseFloat(b.bid_amount || 0), 0);
+            document.getElementById('totalBidValue').textContent = '$' + totalVal.toLocaleString();
+
+            // Update badge
+            const badge = document.getElementById('pendingBidsBadge');
+            if (pending.length > 0) {
+                badge.textContent = pending.length;
+                badge.style.display = 'inline-block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        function filterBids() {
+            const bidStatus = document.getElementById('bidStatusFilter').value;
+            const jobStatus = document.getElementById('jobStatusFilter').value;
+            let filtered = allBids;
+            if (bidStatus) filtered = filtered.filter(b => b.status === bidStatus);
+            if (jobStatus) filtered = filtered.filter(b => b.job_status === jobStatus);
+            displayBids(filtered);
+        }
+
+        function displayBids(bids) {
+            const tbody = document.getElementById('bidsTableBody');
+            tbody.innerHTML = '';
+
+            if (bids.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 40px; color: #999;">No bids found</td></tr>';
+                return;
+            }
+
+            bids.forEach(bid => {
+                const row = document.createElement('tr');
+                const vehicle = bid.vehicle_info || 'N/A';
+                const pickup = (bid.pickup_address || '').split(',')[0];
+                const delivery = (bid.delivery_address || '').split(',')[0];
+                const route = `${pickup} → ${delivery}`;
+                const bidDate = bid.created_at ? new Date(bid.created_at).toLocaleDateString() : 'N/A';
+
+                row.innerHTML = `
+                    <td>${bid.id}</td>
+                    <td><strong>${bid.driver_name}</strong><br><small style="color:#888;">${bid.driver_email || ''}</small></td>
+                    <td>${vehicle}</td>
+                    <td style="max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${bid.pickup_address || ''} → ${bid.delivery_address || ''}">${route}</td>
+                    <td><strong>$${parseFloat(bid.bid_amount || 0).toLocaleString()}</strong></td>
+                    <td><span class="job-status-badge ${bid.job_status}">${bid.job_status}</span></td>
+                    <td><span class="bid-status ${bid.status}">${bid.status}</span></td>
+                    <td>${bidDate}</td>
+                    <td class="action-buttons">
+                        <button class="view-btn" onclick="viewBidDetails(${bid.id})">View</button>
+                        ${bid.status === 'pending' && bid.job_status === 'open' ? `<button class="accept-btn" onclick="acceptBid(${bid.job_id}, ${bid.id})">Accept</button>` : ''}
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function viewBidDetails(bidId) {
+            const bid = allBids.find(b => b.id === bidId);
+            if (!bid) return;
+
+            const details = document.getElementById('bidDetails');
+
+            details.innerHTML = `
+                <h3 style="margin: 10px 0; color: #333; border-bottom: 2px solid #0066cc; padding-bottom: 5px;">Driver Information</h3>
+                <div class="detail-row">
+                    <div class="detail-label">Driver Name:</div>
+                    <div>${bid.driver_name}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Email:</div>
+                    <div>${bid.driver_email || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Phone:</div>
+                    <div>${bid.driver_phone || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Driver Rating:</div>
+                    <div>${bid.driver_rating ? parseFloat(bid.driver_rating).toFixed(1) + ' / 5.0' : 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Completed Deliveries:</div>
+                    <div>${bid.completed_deliveries || 0}</div>
+                </div>
+
+                <h3 style="margin: 20px 0 10px; color: #333; border-bottom: 2px solid #0066cc; padding-bottom: 5px;">Job Details</h3>
+                <div class="detail-row">
+                    <div class="detail-label">Vehicle:</div>
+                    <div>${bid.vehicle_info || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Pickup:</div>
+                    <div>${bid.pickup_address || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Delivery:</div>
+                    <div>${bid.delivery_address || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Distance:</div>
+                    <div>${bid.distance ? bid.distance + ' km' : 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Delivery Date:</div>
+                    <div>${bid.delivery_date || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Job Status:</div>
+                    <div><span class="job-status-badge ${bid.job_status}">${bid.job_status}</span></div>
+                </div>
+
+                <h3 style="margin: 20px 0 10px; color: #333; border-bottom: 2px solid #28a745; padding-bottom: 5px;">Bid Information</h3>
+                <div class="detail-row" style="background: #f0fff4;">
+                    <div class="detail-label">Bid Amount:</div>
+                    <div><strong style="font-size: 18px; color: #28a745;">$${parseFloat(bid.bid_amount || 0).toLocaleString()}</strong></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Est. Completion:</div>
+                    <div>${bid.estimated_completion_time || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Driver Message:</div>
+                    <div>${bid.message || 'No message'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Bid Status:</div>
+                    <div><span class="bid-status ${bid.status}">${bid.status}</span></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Submitted:</div>
+                    <div>${bid.created_at ? new Date(bid.created_at).toLocaleString() : 'N/A'}</div>
+                </div>
+
+                ${bid.status === 'pending' && bid.job_status === 'open' ? `
+                <div style="display: flex; gap: 12px; margin-top: 20px;">
+                    <button onclick="acceptBid(${bid.job_id}, ${bid.id})" style="flex:1; padding: 12px; background: #28a745; color: white; border: none; border-radius: 5px; font-size: 15px; cursor: pointer; font-weight: 600;">Accept This Bid</button>
+                    <button onclick="closeBidModal()" style="flex:1; padding: 12px; background: #6c757d; color: white; border: none; border-radius: 5px; font-size: 15px; cursor: pointer;">Close</button>
+                </div>
+                ` : ''}
+            `;
+            document.getElementById('bidDetailsModal').style.display = 'block';
+        }
+
+        async function acceptBid(jobId, bidId) {
+            if (!confirm('Accept this bid? Other bids on this job will be automatically rejected.')) return;
+            try {
+                const response = await fetch(`/api/delivery-jobs/${jobId}/accept-bid`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ bidId })
+                });
+                if (response.ok) {
+                    alert('Bid accepted successfully! Driver has been assigned.');
+                    closeBidModal();
+                    await loadDeliveryBids();
+                } else {
+                    alert('Failed to accept bid');
+                }
+            } catch (error) {
+                console.error('Error accepting bid:', error);
+                alert('Error accepting bid');
+            }
+        }
+
+        function closeBidModal() {
+            document.getElementById('bidDetailsModal').style.display = 'none';
+        }
+
+        // Close modals when clicking outside
         window.onclick = function(event) {
             const modal = document.getElementById('detailsModal');
-            if (event.target === modal) {
-                closeModal();
-            }
+            const bidModal = document.getElementById('bidDetailsModal');
+            if (event.target === modal) closeModal();
+            if (event.target === bidModal) closeBidModal();
+        }
+
+        // Socket.io for real-time bid updates
+        try {
+            const socket = io();
+            socket.on('newBid', function(data) {
+                console.log('New bid received:', data);
+                loadDeliveryBids();
+            });
+            socket.on('bidAccepted', function(data) {
+                console.log('Bid accepted:', data);
+                loadDeliveryBids();
+            });
+        } catch(e) {
+            console.log('Socket.io not available');
         }
     </script>
 </body>
