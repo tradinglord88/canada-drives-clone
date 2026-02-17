@@ -92,7 +92,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
     <link rel="stylesheet" href="assets/css/styles.css?v=13">
-    <link rel="stylesheet" href="assets/css/mobile.css?v=7">
+    <link rel="stylesheet" href="assets/css/mobile.css?v=9">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -830,6 +830,7 @@
                 <a href="#sell-car" class="btn btn-secondary">Sell My Car</a>
             </div>
         </div>
+    </section>
 
     <!-- Statistics Bar -->
     <div class="stats-bar">
@@ -1548,6 +1549,17 @@
     .exit-popup-trust span i {
         font-size: 10px;
         color: #bbb;
+    }
+    @media (max-width: 768px) {
+        .exit-popup-card { border-radius: 16px; }
+        .exit-popup-title { font-size: 24px; padding: 0 28px; }
+        .exit-popup-subtitle { font-size: 14px; padding: 0 28px; }
+        .exit-popup-referral { padding: 18px 28px; }
+        .exit-popup-amount { font-size: 42px; }
+        .exit-popup-benefits { padding: 0 28px; }
+        .exit-popup-cta { margin: 0 28px; padding: 14px 32px; font-size: 15px; width: calc(100% - 56px); justify-content: center; }
+        .exit-popup-trust { gap: 14px; padding: 14px 24px; }
+        .exit-popup-trust span { font-size: 10px; }
     }
     @media (max-width: 480px) {
         .exit-popup-title { font-size: 22px; padding: 0 24px; }

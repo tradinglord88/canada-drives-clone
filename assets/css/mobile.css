@@ -3,32 +3,12 @@
 /* Base Mobile Styles */
 @media screen and (max-width: 768px) {
     /* Top Bar Mobile */
-    .top-bar {
-        padding: 6px 0;
-        font-size: 11px;
-    }
-
-    .top-bar-content {
-        flex-direction: column;
-        gap: 8px;
-        text-align: center;
-    }
-
-    .top-bar-left,
-    .top-bar-right {
-        justify-content: center;
-        gap: 10px;
-        flex-wrap: nowrap;
-    }
-
-    .top-bar-left span:last-child {
-        display: none;
-    }
-
-    .top-bar-cta {
-        padding: 5px 12px;
-        font-size: 11px;
-    }
+    .top-bar { padding: 6px 0; font-size: 11px; }
+    .top-bar-content { flex-direction: column; gap: 4px; text-align: center; }
+    .top-bar-left { display: none; }
+    .top-bar-right { justify-content: center; gap: 6px; flex-wrap: nowrap; align-items: center; }
+    .top-bar-right span:first-child { display: none; }
+    .top-bar-cta { padding: 4px 10px; font-size: 10px; }
 
     /* Statistics Bar Mobile */
     .stats-bar {
@@ -133,8 +113,8 @@
         align-items: center;
         width: 44px;
         height: 44px;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.4);
         border-radius: 8px;
         cursor: pointer;
         z-index: 1002;
@@ -149,13 +129,14 @@
     }
 
     .mobile-menu-toggle span {
-        display: block;
-        width: 25px;
-        height: 3px;
-        background: #ffffff;
-        margin: 3px 0;
+        display: block !important;
+        width: 22px;
+        height: 2.5px;
+        background: #ffffff !important;
+        margin: 2.5px 0;
         transition: all 0.3s ease;
         border-radius: 2px;
+        opacity: 1 !important;
     }
 
     .mobile-menu-toggle.active span:nth-child(1) {
@@ -776,14 +757,6 @@
         height: 40px;
     }
 
-    .footer-pro p {
-        font-size: 0.8rem;
-    }
-
-    .footer-pro-bottom-links a {
-        font-size: 0.82rem;
-    }
-
     /* Testimonials Mobile */
     .testimonials {
         padding: 60px 20px;
@@ -813,102 +786,29 @@
         font-size: 0.875rem;
     }
 
-    /* Footer Mobile */
-    .footer {
-        padding: 40px 20px 20px;
-    }
-
-    /* Footer top layout - stack logo on top, centered */
-    .footer-top {
-        flex-direction: column;
-        align-items: center;
-        gap: 30px;
-        margin-bottom: 30px;
-    }
-
-    .footer-logo-container {
-        text-align: center;
-        width: 100%;
-    }
-
-    .footer-logo {
-        max-width: 180px;
-        height: auto;
-    }
-
-    .footer-grid {
-        grid-template-columns: 1fr;
-        gap: 30px;
-        text-align: center;
-        width: 100%;
-    }
-
-    .footer-column {
-        text-align: center;
-    }
-
-    .footer-column h4 {
-        font-size: 1.1rem;
-        margin-bottom: 15px;
-        color: #8b92ff;
-    }
-
-    .footer-column ul {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .footer-column ul li {
-        margin-bottom: 10px;
-    }
-
-    .footer-column a {
-        font-size: 15px;
-    }
-
-    /* Connect With Us - center social links */
-    .footer-column:last-child {
-        margin-top: 10px;
-    }
-
-    .social-links {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin-top: 15px;
-    }
-
-    .social-links a {
-        font-size: 1.4rem;
-        width: 50px;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
-        transition: all 0.3s ease;
-    }
-
-    .social-links a:hover {
-        background: rgba(255, 255, 255, 0.2);
-        transform: translateY(-3px);
-    }
-
-    .footer-bottom {
-        flex-direction: column;
-        gap: 15px;
-        padding-top: 25px;
-        text-align: center;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        margin-top: 20px;
-    }
-
-    .footer-links {
-        gap: 20px;
-        justify-content: center;
-    }
+    /* Footer-Pro Mobile */
+    .footer-pro { padding: 0; }
+    .footer-pro .container { padding: 0 20px; }
+    .footer-pro-main { flex-direction: column; gap: 32px; padding: 40px 0 32px; align-items: center; text-align: center; }
+    .footer-pro-brand { flex: none; width: 100%; display: flex; flex-direction: column; align-items: center; }
+    .footer-pro-logo { height: 36px; margin-bottom: 14px; }
+    .footer-pro-tagline { font-size: 0.82rem; max-width: 320px; text-align: center; }
+    .footer-pro-contact { align-items: center; }
+    .footer-pro-contact a { font-size: 0.82rem; }
+    .footer-pro-social { justify-content: center; gap: 10px; }
+    .footer-pro-social a { width: 42px; height: 42px; border-radius: 50%; font-size: 0.95rem; }
+    .footer-pro-links { flex-wrap: wrap; gap: 28px 0; width: 100%; justify-content: center; }
+    .footer-pro-col { flex: 0 0 50%; min-width: 0; text-align: center; }
+    .footer-pro-col h4 { font-size: 0.75rem; margin-bottom: 12px; }
+    .footer-pro-col ul { display: flex; flex-direction: column; align-items: center; }
+    .footer-pro-col ul li { margin-bottom: 8px; }
+    .footer-pro-col ul a { font-size: 0.82rem; }
+    .footer-pro-disclaimer { padding: 20px 0; }
+    .footer-pro-disclaimer p { font-size: 0.68rem; text-align: center; line-height: 1.65; }
+    .footer-pro-bottom { flex-direction: column; gap: 12px; padding: 16px 0; text-align: center; }
+    .footer-pro-bottom p { font-size: 0.72rem; }
+    .footer-pro-bottom-links { flex-wrap: wrap; justify-content: center; gap: 12px 16px; }
+    .footer-pro-bottom-links a { font-size: 0.72rem; }
 
     /* Progress Bar Mobile */
     .progress-container {
@@ -1101,6 +1001,55 @@
     .trust-item i {
         font-size: 1.1rem;
     }
+
+    /* Hero Content Width */
+    .hero-content { max-width: 100%; padding: 5px 0 0; }
+    .hero { min-height: auto; padding-bottom: 20px; }
+
+    /* Lender Logos Tighter */
+    .lender-logos { gap: 8px; max-width: 100%; }
+    .lender-logo { min-height: 56px; padding: 8px; border-radius: 8px; }
+    .lender-logo img { max-height: 40px; }
+    .lender-heading { font-size: 1.4rem !important; }
+    .lender-subtitle { font-size: 0.85rem; padding: 0 10px; }
+
+    /* Credit Grid Tighter */
+    .credit-grid { gap: 8px; max-width: 100%; }
+    .credit-item { gap: 8px; font-size: 0.88rem; padding: 10px 12px; border-radius: 10px; }
+    .credit-check { width: 20px; height: 20px; font-size: 10px; }
+    .credit-subtitle { font-size: 0.85rem; padding: 0 10px; }
+
+    /* Credit Stats Row */
+    .credit-stats-row { padding: 18px 12px; margin-top: 28px; border-radius: 12px; gap: 16px 0; }
+    .credit-stat-number { font-size: 1.35rem; }
+    .credit-stat-label { font-size: 0.68rem; letter-spacing: 0.05em; }
+
+    /* Security Badges Single Row */
+    .security-badges-images { gap: 20px; margin-top: 28px; flex-wrap: nowrap; }
+    .security-badges-images img { height: 45px; }
+
+    /* Lending Info */
+    .lending-info { margin-top: 36px; gap: 14px; }
+    .lending-main { font-size: 22px; }
+    .lending-title { font-size: 12px; letter-spacing: 1.5px; }
+    .lending-info p { font-size: 0.85rem; padding: 0 10px; }
+
+    /* Credit Section Titles */
+    .credit-approved-section { padding: 32px 0 40px; }
+    .credit-approved-section .section-title { font-size: 1.5rem; margin-bottom: 16px; }
+    .credit-approved-section .lender-heading { margin-top: 40px; }
+    .credit-flag-icon { width: 40px; margin-top: 32px; }
+
+    /* Cookie Banner Fix */
+    .cookie-banner { padding: 16px; }
+    .cookie-banner-inner { gap: 16px; }
+    .cookie-title { font-size: 0.85rem; }
+    .cookie-desc { font-size: 0.75rem; line-height: 1.45; }
+    .cookie-actions { flex-wrap: wrap; gap: 6px; }
+    .cookie-btn { padding: 8px 14px; font-size: 0.75rem; }
+    .cookie-btn-settings { flex: 1 1 100%; text-align: center; order: 3; padding: 6px 10px; font-size: 0.72rem; }
+    .cookie-btn-reject { flex: 1; order: 1; }
+    .cookie-btn-accept { flex: 1; order: 2; }
 }
 
 /* Extra Small Devices (phones in portrait) */
@@ -1118,18 +1067,17 @@
         font-size: 1.5rem;
     }
 
+    /* Top bar extra small */
+    .top-bar { padding: 4px 0; }
+    .top-bar-right span { font-size: 10px; }
+
     /* Security badges */
     .security-badges {
         gap: 15px;
     }
 
-    .security-badges-images {
-        gap: 20px;
-    }
-
-    .security-badges-images img {
-        height: 40px;
-    }
+    .security-badges-images { gap: 12px; }
+    .security-badges-images img { height: 34px; }
 
     /* WhatsApp button */
     .whatsapp-label {
@@ -1154,16 +1102,10 @@
         font-size: 9px;
     }
 
-    /* Credit grid */
-    .credit-grid {
-        grid-template-columns: 1fr;
-        gap: 8px;
-    }
-
-    .credit-item {
-        padding: 10px 12px;
-        font-size: 0.85rem;
-    }
+    /* Credit grid - keep 2 columns */
+    .credit-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    .credit-item { padding: 8px 10px; font-size: 0.82rem; gap: 6px; }
+    .credit-check { width: 18px; height: 18px; font-size: 9px; }
 
     .vehicle-selection {
         grid-template-columns: 1fr;
@@ -1196,6 +1138,23 @@
         width: 160px;
         height: 160px;
     }
+
+    /* Lender logos - 3 columns */
+    .lender-logos { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .lender-logo { min-height: 48px; padding: 6px; }
+    .lender-logo img { max-height: 32px; }
+
+    /* Credit stats row */
+    .credit-stats-row { padding: 16px 8px; margin-top: 24px; }
+    .credit-stat-number { font-size: 1.2rem; }
+    .credit-stat-label { font-size: 0.62rem; }
+    .credit-stat { flex: 0 0 50%; padding: 4px 0; }
+
+    /* Form wizard + step titles tighter */
+    .step-title { font-size: 1.4rem; line-height: 1.25; margin-bottom: 16px; }
+    .form-wizard { padding: 24px 14px; border-radius: 12px; }
+    .form-step { padding: 20px 0; }
+    .step-subtitle { font-size: 0.9rem; margin-bottom: 24px; }
 }
 
 /* Landscape Mobile Adjustments */
