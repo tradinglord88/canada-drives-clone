@@ -923,7 +923,7 @@ body::before {
     width: 50px;
     height: auto;
     display: block;
-    margin: 0 auto 8px;
+    margin: 40px auto 8px;
 }
 
 .credit-approved-section .section-title {
@@ -937,15 +937,7 @@ body::before {
 }
 
 .credit-approved-section .section-title::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 3px;
-    background: #c9a962;
-    border-radius: 2px;
+    display: none;
 }
 
 .credit-subtitle {
