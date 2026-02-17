@@ -244,7 +244,7 @@ body {
    ===================================================== */
 .admin-sidebar {
     width: var(--sidebar-width);
-    background: linear-gradient(180deg, #1a2530 0%, #1e2a33 100%);
+    background: #1c2127;
     color: white;
     display: flex;
     flex-direction: column;
