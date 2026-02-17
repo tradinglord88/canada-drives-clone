@@ -17,8 +17,8 @@
     .top-bar-left,
     .top-bar-right {
         justify-content: center;
-        gap: 15px;
-        flex-wrap: wrap;
+        gap: 10px;
+        flex-wrap: nowrap;
     }
 
     .top-bar-left span:last-child {
