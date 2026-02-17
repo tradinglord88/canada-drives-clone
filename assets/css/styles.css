@@ -1475,15 +1475,15 @@ body::before {
 
 /* Form Wizard Styles */
 .form-wizard {
-    background: #ffffff !important;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    background: rgba(255, 255, 255, 0.55) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
     padding: 2rem;
     border-radius: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.6);
     position: relative;
     overflow: hidden;
-    border: 1px solid #e8ebed;
+    border: 1px solid rgba(255, 255, 255, 0.4);
     animation: floatIn 0.8s ease-out;
 }
 
