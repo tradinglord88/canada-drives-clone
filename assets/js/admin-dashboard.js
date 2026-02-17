@@ -11,6 +11,7 @@ let deliveryBidsData = [];
 let referralPartnersData = [];
 let analyticsPeriod = '30d';
 let analyticsCharts = {};
+let appViewMode = 'table';
 
 // =====================================================
 // INITIALIZATION
@@ -250,6 +251,10 @@ function renderApplicationsTab() {
 
     // Filters
     document.getElementById('filterControls').innerHTML = `
+        <div class="view-toggle">
+            <button class="view-toggle-btn ${appViewMode === 'table' ? 'active' : ''}" onclick="setAppView('table')"><i class="fas fa-list"></i></button>
+            <button class="view-toggle-btn ${appViewMode === 'kanban' ? 'active' : ''}" onclick="setAppView('kanban')"><i class="fas fa-columns"></i></button>
+        </div>
         <select id="vehicleFilter" class="filter-select" onchange="handleSearch()">
             <option value="">All Vehicles</option>
             <option value="sedan">Sedan</option>
@@ -270,22 +275,27 @@ function renderApplicationsTab() {
         <button class="btn-export" onclick="exportToCSV()"><i class="fas fa-file-export"></i> Export</button>
     `;
 
-    // Table head
-    document.getElementById('tableHead').innerHTML = `
-        <tr>
-            <th>ID</th>
-            <th>Date</th>
-            <th>Customer</th>
-            <th>Contact</th>
-            <th>Vehicle</th>
-            <th>Budget</th>
-            <th>Credit</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-    `;
-
-    displayApplications(applicationsData);
+    if (appViewMode === 'kanban') {
+        const tableContainer = document.querySelector('.table-container');
+        tableContainer.innerHTML = '<div id="kanbanBoard"></div>';
+        renderKanbanBoard(applicationsData);
+    } else {
+        // Table head
+        document.getElementById('tableHead').innerHTML = `
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Contact</th>
+                <th>Vehicle</th>
+                <th>Budget</th>
+                <th>Credit</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        `;
+        displayApplications(applicationsData);
+    }
 }
 
 function displayApplications(data) {
@@ -316,6 +326,100 @@ function displayApplications(data) {
             </td>
         </tr>
     `).join('');
+}
+
+// =====================================================
+// KANBAN BOARD VIEW
+// =====================================================
+function setAppView(mode) {
+    appViewMode = mode;
+    renderCurrentTab();
+}
+
+function renderKanbanBoard(data) {
+    const columns = [
+        { key: 'pending', label: 'Pending', color: '#f59e0b' },
+        { key: 'contacted', label: 'Contacted', color: '#3b82f6' },
+        { key: 'approved', label: 'Approved', color: '#10b981' },
+        { key: 'declined', label: 'Declined', color: '#ef4444' }
+    ];
+
+    const grouped = {};
+    columns.forEach(col => grouped[col.key] = []);
+    data.forEach(app => {
+        const status = (app.deal_status || 'pending').toLowerCase();
+        if (grouped[status]) {
+            grouped[status].push(app);
+        } else {
+            grouped['pending'].push(app);
+        }
+    });
+
+    const board = document.getElementById('kanbanBoard');
+    if (!board) return;
+
+    board.innerHTML = `
+        <div class="kanban-container">
+            ${columns.map(col => `
+                <div class="kanban-column">
+                    <div class="kanban-column-header" style="border-left: 3px solid ${col.color};">
+                        <span class="kanban-column-title">${col.label}</span>
+                        <span class="kanban-column-count" style="background: ${col.color};">${grouped[col.key].length}</span>
+                    </div>
+                    <div class="kanban-column-body" ondragover="allowDrop(event)" ondrop="dropCard(event, '${col.key}')" ondragleave="dragLeave(event)">
+                        ${grouped[col.key].length === 0
+                            ? '<div class="kanban-empty">No applications</div>'
+                            : grouped[col.key].map(app => renderKanbanCard(app)).join('')
+                        }
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+function renderKanbanCard(app) {
+    const dateObj = new Date(app.submitted_at);
+    const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return `
+        <div class="kanban-card" draggable="true" ondragstart="dragCard(event, ${app.id})" ondragend="dragEnd(event)">
+            <div class="kanban-card-name">${app.first_name} ${app.last_name}</div>
+            <div class="kanban-card-details">${app.vehicle_type || 'No vehicle'} &middot; ${app.budget || 'No budget'}</div>
+            <div class="kanban-card-footer">
+                <span class="badge ${getCreditBadgeClass(app.credit_score)}" style="font-size: 0.6875rem;">${app.credit_score || '-'}</span>
+                <span class="kanban-card-date">${dateStr}</span>
+                <button class="btn-action btn-view" onclick="viewApplication(${app.id})" style="padding: 0.25rem 0.5rem; font-size: 0.6875rem;"><i class="fas fa-eye"></i></button>
+            </div>
+        </div>
+    `;
+}
+
+function dragCard(e, id) {
+    e.dataTransfer.setData('text/plain', id);
+    e.target.classList.add('dragging');
+}
+
+function dragEnd(e) {
+    e.target.classList.remove('dragging');
+}
+
+function allowDrop(e) {
+    e.preventDefault();
+    const col = e.currentTarget;
+    col.classList.add('drag-over');
+}
+
+function dragLeave(e) {
+    e.currentTarget.classList.remove('drag-over');
+}
+
+function dropCard(e, newStatus) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('drag-over');
+    const id = parseInt(e.dataTransfer.getData('text/plain'));
+    if (id) {
+        updateApplicationStatus(id, newStatus);
+    }
 }
 
 // =====================================================
@@ -1843,7 +1947,11 @@ function handleSearch() {
             const matchCredit = !cf || (app.credit_score || '').toLowerCase() === cf.toLowerCase();
             return matchSearch && matchVehicle && matchCredit;
         });
-        displayApplications(filtered);
+        if (appViewMode === 'kanban') {
+            renderKanbanBoard(filtered);
+        } else {
+            displayApplications(filtered);
+        }
     } else if (currentTab === 'sell') {
         const filtered = sellData.filter(sub => {
             return !query ||
