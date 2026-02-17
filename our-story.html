@@ -15,6 +15,11 @@
         .os-container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
 
         /* ── Hero ── */
+        .os-hero-bg {
+            background: url('assets/images/glacier-bg.jpg') center top / cover no-repeat;
+            margin: 0 calc(-50vw + 50%);
+            padding: 0 calc(50vw - 50%);
+        }
         .os-hero {
             padding: 4rem 0 3rem;
             text-align: center;
@@ -47,7 +52,7 @@
         .os-hero h1 {
             font-size: clamp(2rem, 4vw, 3rem);
             font-weight: 800;
-            color: #111827;
+            color: #ffffff;
             letter-spacing: -0.03em;
             line-height: 1.15;
             margin-bottom: 0.75rem;
@@ -68,39 +73,41 @@
             padding: 0 0 3.5rem;
         }
         .os-achievement {
-            background: rgba(0, 0, 0, 0.02);
-            border: 1px solid rgba(0, 0, 0, 0.08);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.35);
             border-radius: 12px;
-            padding: 1.5rem 1rem;
+            padding: 0.75rem 0.75rem;
             text-align: center;
             transition: all 0.25s ease;
         }
         .os-achievement:hover {
-            background: rgba(0, 0, 0, 0.04);
-            border-color: rgba(16, 185, 129, 0.3);
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
             transform: translateY(-2px);
         }
         .os-achievement-icon {
-            width: 44px; height: 44px;
-            margin: 0 auto 0.75rem;
-            border-radius: 10px;
-            background: rgba(16, 185, 129, 0.1);
+            width: 36px; height: 36px;
+            margin: 0 auto 0.5rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.25);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #34d399;
-            font-size: 1.125rem;
+            color: #ffffff;
+            font-size: 1rem;
         }
         .os-achievement h4 {
-            color: #111827;
-            font-size: 1.75rem;
+            color: #ffffff;
+            font-size: 1.5rem;
             font-weight: 800;
             letter-spacing: -0.02em;
             margin-bottom: 0.125rem;
         }
         .os-achievement p {
-            color: rgba(0, 0, 0, 0.45);
-            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.7rem;
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.04em;
@@ -614,6 +621,7 @@
     </header>
 
     <div class="os-container">
+        <div class="os-hero-bg">
         <!-- Hero -->
         <section class="os-hero">
             <div class="os-hero-badge"><i class="fas fa-leaf"></i> Serving Western Canada Since 2019</div>
@@ -635,14 +643,15 @@
             </div>
             <div class="os-achievement">
                 <div class="os-achievement-icon"><i class="fas fa-check-circle"></i></div>
-                <h4 data-target="98" data-suffix="%">0</h4>
-                <p>Approval Rate</p>
+                <h4 data-target="98" data-suffix="%" style="color: #34d399;">0</h4>
+                <p style="color: #34d399;">Approval Rate</p>
             </div>
             <div class="os-achievement">
                 <div class="os-achievement-icon"><i class="fas fa-map-marked-alt"></i></div>
                 <h4 data-target="3" data-suffix="">0</h4>
                 <p>Provinces Served</p>
             </div>
+        </div>
         </div>
 
         <!-- Our Story Card -->
@@ -667,6 +676,26 @@
                 </div>
             </div>
         </div>
+
+        <!-- Shop for a Car CTA -->
+        <section class="os-cta-section">
+            <div class="os-cta-card featured">
+                <div class="os-cta-image">
+                    <img src="assets/images/family-car-keys.jpg" alt="Happy family with their new car keys">
+                </div>
+                <div class="os-cta-content">
+                    <h3>Shop For a Car With Confidence</h3>
+                    <p>Getting pre-approved for car financing has never been easier. Our simple online application takes just minutes to complete.</p>
+                    <ul class="os-benefits">
+                        <li><i class="fas fa-check"></i> No impact on your credit score</li>
+                        <li><i class="fas fa-check"></i> Know your budget before you shop</li>
+                        <li><i class="fas fa-check"></i> Access to thousands of vehicles</li>
+                        <li><i class="fas fa-check"></i> Competitive interest rates</li>
+                    </ul>
+                    <a href="index.html#formWizard" class="os-cta-btn os-cta-btn-primary">Get Started <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </section>
 
         <!-- Locations -->
         <section class="os-locations">
@@ -704,26 +733,6 @@
                     <div class="os-location-icon"><i class="fas fa-map-marker-alt"></i></div>
                     <h4>Saskatoon</h4>
                     <p>From the University to the industrial areas, our Saskatoon team provides fast approvals and competitive rates for the Bridge City.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Shop for a Car CTA -->
-        <section class="os-cta-section">
-            <div class="os-cta-card featured">
-                <div class="os-cta-image">
-                    <img src="assets/images/family-car-keys.jpg" alt="Happy family with their new car keys">
-                </div>
-                <div class="os-cta-content">
-                    <h3>Shop For a Car With Confidence</h3>
-                    <p>Getting pre-approved for car financing has never been easier. Our simple online application takes just minutes to complete.</p>
-                    <ul class="os-benefits">
-                        <li><i class="fas fa-check"></i> No impact on your credit score</li>
-                        <li><i class="fas fa-check"></i> Know your budget before you shop</li>
-                        <li><i class="fas fa-check"></i> Access to thousands of vehicles</li>
-                        <li><i class="fas fa-check"></i> Competitive interest rates</li>
-                    </ul>
-                    <a href="index.html#formWizard" class="os-cta-btn os-cta-btn-primary">Get Started <i class="fas fa-arrow-right"></i></a>
                 </div>
             </div>
         </section>
