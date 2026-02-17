@@ -17,11 +17,8 @@ let appViewMode = 'table';
 // INITIALIZATION
 // =====================================================
 document.addEventListener('DOMContentLoaded', () => {
-    authToken = localStorage.getItem('adminToken');
-    if (authToken) {
-        showDashboard();
-        loadAllData();
-    }
+    localStorage.removeItem('adminToken');
+    authToken = null;
 
     document.getElementById('loginForm').addEventListener('submit', handleLogin);
     document.getElementById('logoutBtn').addEventListener('click', handleLogout);
