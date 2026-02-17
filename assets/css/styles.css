@@ -1525,26 +1525,23 @@ label:has(input[required])::after {
     gap: 2rem;
     padding: 1.5rem;
     margin-top: 2rem;
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(10px);
+    background: transparent;
     border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .trust-item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: var(--text-dark);
+    color: #fff;
     font-size: 0.875rem;
     font-weight: 500;
 }
 
 .trust-item i {
     font-size: 1.25rem;
-    color: var(--primary-color);
-    opacity: 0.8;
+    color: #fff;
+    opacity: 0.85;
 }
 
 /* Progress Bar */

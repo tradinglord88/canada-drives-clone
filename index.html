@@ -1267,15 +1267,54 @@
     <div class="exit-popup-overlay" id="exitPopupOverlay">
         <div class="exit-popup-card">
             <button class="exit-popup-close" id="exitPopupClose">&times;</button>
-            <h2 class="exit-popup-title">Wait! Don't Miss Your Pre-Approval</h2>
-            <p class="exit-popup-subtitle">You're just minutes away from getting behind the wheel.</p>
-            <ul class="exit-popup-benefits">
-                <li><i class="fas fa-check-circle"></i> No impact on your credit score</li>
-                <li><i class="fas fa-check-circle"></i> 50+ lenders competing for your rate</li>
-                <li><i class="fas fa-check-circle"></i> Results in under 2 minutes</li>
-                <li><i class="fas fa-check-circle"></i> 98% approval rate — any credit welcome</li>
-            </ul>
-            <a href="#formWizard" class="exit-popup-cta" id="exitPopupCta">Get My Free Pre-Approval <i class="fas fa-arrow-right"></i></a>
+            <div class="exit-popup-badge">
+                <i class="fas fa-gift"></i>
+                <span>Limited Time Offer</span>
+            </div>
+            <h2 class="exit-popup-title">Before You Go&hellip;</h2>
+            <p class="exit-popup-subtitle">Your pre-approval is just 2 minutes away. Plus, unlock our exclusive referral program.</p>
+
+            <div class="exit-popup-referral">
+                <div class="exit-popup-amount">$1,000</div>
+                <div class="exit-popup-referral-text">Earn up to <strong>$1,000</strong> for every friend you refer who gets approved</div>
+            </div>
+
+            <div class="exit-popup-benefits">
+                <div class="exit-popup-benefit">
+                    <div class="exit-popup-benefit-icon"><i class="fas fa-shield-alt"></i></div>
+                    <div>
+                        <strong>No Credit Impact</strong>
+                        <span>Soft check only — your score stays safe</span>
+                    </div>
+                </div>
+                <div class="exit-popup-benefit">
+                    <div class="exit-popup-benefit-icon"><i class="fas fa-bolt"></i></div>
+                    <div>
+                        <strong>98% Approval Rate</strong>
+                        <span>50+ lenders competing for your rate</span>
+                    </div>
+                </div>
+                <div class="exit-popup-benefit">
+                    <div class="exit-popup-benefit-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                    <div>
+                        <strong>Refer & Earn $1,000</strong>
+                        <span>Share your link, get paid when they're approved</span>
+                    </div>
+                </div>
+            </div>
+
+            <a href="#formWizard" class="exit-popup-cta" id="exitPopupCta">
+                Get My Free Pre-Approval
+                <i class="fas fa-arrow-right"></i>
+            </a>
+            <a href="referral.html" class="exit-popup-referral-link">
+                <i class="fas fa-user-friends"></i> Learn About the Referral Program
+            </a>
+            <div class="exit-popup-trust">
+                <span><i class="fas fa-lock"></i> 256-bit SSL Encrypted</span>
+                <span><i class="fas fa-star"></i> 4.9/5 Rating</span>
+                <span><i class="fas fa-users"></i> 25,000+ Approved</span>
+            </div>
         </div>
     </div>
 
@@ -1283,14 +1322,17 @@
     .exit-popup-overlay {
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.6);
+        background: rgba(10, 10, 30, 0.7);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
         z-index: 10003;
         display: flex;
         align-items: center;
         justify-content: center;
         opacity: 0;
         visibility: hidden;
-        transition: opacity 0.3s ease, visibility 0.3s ease;
+        transition: opacity 0.35s ease, visibility 0.35s ease;
+        padding: 20px;
     }
     .exit-popup-overlay.visible {
         opacity: 1;
@@ -1299,77 +1341,204 @@
     .exit-popup-card {
         background: #fff;
         border-radius: 20px;
-        padding: 40px 36px;
-        max-width: 480px;
-        width: 90%;
+        padding: 0;
+        max-width: 520px;
+        width: 100%;
         position: relative;
         text-align: center;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        transform: translateY(20px);
-        transition: transform 0.3s ease;
+        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255,255,255,0.1);
+        transform: translateY(30px) scale(0.96);
+        transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        overflow: hidden;
     }
     .exit-popup-overlay.visible .exit-popup-card {
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
     .exit-popup-close {
         position: absolute;
-        top: 14px;
-        right: 18px;
-        background: none;
+        top: 16px;
+        right: 20px;
+        background: rgba(0,0,0,0.06);
         border: none;
-        font-size: 28px;
-        color: #999;
+        font-size: 20px;
+        color: #666;
         cursor: pointer;
         line-height: 1;
-        transition: color 0.2s;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        z-index: 2;
     }
     .exit-popup-close:hover {
+        background: rgba(0,0,0,0.1);
         color: #333;
     }
-    .exit-popup-title {
-        font-size: 24px;
+    .exit-popup-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: linear-gradient(135deg, #27ae60, #2ecc71);
+        color: #fff;
+        padding: 6px 16px;
+        border-radius: 50px;
+        font-size: 12px;
         font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        margin: 32px auto 16px;
+    }
+    .exit-popup-badge i {
+        font-size: 11px;
+    }
+    .exit-popup-title {
+        font-size: 28px;
+        font-weight: 800;
         color: #1a1a2e;
         margin: 0 0 8px;
+        padding: 0 36px;
+        line-height: 1.2;
     }
     .exit-popup-subtitle {
         font-size: 15px;
         color: #666;
-        margin: 0 0 24px;
+        margin: 0 auto 20px;
+        padding: 0 36px;
+        max-width: 400px;
+        line-height: 1.5;
+    }
+    .exit-popup-referral {
+        background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+        border-top: 1px solid #bbf7d0;
+        border-bottom: 1px solid #bbf7d0;
+        padding: 20px 36px;
+        margin: 0 0 20px;
+    }
+    .exit-popup-amount {
+        font-size: 48px;
+        font-weight: 900;
+        background: linear-gradient(135deg, #166534, #27ae60);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.1;
+        margin-bottom: 6px;
+    }
+    .exit-popup-referral-text {
+        font-size: 14px;
+        color: #555;
+        line-height: 1.4;
+    }
+    .exit-popup-referral-text strong {
+        color: #166534;
     }
     .exit-popup-benefits {
-        list-style: none;
-        padding: 0;
-        margin: 0 0 28px;
+        padding: 0 36px;
+        margin: 0 0 24px;
         text-align: left;
     }
-    .exit-popup-benefits li {
-        padding: 8px 0;
-        font-size: 15px;
-        color: #333;
+    .exit-popup-benefit {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 14px;
+        padding: 10px 0;
     }
-    .exit-popup-benefits li i {
-        color: #27ae60;
-        font-size: 18px;
+    .exit-popup-benefit + .exit-popup-benefit {
+        border-top: 1px solid #f0f0f0;
+    }
+    .exit-popup-benefit-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
         flex-shrink: 0;
     }
+    .exit-popup-benefit-icon i {
+        color: #27ae60;
+        font-size: 16px;
+    }
+    .exit-popup-benefit div:last-child {
+        display: flex;
+        flex-direction: column;
+    }
+    .exit-popup-benefit strong {
+        font-size: 14px;
+        color: #1a1a2e;
+        font-weight: 600;
+    }
+    .exit-popup-benefit span {
+        font-size: 12.5px;
+        color: #888;
+        margin-top: 1px;
+    }
     .exit-popup-cta {
-        display: inline-block;
-        background: #27ae60;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #27ae60, #219a52);
         color: #fff;
-        padding: 14px 32px;
+        padding: 15px 36px;
         border-radius: 50px;
         font-size: 16px;
-        font-weight: 600;
+        font-weight: 700;
         text-decoration: none;
-        transition: background 0.2s, transform 0.2s;
+        transition: all 0.25s ease;
+        box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4);
+        margin: 0 36px;
     }
     .exit-popup-cta:hover {
-        background: #219a52;
-        transform: translateY(-1px);
+        background: linear-gradient(135deg, #219a52, #1a8a44);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(39, 174, 96, 0.5);
+    }
+    .exit-popup-referral-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #27ae60;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        margin-top: 14px;
+        transition: color 0.2s;
+    }
+    .exit-popup-referral-link:hover {
+        color: #1a8a44;
+    }
+    .exit-popup-trust {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        padding: 16px 36px;
+        margin-top: 20px;
+        background: #fafafa;
+        border-top: 1px solid #f0f0f0;
+    }
+    .exit-popup-trust span {
+        font-size: 11px;
+        color: #999;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .exit-popup-trust span i {
+        font-size: 10px;
+        color: #bbb;
+    }
+    @media (max-width: 480px) {
+        .exit-popup-title { font-size: 22px; padding: 0 24px; }
+        .exit-popup-subtitle { padding: 0 24px; }
+        .exit-popup-referral { padding: 16px 24px; }
+        .exit-popup-amount { font-size: 38px; }
+        .exit-popup-benefits { padding: 0 24px; }
+        .exit-popup-cta { margin: 0 24px; padding: 14px 28px; font-size: 15px; }
+        .exit-popup-trust { gap: 12px; padding: 14px 20px; flex-wrap: wrap; }
     }
     </style>
 
@@ -1382,6 +1551,10 @@
         var closeBtn = document.getElementById('exitPopupClose');
         var ctaBtn = document.getElementById('exitPopupCta');
 
+        function closePopup() {
+            overlay.classList.remove('visible');
+        }
+
         // Arm after 5 seconds
         setTimeout(function() { armed = true; }, 5000);
 
@@ -1393,28 +1566,15 @@
             }
         });
 
-        // Close on X button
-        closeBtn.addEventListener('click', function() {
-            overlay.classList.remove('visible');
-        });
+        closeBtn.addEventListener('click', closePopup);
+        ctaBtn.addEventListener('click', closePopup);
 
-        // Close on overlay click
         overlay.addEventListener('click', function(e) {
-            if (e.target === overlay) {
-                overlay.classList.remove('visible');
-            }
+            if (e.target === overlay) closePopup();
         });
 
-        // Close on CTA click
-        ctaBtn.addEventListener('click', function() {
-            overlay.classList.remove('visible');
-        });
-
-        // Close on Escape key
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                overlay.classList.remove('visible');
-            }
+            if (e.key === 'Escape') closePopup();
         });
     })();
     </script>
