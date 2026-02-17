@@ -1086,14 +1086,15 @@
 
     /* Trust Bar Mobile Optimization */
     .trust-bar {
-        flex-direction: column;
-        gap: 1rem;
-        padding: 1rem;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 0.75rem;
+        padding: 1rem 0.5rem;
         margin-top: 1.5rem;
     }
 
     .trust-item {
-        font-size: 0.8rem;
+        font-size: 0.7rem;
         justify-content: center;
     }
 

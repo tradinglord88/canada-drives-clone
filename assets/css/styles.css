@@ -1527,7 +1527,7 @@ label:has(input[required])::after {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 2rem;
     padding: 1.5rem;
     margin-top: 2rem;
