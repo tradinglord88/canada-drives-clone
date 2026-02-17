@@ -161,6 +161,19 @@
     background: rgba(255,255,255,0.2);
 }
 
+.stat-canadian {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.canadian-flag {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+}
+
 /* ====== ANIMATION KEYFRAMES ====== */
 @keyframes fadeInUp {
     from {
@@ -891,24 +904,53 @@ body::before {
 
 /* Any Credit Approved Section */
 .credit-approved-section {
-    padding: 40px 0;
-    background: #f8f9fa;
+    padding: 70px 0 60px;
+    background: #ffffff;
     text-align: center;
 }
 
+.credit-flag-icon {
+    width: 70px;
+    height: auto;
+    display: block;
+    margin: 0 auto 16px;
+}
+
 .credit-approved-section .section-title {
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: 700;
     color: #151f21;
-    margin-bottom: 25px;
-    font-style: italic;
+    margin-bottom: 10px;
+    font-style: normal;
+    position: relative;
+    display: inline-block;
+}
+
+.credit-approved-section .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: #c9a962;
+    border-radius: 2px;
+}
+
+.credit-subtitle {
+    color: #666;
+    max-width: 580px;
+    margin: 28px auto 32px;
+    line-height: 1.7;
+    font-size: 0.95rem;
 }
 
 .credit-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 15px 25px;
-    max-width: 800px;
+    gap: 12px;
+    max-width: 860px;
     margin: 0 auto;
 }
 
@@ -916,21 +958,76 @@ body::before {
     display: flex;
     align-items: center;
     gap: 12px;
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: #333;
+    background: rgba(21, 31, 33, 0.03);
+    border: 1px solid rgba(21, 31, 33, 0.08);
+    border-radius: 12px;
+    padding: 14px 18px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.credit-item:hover {
+    background: rgba(21, 31, 33, 0.06);
+    border-color: rgba(201, 169, 98, 0.35);
+    box-shadow: 0 4px 20px rgba(201, 169, 98, 0.08);
 }
 
 .credit-check {
-    width: 28px;
-    height: 28px;
-    background: #28a745;
+    width: 24px;
+    height: 24px;
+    background: transparent;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: #c9a962;
     font-size: 14px;
     flex-shrink: 0;
+}
+
+/* Credit Stats Row */
+.credit-stats-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    max-width: 720px;
+    margin: 40px auto 0;
+    background: rgba(21, 31, 33, 0.03);
+    border: 1px solid rgba(21, 31, 33, 0.06);
+    border-radius: 16px;
+    padding: 28px 20px;
+}
+
+.credit-stat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.credit-stat-number {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #c9a962;
+    line-height: 1;
+}
+
+.credit-stat-label {
+    font-size: 0.78rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+}
+
+.credit-stat-divider {
+    width: 1px;
+    height: 36px;
+    background: rgba(21, 31, 33, 0.1);
 }
 
 /* Brand Marquee Banner */
@@ -987,6 +1084,18 @@ body::before {
     }
 }
 
+/* Lender heading spacing */
+.credit-approved-section .section-title.lender-heading {
+    margin-top: 60px;
+}
+
+.lender-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 0.95rem;
+}
+
 .lender-logos {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -996,20 +1105,40 @@ body::before {
 }
 
 .lender-logo {
-    background: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid #e8e8e8;
+    border-radius: 10px;
     padding: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 70px;
+    transition: all 0.3s ease;
+}
+
+.lender-logo:hover {
+    border-color: rgba(201, 169, 98, 0.4);
+    transform: scale(1.04);
+    background: #ffffff;
 }
 
 .lender-logo img {
     max-width: 100%;
     max-height: 50px;
     object-fit: contain;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.lender-logo:hover img {
+    filter: none;
+    opacity: 1;
+}
+
+.lender-more {
+    color: #c9a962;
+    font-weight: 600;
+    font-size: 0.95rem;
 }
 
 @media (max-width: 900px) {
@@ -1045,6 +1174,7 @@ body::before {
     height: 60px;
     width: auto;
     object-fit: contain;
+    opacity: 0.75;
 }
 
 .security-badge {
@@ -1099,13 +1229,41 @@ body::before {
 .lending-info p {
     max-width: 500px;
     color: #666;
-    line-height: 1.6;
+    line-height: 1.7;
+    font-size: 0.95rem;
 }
 
 @media (max-width: 768px) {
     .credit-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
+        gap: 10px;
+    }
+
+    .credit-item {
+        padding: 11px 14px;
+        font-size: 0.92rem;
+    }
+
+    .credit-approved-section {
+        padding: 50px 0 40px;
+    }
+
+    .credit-stats-row {
+        flex-wrap: wrap;
+        gap: 20px 0;
+        padding: 22px 16px;
+    }
+
+    .credit-stat-number {
+        font-size: 1.5rem;
+    }
+
+    .credit-stat-divider {
+        display: none;
+    }
+
+    .credit-stat {
+        flex: 0 0 50%;
     }
 
     .security-badges {
@@ -1113,7 +1271,7 @@ body::before {
     }
 
     .credit-approved-section .section-title {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
     }
 }
 
@@ -4676,3 +4834,67 @@ textarea {
     }
 }
 
+/* ====== WHATSAPP FLOATING BUTTON ====== */
+.whatsapp-wrapper {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.whatsapp-label {
+    background: #fff;
+    color: #333;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 16px 8px 14px;
+    border-radius: 24px 0 0 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    white-space: nowrap;
+    margin-right: -8px;
+    position: relative;
+    z-index: 1;
+}
+
+.whatsapp-float {
+    position: relative;
+    z-index: 2;
+    width: 60px;
+    height: 60px;
+    background: #25D366;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-decoration: none;
+}
+
+.whatsapp-float:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+}
+
+@media (max-width: 768px) {
+    .whatsapp-wrapper {
+        bottom: 20px;
+        right: 20px;
+    }
+
+    .whatsapp-label {
+        font-size: 12px;
+        padding: 6px 12px 6px 10px;
+    }
+
+    .whatsapp-float {
+        width: 52px;
+        height: 52px;
+        font-size: 28px;
+    }
+}
