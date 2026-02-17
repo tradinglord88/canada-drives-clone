@@ -3,12 +3,14 @@
 // =====================================================
 
 let authToken = null;
-let currentTab = 'applications';
+let currentTab = 'analytics';
 let applicationsData = [];
 let sellData = [];
 let leadInquiriesData = [];
 let deliveryBidsData = [];
 let referralPartnersData = [];
+let analyticsPeriod = '30d';
+let analyticsCharts = {};
 
 // =====================================================
 // INITIALIZATION
@@ -172,13 +174,27 @@ function switchTab(tab, el) {
     // Reset search and filters
     document.getElementById('searchInput').value = '';
 
+    // Restore search box visibility and table structure when leaving analytics
+    if (tab !== 'analytics') {
+        document.querySelector('.search-box').style.display = '';
+        const tableContainer = document.querySelector('.table-container');
+        tableContainer.innerHTML = `
+            <table class="leads-table">
+                <thead id="tableHead"><tr></tr></thead>
+                <tbody id="tableBody"><tr class="loading-row"><td colspan="8"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr></tbody>
+            </table>
+        `;
+    }
+
     renderCurrentTab();
 }
 
 function renderCurrentTab() {
     updateSidebarCounts();
 
-    if (currentTab === 'applications') {
+    if (currentTab === 'analytics') {
+        renderAnalyticsTab();
+    } else if (currentTab === 'applications') {
         renderApplicationsTab();
     } else if (currentTab === 'sell') {
         renderSellTab();
@@ -778,6 +794,699 @@ function exportBidsCSV() {
 }
 
 // =====================================================
+// ANALYTICS TAB — PROFESSIONAL DASHBOARD
+// =====================================================
+function renderAnalyticsTab() {
+    document.getElementById('pageTitle').textContent = 'Analytics Overview';
+    document.getElementById('pageSubtitle').textContent = 'Business performance at a glance';
+
+    document.querySelector('.search-box').style.display = 'none';
+
+    const periodLabel = analyticsPeriod === 'all' ? 'All Time' : analyticsPeriod === '7d' ? 'Last 7 Days' : analyticsPeriod === '30d' ? 'Last 30 Days' : 'Last 90 Days';
+    document.getElementById('filterControls').innerHTML = `
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+            <span style="font-size:0.6875rem;color:#94a3b8;font-weight:500;">Period:</span>
+            <div class="time-filter-group">
+                <button class="time-filter-btn ${analyticsPeriod === '7d' ? 'active' : ''}" onclick="setAnalyticsPeriod('7d')">7D</button>
+                <button class="time-filter-btn ${analyticsPeriod === '30d' ? 'active' : ''}" onclick="setAnalyticsPeriod('30d')">30D</button>
+                <button class="time-filter-btn ${analyticsPeriod === '90d' ? 'active' : ''}" onclick="setAnalyticsPeriod('90d')">90D</button>
+                <button class="time-filter-btn ${analyticsPeriod === 'all' ? 'active' : ''}" onclick="setAnalyticsPeriod('all')">All</button>
+            </div>
+        </div>
+    `;
+
+    renderAnalyticsKPIs();
+
+    document.querySelector('.table-container').innerHTML = `
+        <div class="analytics-grid">
+            <!-- Lead Volume -->
+            <div class="chart-card chart-full">
+                <div class="chart-card-header">
+                    <div>
+                        <div class="chart-card-title"><i class="fas fa-chart-area icon-purple"></i> Lead Volume Over Time</div>
+                        <div class="chart-card-subtitle">Daily applications &amp; sell requests</div>
+                    </div>
+                    <div class="chart-card-badge" id="leadVolumeBadge">-</div>
+                </div>
+                <div class="chart-canvas-wrapper chart-canvas-line">
+                    <canvas id="chartLeadVolume"></canvas>
+                </div>
+            </div>
+
+            <div class="analytics-section-label"><span>Pipeline &amp; Breakdown</span></div>
+
+            <!-- Conversion Funnel -->
+            <div class="chart-card chart-half">
+                <div class="chart-card-header">
+                    <div>
+                        <div class="chart-card-title"><i class="fas fa-filter icon-green"></i> Conversion Funnel</div>
+                        <div class="chart-card-subtitle">Lead progression through stages</div>
+                    </div>
+                </div>
+                <div class="funnel-container" id="funnelContainer"></div>
+            </div>
+
+            <!-- Vehicle Type -->
+            <div class="chart-card chart-half">
+                <div class="chart-card-header">
+                    <div>
+                        <div class="chart-card-title"><i class="fas fa-car-side icon-pink"></i> Vehicle Type Demand</div>
+                        <div class="chart-card-subtitle">Most requested vehicle categories</div>
+                    </div>
+                </div>
+                <div class="chart-canvas-wrapper chart-canvas-doughnut">
+                    <canvas id="chartVehicleType"></canvas>
+                </div>
+            </div>
+
+            <!-- Credit Score -->
+            <div class="chart-card chart-half">
+                <div class="chart-card-header">
+                    <div>
+                        <div class="chart-card-title"><i class="fas fa-credit-card icon-blue"></i> Credit Score Distribution</div>
+                        <div class="chart-card-subtitle">Applicant credit quality breakdown</div>
+                    </div>
+                </div>
+                <div class="chart-canvas-wrapper chart-canvas-bar">
+                    <canvas id="chartCreditScore"></canvas>
+                </div>
+            </div>
+
+            <!-- Province Heatmap -->
+            <div class="chart-card chart-half">
+                <div class="chart-card-header">
+                    <div>
+                        <div class="chart-card-title"><i class="fas fa-map-marker-alt icon-orange"></i> Leads by Province</div>
+                        <div class="chart-card-subtitle">Geographic distribution of applicants</div>
+                    </div>
+                </div>
+                <div class="province-list" id="provinceList"></div>
+            </div>
+
+            <div class="analytics-section-label"><span>Revenue &amp; Partners</span></div>
+
+            <!-- Revenue Summary -->
+            <div class="chart-card chart-third">
+                <div class="chart-card-header">
+                    <div>
+                        <div class="chart-card-title"><i class="fas fa-dollar-sign icon-green"></i> Revenue Summary</div>
+                        <div class="chart-card-subtitle">Referral earnings overview</div>
+                    </div>
+                </div>
+                <div class="revenue-grid" id="revenueSummary"></div>
+            </div>
+
+            <!-- Top Referral Partners -->
+            <div class="chart-card" style="grid-column: span 8;">
+                <div class="chart-card-header">
+                    <div>
+                        <div class="chart-card-title"><i class="fas fa-user-friends icon-purple"></i> Top Referral Partners</div>
+                        <div class="chart-card-subtitle">Highest performing partners by lead count</div>
+                    </div>
+                </div>
+                <div class="chart-canvas-wrapper chart-canvas-bar">
+                    <canvas id="chartTopReferrals"></canvas>
+                </div>
+            </div>
+
+            <div class="analytics-section-label"><span>Activity Timeline</span></div>
+
+            <!-- Activity Feed -->
+            <div class="chart-card chart-full">
+                <div class="chart-card-header">
+                    <div>
+                        <div class="chart-card-title"><i class="fas fa-stream icon-amber"></i> Recent Activity</div>
+                        <div class="chart-card-subtitle">Latest events across all channels</div>
+                    </div>
+                    <div class="chart-card-badge" id="activityBadge">-</div>
+                </div>
+                <div class="activity-feed" id="activityFeed"></div>
+            </div>
+        </div>
+    `;
+
+    renderAnalyticsCharts();
+}
+
+function renderAnalyticsKPIs() {
+    const apps = filterByPeriod(applicationsData, 'submitted_at', analyticsPeriod);
+    const prevApps = getPreviousPeriodData(applicationsData, 'submitted_at', analyticsPeriod);
+
+    const weekAgo = new Date(Date.now() - 7 * 86400000);
+    const leadsThisWeek = applicationsData.filter(a => new Date(a.submitted_at) >= weekAgo).length;
+    const prevWeekStart = new Date(Date.now() - 14 * 86400000);
+    const leadsPrevWeek = applicationsData.filter(a => {
+        const d = new Date(a.submitted_at);
+        return d >= prevWeekStart && d < weekAgo;
+    }).length;
+
+    const approvedCount = apps.filter(a => a.deal_status === 'approved').length;
+    const approvalRate = apps.length > 0 ? Math.round((approvedCount / apps.length) * 100) : 0;
+    const prevApproved = prevApps.filter(a => a.deal_status === 'approved').length;
+    const prevRate = prevApps.length > 0 ? Math.round((prevApproved / prevApps.length) * 100) : 0;
+
+    const pendingCount = apps.filter(a => !a.deal_status || a.deal_status === 'pending').length;
+    const prevPending = prevApps.filter(a => !a.deal_status || a.deal_status === 'pending').length;
+
+    const sells = filterByPeriod(sellData, 'submitted_at', analyticsPeriod);
+    const prevSells = getPreviousPeriodData(sellData, 'submitted_at', analyticsPeriod);
+
+    const inquiries = filterByPeriod(leadInquiriesData, 'created_at', analyticsPeriod);
+    const prevInquiries = getPreviousPeriodData(leadInquiriesData, 'created_at', analyticsPeriod);
+
+    const referralRevenue = referralPartnersData.reduce((sum, p) => sum + parseFloat(p.total_earnings || 0), 0);
+    const activeDeliveries = deliveryBidsData.filter(b => b.status === 'accepted' && b.job_status !== 'completed').length;
+
+    const periodLabel = analyticsPeriod === 'all' ? 'all time' : 'vs prev period';
+
+    const kpis = [
+        { label: 'Total Leads', value: apps.length, curr: apps.length, prev: prevApps.length, accent: 'purple', icon: 'fas fa-users', gradient: 'linear-gradient(135deg,#6366f1,#8b5cf6)' },
+        { label: 'Leads This Week', value: leadsThisWeek, curr: leadsThisWeek, prev: leadsPrevWeek, accent: 'blue', icon: 'fas fa-calendar-week', gradient: 'linear-gradient(135deg,#3b82f6,#60a5fa)' },
+        { label: 'Approval Rate', value: approvalRate + '%', curr: approvalRate, prev: prevRate, accent: 'green', icon: 'fas fa-check-circle', gradient: 'linear-gradient(135deg,#10b981,#34d399)' },
+        { label: 'Pending Review', value: pendingCount, curr: pendingCount, prev: prevPending, accent: 'amber', icon: 'fas fa-clock', gradient: 'linear-gradient(135deg,#f59e0b,#fbbf24)', invert: true },
+        { label: 'Sell Requests', value: sells.length, curr: sells.length, prev: prevSells.length, accent: 'pink', icon: 'fas fa-car', gradient: 'linear-gradient(135deg,#ec4899,#f472b6)' },
+        { label: 'Dealer Inquiries', value: inquiries.length, curr: inquiries.length, prev: prevInquiries.length, accent: 'violet', icon: 'fas fa-handshake', gradient: 'linear-gradient(135deg,#8b5cf6,#a78bfa)' },
+        { label: 'Referral Revenue', value: '$' + referralRevenue.toLocaleString(), curr: null, prev: null, accent: 'emerald', icon: 'fas fa-dollar-sign', gradient: 'linear-gradient(135deg,#059669,#10b981)' },
+        { label: 'Active Deliveries', value: activeDeliveries, curr: null, prev: null, accent: 'orange', icon: 'fas fa-truck', gradient: 'linear-gradient(135deg,#f97316,#fb923c)' }
+    ];
+
+    const container = document.getElementById('statsContainer');
+    container.innerHTML = `<div class="analytics-kpi-row">${kpis.map(k => {
+        const delta = buildKPIDelta(k.curr, k.prev, k.invert, periodLabel);
+        return `
+        <div class="kpi-card" data-accent="${k.accent}">
+            <div class="kpi-header">
+                <div class="kpi-label">${k.label}</div>
+                <div class="kpi-icon" style="background:${k.gradient};"><i class="${k.icon}"></i></div>
+            </div>
+            <div class="kpi-value-row">
+                <div class="kpi-value">${k.value}</div>
+            </div>
+            <div class="kpi-footer">${delta}</div>
+        </div>`;
+    }).join('')}</div>`;
+}
+
+function buildKPIDelta(current, previous, invert, label) {
+    if (current === null || previous === null) return `<span class="kpi-delta-label">Cumulative total</span>`;
+    if (previous === 0 && current === 0) return `<span class="kpi-delta neutral">&#8212; 0%</span><span class="kpi-delta-label">${label}</span>`;
+    const pct = previous === 0 ? 100 : Math.round(((current - previous) / previous) * 100);
+    if (pct === 0) return `<span class="kpi-delta neutral">&#8212; 0%</span><span class="kpi-delta-label">${label}</span>`;
+    const isUp = pct > 0;
+    const cls = (invert ? !isUp : isUp) ? 'up' : 'down';
+    const arrow = isUp ? '&#9650;' : '&#9660;';
+    return `<span class="kpi-delta ${cls}">${arrow} ${Math.abs(pct)}%</span><span class="kpi-delta-label">${label}</span>`;
+}
+
+function renderAnalyticsCharts() {
+    Object.values(analyticsCharts).forEach(c => { if (c) c.destroy(); });
+    analyticsCharts = {};
+
+    renderLeadVolumeChart();
+    renderConversionFunnel();
+    renderVehicleTypeChart();
+    renderCreditScoreChart();
+    renderProvinceHeatmap();
+    renderRevenueSummary();
+    renderTopReferralsChart();
+    renderActivityFeed();
+}
+
+function renderLeadVolumeChart() {
+    const apps = filterByPeriod(applicationsData, 'submitted_at', analyticsPeriod);
+    const sells = filterByPeriod(sellData, 'submitted_at', analyticsPeriod);
+
+    const appsByDay = groupByDay(apps, 'submitted_at');
+    const sellsByDay = groupByDay(sells, 'submitted_at');
+    const allDates = fillDateRange(analyticsPeriod);
+    const appCounts = allDates.map(d => appsByDay[d] || 0);
+    const sellCounts = allDates.map(d => sellsByDay[d] || 0);
+    const total = apps.length + sells.length;
+
+    const badge = document.getElementById('leadVolumeBadge');
+    if (badge) badge.textContent = total + ' total leads';
+
+    const ctx = document.getElementById('chartLeadVolume');
+    if (!ctx) return;
+
+    analyticsCharts.leadVolume = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: allDates.map(d => {
+                const date = new Date(d + 'T00:00:00');
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            }),
+            datasets: [
+                {
+                    label: 'Applications',
+                    data: appCounts,
+                    borderColor: '#6366f1',
+                    backgroundColor: function(context) {
+                        const chart = context.chart;
+                        const { ctx: c, chartArea } = chart;
+                        if (!chartArea) return 'rgba(99,102,241,0.1)';
+                        const gradient = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                        gradient.addColorStop(0, 'rgba(99,102,241,0.25)');
+                        gradient.addColorStop(1, 'rgba(99,102,241,0.02)');
+                        return gradient;
+                    },
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 2.5,
+                    pointRadius: 0,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#6366f1',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 2.5
+                },
+                {
+                    label: 'Sell Requests',
+                    data: sellCounts,
+                    borderColor: '#ec4899',
+                    backgroundColor: function(context) {
+                        const chart = context.chart;
+                        const { ctx: c, chartArea } = chart;
+                        if (!chartArea) return 'rgba(236,72,153,0.1)';
+                        const gradient = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                        gradient.addColorStop(0, 'rgba(236,72,153,0.2)');
+                        gradient.addColorStop(1, 'rgba(236,72,153,0.02)');
+                        return gradient;
+                    },
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 2.5,
+                    pointRadius: 0,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#ec4899',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 2.5
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { position: 'top', align: 'end', labels: { usePointStyle: true, pointStyle: 'circle', padding: 16, font: { size: 11, weight: '600' } } },
+                tooltip: {
+                    backgroundColor: '#0f172a',
+                    titleFont: { size: 12, weight: '700' },
+                    bodyFont: { size: 11 },
+                    padding: 12,
+                    cornerRadius: 8,
+                    displayColors: true,
+                    boxPadding: 4
+                }
+            },
+            scales: {
+                y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } }, grid: { color: '#f1f5f9', drawBorder: false }, border: { display: false } },
+                x: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 10 }, maxRotation: 0, autoSkipPadding: 16 } }
+            }
+        }
+    });
+}
+
+function renderConversionFunnel() {
+    const apps = filterByPeriod(applicationsData, 'submitted_at', analyticsPeriod);
+    const total = apps.length;
+    const contacted = apps.filter(a => a.deal_status === 'contacted' || a.deal_status === 'approved' || a.deal_status === 'declined').length;
+    const approved = apps.filter(a => a.deal_status === 'approved').length;
+    const declined = apps.filter(a => a.deal_status === 'declined').length;
+    const pending = apps.filter(a => !a.deal_status || a.deal_status === 'pending').length;
+
+    const container = document.getElementById('funnelContainer');
+    if (!container) return;
+
+    const steps = [
+        { label: 'All Leads', count: total, color: 'linear-gradient(90deg,#6366f1,#818cf8)', pct: 100 },
+        { label: 'Contacted', count: contacted, color: 'linear-gradient(90deg,#3b82f6,#60a5fa)', pct: total > 0 ? Math.round((contacted / total) * 100) : 0 },
+        { label: 'Approved', count: approved, color: 'linear-gradient(90deg,#10b981,#34d399)', pct: total > 0 ? Math.round((approved / total) * 100) : 0 },
+        { label: 'Declined', count: declined, color: 'linear-gradient(90deg,#ef4444,#f87171)', pct: total > 0 ? Math.round((declined / total) * 100) : 0 },
+        { label: 'Pending', count: pending, color: 'linear-gradient(90deg,#f59e0b,#fbbf24)', pct: total > 0 ? Math.round((pending / total) * 100) : 0 }
+    ];
+
+    container.innerHTML = steps.map(s => `
+        <div class="funnel-step">
+            <div class="funnel-label">${s.label}</div>
+            <div class="funnel-bar-track">
+                <div class="funnel-bar-fill" style="width:${Math.max(s.pct, 3)}%;background:${s.color};">
+                    <span class="funnel-bar-value">${s.count}</span>
+                </div>
+            </div>
+            <div class="funnel-pct">${s.pct}%</div>
+        </div>
+    `).join('');
+}
+
+function renderVehicleTypeChart() {
+    const apps = filterByPeriod(applicationsData, 'submitted_at', analyticsPeriod);
+    const types = countByField(apps, 'vehicle_type');
+    const ctx = document.getElementById('chartVehicleType');
+    if (!ctx) return;
+    const labels = Object.keys(types);
+    const colors = ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#3b82f6', '#f97316', '#8b5cf6', '#94a3b8'];
+
+    analyticsCharts.vehicleType = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels.map(l => capitalize(l)),
+            datasets: [{
+                data: Object.values(types),
+                backgroundColor: colors.slice(0, labels.length),
+                borderWidth: 3,
+                borderColor: '#fff',
+                hoverOffset: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '62%',
+            plugins: {
+                legend: { position: 'right', labels: { usePointStyle: true, pointStyle: 'rectRounded', padding: 14, font: { size: 11, weight: '500' } } },
+                tooltip: { backgroundColor: '#0f172a', padding: 10, cornerRadius: 8, bodyFont: { size: 11 } }
+            }
+        }
+    });
+}
+
+function renderCreditScoreChart() {
+    const apps = filterByPeriod(applicationsData, 'submitted_at', analyticsPeriod);
+    const scores = { Excellent: 0, Good: 0, Fair: 0, Poor: 0, Unsure: 0 };
+    apps.forEach(a => {
+        const s = capitalize((a.credit_score || 'unsure').toLowerCase());
+        if (scores.hasOwnProperty(s)) scores[s]++;
+        else scores['Unsure']++;
+    });
+
+    const ctx = document.getElementById('chartCreditScore');
+    if (!ctx) return;
+    analyticsCharts.creditScore = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(scores),
+            datasets: [{
+                label: 'Applicants',
+                data: Object.values(scores),
+                backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#94a3b8'],
+                borderRadius: 8,
+                barThickness: 36,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: { backgroundColor: '#0f172a', padding: 10, cornerRadius: 8 }
+            },
+            scales: {
+                y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } }, grid: { color: '#f1f5f9', drawBorder: false }, border: { display: false } },
+                x: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 11, weight: '500' } } }
+            }
+        }
+    });
+}
+
+function renderProvinceHeatmap() {
+    const apps = filterByPeriod(applicationsData, 'submitted_at', analyticsPeriod);
+    const provinces = {};
+    apps.forEach(a => {
+        const prov = (a.province || 'Unknown').toUpperCase().trim();
+        const key = prov.length > 3 ? prov.substring(0, 2) : prov;
+        provinces[key] = (provinces[key] || 0) + 1;
+    });
+
+    const sorted = Object.entries(provinces).sort((a, b) => b[1] - a[1]).slice(0, 8);
+    const maxCount = sorted.length > 0 ? sorted[0][1] : 1;
+    const colors = ['#6366f1', '#818cf8', '#a5b4fc', '#c7d2fe', '#e0e7ff', '#ede9fe', '#f5f3ff', '#faf5ff'];
+
+    const container = document.getElementById('provinceList');
+    if (!container) return;
+
+    if (sorted.length === 0) {
+        container.innerHTML = '<div class="empty-state" style="padding:1.5rem;"><i class="fas fa-map-marker-alt"></i><p>No province data available</p></div>';
+        return;
+    }
+
+    container.innerHTML = sorted.map(([ name, count ], i) => {
+        const pct = Math.round((count / maxCount) * 100);
+        return `
+        <div class="province-row">
+            <div class="province-name">${name}</div>
+            <div class="province-bar-track">
+                <div class="province-bar-fill" style="width:${pct}%;background:${colors[i] || colors[colors.length - 1]};"></div>
+            </div>
+            <div class="province-count">${count}</div>
+        </div>`;
+    }).join('');
+}
+
+function renderRevenueSummary() {
+    const totalEarnings = referralPartnersData.reduce((sum, p) => sum + parseFloat(p.total_earnings || 0), 0);
+    const totalLeads = referralPartnersData.reduce((sum, p) => sum + parseInt(p.total_leads || 0), 0);
+    const totalConverted = referralPartnersData.reduce((sum, p) => sum + parseInt(p.converted_leads || 0), 0);
+    const avgCommission = referralPartnersData.length > 0
+        ? referralPartnersData.reduce((sum, p) => sum + parseFloat(p.commission_rate || 500), 0) / referralPartnersData.length
+        : 0;
+    const conversionRate = totalLeads > 0 ? Math.round((totalConverted / totalLeads) * 100) : 0;
+
+    const container = document.getElementById('revenueSummary');
+    if (!container) return;
+
+    container.innerHTML = `
+        <div class="revenue-metric">
+            <div class="revenue-metric-value" style="color:#10b981;">$${totalEarnings.toLocaleString()}</div>
+            <div class="revenue-metric-label">Total Paid</div>
+        </div>
+        <div class="revenue-metric">
+            <div class="revenue-metric-value" style="color:#6366f1;">${totalConverted}</div>
+            <div class="revenue-metric-label">Conversions</div>
+        </div>
+        <div class="revenue-metric">
+            <div class="revenue-metric-value" style="color:#f59e0b;">${conversionRate}%</div>
+            <div class="revenue-metric-label">Conv. Rate</div>
+        </div>
+        <div class="revenue-metric">
+            <div class="revenue-metric-value" style="color:#8b5cf6;">$${Math.round(avgCommission).toLocaleString()}</div>
+            <div class="revenue-metric-label">Avg Commission</div>
+        </div>
+    `;
+}
+
+function renderTopReferralsChart() {
+    const sorted = [...referralPartnersData]
+        .sort((a, b) => parseInt(b.total_leads || 0) - parseInt(a.total_leads || 0))
+        .slice(0, 7);
+
+    const ctx = document.getElementById('chartTopReferrals');
+    if (!ctx) return;
+
+    if (sorted.length === 0) {
+        ctx.parentElement.innerHTML = '<div class="empty-state" style="padding:2rem;"><i class="fas fa-user-friends"></i><p>No referral partners yet</p></div>';
+        return;
+    }
+
+    analyticsCharts.topReferrals = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: sorted.map(p => p.name),
+            datasets: [
+                {
+                    label: 'Total Leads',
+                    data: sorted.map(p => parseInt(p.total_leads || 0)),
+                    backgroundColor: '#6366f1',
+                    borderRadius: 6,
+                    barThickness: 20
+                },
+                {
+                    label: 'Approved',
+                    data: sorted.map(p => parseInt(p.converted_leads || 0)),
+                    backgroundColor: '#10b981',
+                    borderRadius: 6,
+                    barThickness: 20
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+                legend: { position: 'top', align: 'end', labels: { usePointStyle: true, pointStyle: 'rectRounded', padding: 16, font: { size: 11, weight: '500' } } },
+                tooltip: { backgroundColor: '#0f172a', padding: 10, cornerRadius: 8 }
+            },
+            scales: {
+                x: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } }, grid: { color: '#f1f5f9', drawBorder: false }, border: { display: false }, stacked: false },
+                y: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 11, weight: '500' } } }
+            }
+        }
+    });
+}
+
+function renderActivityFeed() {
+    const feed = document.getElementById('activityFeed');
+    if (!feed) return;
+
+    const items = [];
+
+    applicationsData.forEach(a => {
+        items.push({
+            date: new Date(a.submitted_at),
+            icon: 'fas fa-file-alt',
+            dotClass: 'dot-purple',
+            badge: 'activity-badge-app',
+            badgeText: 'Application',
+            text: `<strong>${a.first_name} ${a.last_name}</strong> submitted a pre-approval application`,
+            sub: a.vehicle_type ? capitalize(a.vehicle_type) + (a.budget ? ' &middot; ' + a.budget : '') : '',
+            tab: 'applications'
+        });
+    });
+
+    sellData.forEach(s => {
+        items.push({
+            date: new Date(s.submitted_at),
+            icon: 'fas fa-car',
+            dotClass: 'dot-pink',
+            badge: 'activity-badge-sell',
+            badgeText: 'Sell Request',
+            text: `<strong>${s.first_name} ${s.last_name}</strong> wants to sell ${s.year || ''} ${s.make || ''} ${s.model || ''}`.trim(),
+            sub: s.condition ? 'Condition: ' + s.condition : '',
+            tab: 'sell'
+        });
+    });
+
+    leadInquiriesData.forEach(i => {
+        items.push({
+            date: new Date(i.created_at),
+            icon: 'fas fa-handshake',
+            dotClass: 'dot-violet',
+            badge: 'activity-badge-inquiry',
+            badgeText: 'Inquiry',
+            text: `<strong>${i.dealership_name}</strong> submitted a dealer inquiry`,
+            sub: i.location || '',
+            tab: 'leadInquiries'
+        });
+    });
+
+    deliveryBidsData.forEach(b => {
+        items.push({
+            date: new Date(b.created_at),
+            icon: 'fas fa-gavel',
+            dotClass: 'dot-amber',
+            badge: 'activity-badge-bid',
+            badgeText: 'Delivery Bid',
+            text: `<strong>${b.driver_name}</strong> placed a $${parseFloat(b.bid_amount || 0).toLocaleString()} bid`,
+            sub: b.vehicle_info || '',
+            tab: 'deliveryBids'
+        });
+    });
+
+    items.sort((a, b) => b.date - a.date);
+    const recent = items.slice(0, 12);
+
+    const actBadge = document.getElementById('activityBadge');
+    if (actBadge) actBadge.textContent = items.length + ' total events';
+
+    if (recent.length === 0) {
+        feed.innerHTML = '<div class="empty-state" style="padding:2rem;"><i class="fas fa-stream"></i><p>No recent activity</p></div>';
+        return;
+    }
+
+    feed.innerHTML = recent.map((item, idx) => `
+        <div class="activity-item" onclick="switchTab('${item.tab}', document.querySelector('[data-tab=\\'${item.tab}\\']'))">
+            <div class="activity-dot-wrap">
+                <div class="activity-dot ${item.dotClass}"><i class="${item.icon}"></i></div>
+            </div>
+            <div class="activity-content">
+                <div class="activity-text">${item.text}</div>
+                <div class="activity-meta">
+                    <span class="activity-badge ${item.badge}">${item.badgeText}</span>
+                    ${item.sub ? `<span class="activity-sub"><i class="fas fa-tag"></i> ${item.sub}</span>` : ''}
+                </div>
+            </div>
+            <div class="activity-time">${timeAgo(item.date)}</div>
+        </div>
+    `).join('');
+}
+
+// =====================================================
+// ANALYTICS HELPERS
+// =====================================================
+function setAnalyticsPeriod(period) {
+    analyticsPeriod = period;
+    renderAnalyticsTab();
+}
+
+function getDateCutoff(period) {
+    if (period === 'all') return null;
+    const days = period === '7d' ? 7 : period === '30d' ? 30 : 90;
+    return new Date(Date.now() - days * 86400000);
+}
+
+function filterByPeriod(data, dateField, period) {
+    const cutoff = getDateCutoff(period);
+    if (!cutoff) return [...data];
+    return data.filter(d => new Date(d[dateField]) >= cutoff);
+}
+
+function getPreviousPeriodData(data, dateField, period) {
+    if (period === 'all') return [];
+    const days = period === '7d' ? 7 : period === '30d' ? 30 : 90;
+    const now = Date.now();
+    const periodStart = new Date(now - days * 86400000);
+    const prevStart = new Date(now - days * 2 * 86400000);
+    return data.filter(d => {
+        const date = new Date(d[dateField]);
+        return date >= prevStart && date < periodStart;
+    });
+}
+
+function groupByDay(data, dateField) {
+    const grouped = {};
+    data.forEach(d => {
+        const date = new Date(d[dateField]);
+        const key = date.toISOString().split('T')[0];
+        grouped[key] = (grouped[key] || 0) + 1;
+    });
+    return grouped;
+}
+
+function fillDateRange(period) {
+    const days = period === '7d' ? 7 : period === '30d' ? 30 : period === '90d' ? 90 : 60;
+    const dates = [];
+    for (let i = days - 1; i >= 0; i--) {
+        const d = new Date(Date.now() - i * 86400000);
+        dates.push(d.toISOString().split('T')[0]);
+    }
+    return dates;
+}
+
+function countByField(data, field) {
+    const counts = {};
+    data.forEach(d => {
+        const val = (d[field] || 'unknown').toLowerCase();
+        counts[val] = (counts[val] || 0) + 1;
+    });
+    return counts;
+}
+
+function timeAgo(date) {
+    const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+    if (seconds < 60) return 'Just now';
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return minutes + 'm ago';
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return hours + 'h ago';
+    const days = Math.floor(hours / 24);
+    if (days < 30) return days + 'd ago';
+    const months = Math.floor(days / 30);
+    return months + 'mo ago';
+}
+
+// =====================================================
 // STATS RENDERING
 // =====================================================
 function renderStats(stats) {
@@ -1316,7 +2025,9 @@ function downloadDocument(event, appId, docType) {
 
 function formatDate(dateString) {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    const datePart = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    const timePart = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    return datePart + '<br><small style="color:#888;">' + timePart + '</small>';
 }
 
 function formatDateFull(dateString) {

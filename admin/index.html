@@ -51,8 +51,13 @@
                 </div>
             </div>
             <nav class="sidebar-nav">
-                <div class="sidebar-section-label">Lead Management</div>
-                <div class="sidebar-item active" data-tab="applications" onclick="switchTab('applications', this)">
+                <div class="sidebar-section-label">Overview</div>
+                <div class="sidebar-item active" data-tab="analytics" onclick="switchTab('analytics', this)">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Analytics</span>
+                </div>
+                <div class="sidebar-section-label" style="margin-top: 1.5rem;">Lead Management</div>
+                <div class="sidebar-item" data-tab="applications" onclick="switchTab('applications', this)">
                     <i class="fas fa-file-alt"></i>
                     <span>Pre-Approvals</span>
                     <span class="badge-count" id="sidebarAppCount">0</span>
@@ -202,6 +207,7 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="../assets/js/admin-dashboard.js"></script>
 </body>
 </html>
