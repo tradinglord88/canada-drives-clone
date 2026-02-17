@@ -97,22 +97,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <!-- Professional Top Bar -->
-    <div class="top-bar">
-        <div class="container">
-            <div class="top-bar-content">
-                <div class="top-bar-left">
-                    <span><i class="fas fa-envelope"></i> info@greenlightauto.ca</span>
-                </div>
-                <div class="top-bar-right">
-                    <span><i class="fas fa-clock"></i> Mon-Fri: 9AM-8PM | Sat: 10AM-6PM</span>
-                    <span><i class="fas fa-phone-alt"></i> 250-618-4995</span>
-                    <a href="#formWizard" class="top-bar-cta">Apply Now <i class="fas fa-arrow-right"></i></a>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Navigation Header -->
     <header class="header">
         <nav class="navbar">
@@ -141,6 +125,22 @@
             </div>
         </nav>
     </header>
+
+    <!-- Professional Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-content">
+                <div class="top-bar-left">
+                    <span><i class="fas fa-envelope"></i> info@greenlightauto.ca</span>
+                </div>
+                <div class="top-bar-right">
+                    <span><i class="fas fa-clock"></i> Mon-Fri: 9AM-8PM | Sat: 10AM-6PM</span>
+                    <span><i class="fas fa-phone-alt"></i> 250-618-4995</span>
+                    <a href="#formWizard" class="top-bar-cta">Apply Now <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -798,6 +798,13 @@
                 </div>
             </div>
 
+            <!-- Social Proof Trust Bar -->
+            <div class="trust-bar">
+                <div class="trust-item"><i class="fas fa-shield-alt"></i> No Credit Impact</div>
+                <div class="trust-item"><i class="fas fa-users"></i> 25,000+ Approved</div>
+                <div class="trust-item"><i class="fas fa-star"></i> 4.9/5 Rating</div>
+                <div class="trust-item"><i class="fas fa-clock"></i> 2-Min Application</div>
+            </div>
 
             <!-- Original buttons for alternative flow -->
             <div class="hero-buttons-alternative" style="display: none;">
@@ -1254,6 +1261,162 @@
         banner.classList.add('hiding');
         setTimeout(function() { banner.style.display = 'none'; }, 400);
     }
+    </script>
+
+    <!-- Exit-Intent Popup -->
+    <div class="exit-popup-overlay" id="exitPopupOverlay">
+        <div class="exit-popup-card">
+            <button class="exit-popup-close" id="exitPopupClose">&times;</button>
+            <h2 class="exit-popup-title">Wait! Don't Miss Your Pre-Approval</h2>
+            <p class="exit-popup-subtitle">You're just minutes away from getting behind the wheel.</p>
+            <ul class="exit-popup-benefits">
+                <li><i class="fas fa-check-circle"></i> No impact on your credit score</li>
+                <li><i class="fas fa-check-circle"></i> 50+ lenders competing for your rate</li>
+                <li><i class="fas fa-check-circle"></i> Results in under 2 minutes</li>
+                <li><i class="fas fa-check-circle"></i> 98% approval rate — any credit welcome</li>
+            </ul>
+            <a href="#formWizard" class="exit-popup-cta" id="exitPopupCta">Get My Free Pre-Approval <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <style>
+    .exit-popup-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 10003;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .exit-popup-overlay.visible {
+        opacity: 1;
+        visibility: visible;
+    }
+    .exit-popup-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 40px 36px;
+        max-width: 480px;
+        width: 90%;
+        position: relative;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        transform: translateY(20px);
+        transition: transform 0.3s ease;
+    }
+    .exit-popup-overlay.visible .exit-popup-card {
+        transform: translateY(0);
+    }
+    .exit-popup-close {
+        position: absolute;
+        top: 14px;
+        right: 18px;
+        background: none;
+        border: none;
+        font-size: 28px;
+        color: #999;
+        cursor: pointer;
+        line-height: 1;
+        transition: color 0.2s;
+    }
+    .exit-popup-close:hover {
+        color: #333;
+    }
+    .exit-popup-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin: 0 0 8px;
+    }
+    .exit-popup-subtitle {
+        font-size: 15px;
+        color: #666;
+        margin: 0 0 24px;
+    }
+    .exit-popup-benefits {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 28px;
+        text-align: left;
+    }
+    .exit-popup-benefits li {
+        padding: 8px 0;
+        font-size: 15px;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .exit-popup-benefits li i {
+        color: #27ae60;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+    .exit-popup-cta {
+        display: inline-block;
+        background: #27ae60;
+        color: #fff;
+        padding: 14px 32px;
+        border-radius: 50px;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.2s, transform 0.2s;
+    }
+    .exit-popup-cta:hover {
+        background: #219a52;
+        transform: translateY(-1px);
+    }
+    </style>
+
+    <script>
+    // Exit-Intent Popup Logic
+    (function() {
+        var armed = false;
+        var shown = false;
+        var overlay = document.getElementById('exitPopupOverlay');
+        var closeBtn = document.getElementById('exitPopupClose');
+        var ctaBtn = document.getElementById('exitPopupCta');
+
+        // Arm after 5 seconds
+        setTimeout(function() { armed = true; }, 5000);
+
+        // Show on mouse leaving viewport (towards address bar)
+        document.addEventListener('mouseleave', function(e) {
+            if (armed && !shown && e.clientY <= 0) {
+                shown = true;
+                overlay.classList.add('visible');
+            }
+        });
+
+        // Close on X button
+        closeBtn.addEventListener('click', function() {
+            overlay.classList.remove('visible');
+        });
+
+        // Close on overlay click
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) {
+                overlay.classList.remove('visible');
+            }
+        });
+
+        // Close on CTA click
+        ctaBtn.addEventListener('click', function() {
+            overlay.classList.remove('visible');
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                overlay.classList.remove('visible');
+            }
+        });
+    })();
     </script>
 
     <script src="assets/js/main.js?v=2"></script>
