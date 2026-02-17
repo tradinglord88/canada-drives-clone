@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /crm.html
+Disallow: /driver-portal.html
+
+Sitemap: https://www.greenlightautosolutions.ca/sitemap.xml
