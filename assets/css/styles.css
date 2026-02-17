@@ -992,13 +992,13 @@ body::before {
 .credit-check {
     width: 24px;
     height: 24px;
-    background: transparent;
+    background: #27ae60;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #c9a962;
-    font-size: 14px;
+    color: #fff;
+    font-size: 12px;
     flex-shrink: 0;
 }
 
@@ -1539,7 +1539,7 @@ label:has(input[required])::after {
     align-items: center;
     gap: 0.5rem;
     color: #fff;
-    font-size: 0.875rem;
+    font-size: 1.05rem;
     font-weight: 500;
 }
 
