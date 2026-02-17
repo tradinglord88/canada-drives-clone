@@ -119,7 +119,7 @@
 .stats-bar {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--navy-dark) 100%);
     padding: 20px 0;
-    border-bottom: 3px solid var(--gold-accent);
+    border-bottom: none;
 }
 
 .stats-bar-content {
@@ -435,20 +435,32 @@ body::before {
 
 /* Admin Link Styling */
 .nav-menu .admin-link {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 5px 10px !important;
-    border-radius: 14px;
+    background: linear-gradient(145deg, #2a2a3e, #1a1a2e);
+    padding: 8px 18px !important;
+    border-radius: 10px;
     margin-left: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     transition: all 0.3s ease;
     white-space: nowrap;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: #e0e0e0 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    text-transform: uppercase;
 }
 
 .nav-menu .admin-link:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.5);
+    background: linear-gradient(145deg, #353550, #252540);
+    border-color: rgba(255, 255, 255, 0.2);
     transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    color: #fff !important;
+}
+
+.nav-menu .admin-link:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .nav-menu .admin-link::after {
@@ -456,8 +468,9 @@ body::before {
 }
 
 .nav-menu .admin-link i {
-    margin-right: 4px;
-    font-size: 0.75em;
+    margin-right: 5px;
+    font-size: 0.7em;
+    opacity: 0.7;
 }
 
 .mobile-menu-toggle {
