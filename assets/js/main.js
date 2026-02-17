@@ -1339,10 +1339,9 @@ function showSuccessAnimation(applicationId) {
                     <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
                 </svg>
             </div>
-            <h2 class="success-title">Congratulations!</h2>
-            <p class="success-message">Your pre-approval application has been submitted successfully.</p>
-            <p class="success-submessage">You will be receiving a call shortly!</p>
-            <div class="success-app-id">Application ID: <strong>${applicationId}</strong></div>
+            <h2 class="success-title">You're Pre-Approved!</h2>
+            <p class="success-message">Your application has been submitted successfully.</p>
+            <p class="success-submessage">A member of our team will be in touch shortly.</p>
             <button class="btn btn-primary success-btn" onclick="closeSuccessAndReset()">Back to Home</button>
         </div>
     `;
