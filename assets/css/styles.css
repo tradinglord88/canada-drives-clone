@@ -1527,6 +1527,7 @@ label:has(input[required])::after {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
     gap: 2rem;
     padding: 1.5rem;
     margin-top: 2rem;
@@ -1541,6 +1542,7 @@ label:has(input[required])::after {
     color: #fff;
     font-size: 1.05rem;
     font-weight: 500;
+    white-space: nowrap;
 }
 
 .trust-item i {
