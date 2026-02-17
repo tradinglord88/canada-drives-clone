@@ -230,7 +230,7 @@
     .hero {
         padding: 0;
         background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4)),
-                    url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') !important;
+                    url('../images/clouds-bg.jpg') !important;
         background-size: 100% auto !important;
         background-position: center top !important;
         background-repeat: no-repeat !important;
@@ -760,6 +760,28 @@
 
     .achievement-label {
         font-size: 0.85rem;
+        white-space: normal;
+    }
+
+    .credit-item {
+        white-space: normal;
+    }
+
+    .hero-car {
+        display: none;
+    }
+
+    .summary-icon {
+        width: 60px;
+        height: 40px;
+    }
+
+    .footer-pro p {
+        font-size: 0.8rem;
+    }
+
+    .footer-pro-bottom-links a {
+        font-size: 0.82rem;
     }
 
     /* Testimonials Mobile */
@@ -1086,13 +1108,60 @@
     .hero {
         background-size: cover !important;
         background-position: center center !important;
-        background-attachment: fixed !important;
+        background-attachment: scroll !important;
         min-height: 100vh;
         height: auto;
     }
 
     .hero-title {
         font-size: 1.5rem;
+    }
+
+    /* Security badges */
+    .security-badges {
+        gap: 15px;
+    }
+
+    .security-badges-images {
+        gap: 20px;
+    }
+
+    .security-badges-images img {
+        height: 40px;
+    }
+
+    /* WhatsApp button */
+    .whatsapp-label {
+        display: none;
+    }
+
+    .whatsapp-wrapper {
+        bottom: 16px;
+        right: 16px;
+    }
+
+    /* Stats bar */
+    .stats-bar-content {
+        gap: 10px 15px;
+    }
+
+    .stat-number {
+        font-size: 18px;
+    }
+
+    .stat-label {
+        font-size: 9px;
+    }
+
+    /* Credit grid */
+    .credit-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .credit-item {
+        padding: 10px 12px;
+        font-size: 0.85rem;
     }
 
     .vehicle-selection {

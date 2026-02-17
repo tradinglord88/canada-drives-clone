@@ -2143,7 +2143,7 @@ label:has(input[required])::after {
     padding: 14px 16px;
     border: 1.5px solid #e0e3e8;
     border-radius: 10px;
-    font-size: 1rem;
+    font-size: 16px;
     background: #fff;
     transition: all 0.2s ease;
     box-shadow: none;
@@ -2168,7 +2168,7 @@ label:has(input[required])::after {
     padding-right: 40px;
     border: 1.5px solid #e0e3e8;
     border-radius: 10px;
-    font-size: 1rem;
+    font-size: 16px;
     background: #fff;
     transition: all 0.2s ease;
     box-shadow: none;
@@ -2197,7 +2197,7 @@ label:has(input[required])::after {
     padding: 14px 16px;
     border: 1.5px solid #e0e3e8;
     border-radius: 10px;
-    font-size: 1rem;
+    font-size: 16px;
     font-family: inherit;
     background: #fff;
     transition: all 0.2s ease;
@@ -3218,7 +3218,7 @@ label:has(input[required])::after {
     padding: 14px 18px;
     border: 2px solid #e8eaed;
     border-radius: 12px;
-    font-size: 1rem;
+    font-size: 16px;
     background: linear-gradient(145deg, #ffffff 0%, #fafbfc 100%);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
